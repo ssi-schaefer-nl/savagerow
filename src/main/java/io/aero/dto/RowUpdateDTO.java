@@ -1,4 +1,4 @@
-package io.aero;
+package io.aero.dto;
 
 import java.util.Map;
 

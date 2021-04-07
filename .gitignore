@@ -1,3 +1,4 @@
 .idea
 aero.iml
 target
+*.db

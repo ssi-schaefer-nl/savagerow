@@ -1,23 +1,18 @@
 package io.aero;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.aero.dto.RowInsertDTO;
+import io.aero.dto.RowUpdateDTO;
 
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static spark.Spark.*;
 
 public class Controller {
-    private static String TABLE_PARAM = "tableName";
-    private QueryService queryService;
+    private static final String TABLE_PARAM = "tableName";
+    private final QueryService queryService;
 
     public Controller(QueryService queryService) {
         this.queryService = queryService;
@@ -29,13 +24,39 @@ public class Controller {
         getAllTables();
         getAllRowsOfTable();
         updateRowOfTable();
+        addNewRowForTable();
+        postChangeDatabase();
     }
+
+    private void addNewRowForTable() {
+        post("/api/table/:tableName/add", (req, res) -> {
+            String tableName = req.params(TABLE_PARAM);
+            try {
+                RowInsertDTO newRow = new ObjectMapper().readValue(req.body(), new TypeReference<RowInsertDTO>() {});
+                queryService.addRow(tableName, newRow);
+            } catch (Exception e) {
+                System.out.println(e);
+                res.status(500);
+            }
+            return "";
+        });
+    }
+
+    private void postChangeDatabase() {
+        post("/api/database/set/:db", (req, res) -> {
+            String dbName = req.params("db");
+            queryService.switchDatabase(dbName);
+            return "";
+        });
+    }
+
 
     private void updateRowOfTable() {
         post("/api/table/:tableName/update", (req, res) -> {
             String tableName = req.params(TABLE_PARAM);
             try {
-                RowUpdateDTO rowUpdate = new ObjectMapper().readValue(req.body(), new TypeReference<List<RowUpdateDTO>>() {}).get(0);
+                RowUpdateDTO rowUpdate = new ObjectMapper().readValue(req.body(), new TypeReference<List<RowUpdateDTO>>() {
+                }).get(0);
                 queryService.updateRow(tableName, rowUpdate);
             } catch (Exception e) {
                 System.out.println(e);
