@@ -2,8 +2,9 @@ package io.aero.integration.jdbc.preparedstatements;
 
 import io.aero.integration.jdbc.ColumnMetaData;
 
-import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,7 +15,6 @@ public class PreparedUpdateStatementBuilder {
     private String table;
     private Map<String, String> originalRow;
     private Map<String, String> newRow;
-    private String sql;
     private List<ColumnMetaData> columnMetaData;
 
 
@@ -72,83 +72,21 @@ public class PreparedUpdateStatementBuilder {
         List<String> columnsNewRowSorted = newRow.keySet().stream().sorted().collect(Collectors.toList());
         List<String> columnsOldRowSorted = originalRow.keySet().stream().sorted().filter(row -> originalRow.get(row)!=null).collect(Collectors.toList());
 
-        String set = columnsNewRowSorted.stream().map(col -> col + " = ?").collect(Collectors.joining(", "));
-        String where = columnsOldRowSorted.stream().map(col -> col + " = ?").collect(Collectors.joining(" AND "));
-        sql = "UPDATE " + table + " SET " + set + " WHERE " + where;
+        String sql = createSqlString(columnsNewRowSorted, columnsOldRowSorted);
         statement = connection.prepareStatement(sql);
 
-        int paramIndex = 1;
-        paramIndex = setParametersBulk(columnsNewRowSorted, newRow, paramIndex);
-        setParametersBulk(columnsOldRowSorted, originalRow, paramIndex);
+        ParameterSetter parameterSetter = new ParameterSetter(statement);
+        parameterSetter.setParameters(columnsNewRowSorted, newRow, columnMetaData);
+        parameterSetter.setParameters(columnsOldRowSorted, originalRow, columnMetaData);
 
         statement.executeUpdate();
     }
 
-    private int setParametersBulk(List<String> sortedColumns, Map<String, String> colValMap, int paramIndex) throws SQLException {
-        for (String col : sortedColumns) {
-            String type = columnMetaData.stream().filter(c -> c.getName().equals(col)).findFirst().map(ColumnMetaData::getDatatype).orElse("");
-            setParameterWithAppropriateType(paramIndex, colValMap.get(col), type);
-            paramIndex++;
-        }
-        return paramIndex;
+    private String createSqlString(List<String> sortedSetColumns, List<String> sortedWhereColumns) {
+        String set = sortedSetColumns.stream().map(col -> col + " = ?").collect(Collectors.joining(", "));
+        String where = sortedWhereColumns.stream().map(col -> col + " = ?").collect(Collectors.joining(" AND "));
+        return "UPDATE " + table + " SET " + set + " WHERE " + where;
     }
 
-    private void setParameterWithAppropriateType(int paramIndex, String colVal, String type) throws SQLException {
-        if(colVal == null) {
-            statement.setNull(paramIndex, Integer.parseInt(type));
-            return;
-        }
-
-        switch (type) {
-            case "12":
-            case "-1":
-                statement.setString(paramIndex, colVal);
-                break;
-            case "2":
-                statement.setBigDecimal(paramIndex, new BigDecimal(colVal));
-                break;
-            case "-7":
-                statement.setBoolean(paramIndex, Boolean.parseBoolean(colVal));
-                break;
-            case "-6":
-                statement.setByte(paramIndex, Byte.parseByte(colVal));
-                break;
-            case "5":
-                statement.setShort(paramIndex, Short.parseShort(colVal));
-                break;
-            case "4":
-                statement.setInt(paramIndex, Integer.parseInt(colVal));
-                break;
-            case "-5":
-                statement.setLong(paramIndex, Long.parseLong(colVal));
-                break;
-            case "7":
-                statement.setFloat(paramIndex, Float.parseFloat(colVal));
-
-                break;
-            case "8":
-                statement.setDouble(paramIndex, Double.parseDouble(colVal));
-                break;
-            case "-3":
-            case "-4":
-                statement.setBytes(paramIndex, colVal.getBytes());
-                break;
-            case "91":
-                statement.setDate(paramIndex, Date.valueOf(colVal));
-                break;
-            case "92":
-                statement.setTime(paramIndex, Time.valueOf(colVal));
-                break;
-            case "93":
-                statement.setTimestamp(paramIndex, Timestamp.valueOf(colVal));
-                break;
-            default:
-                statement.setString(paramIndex, colVal);
-                break;
-
-        }
-
-
-    }
 
 }

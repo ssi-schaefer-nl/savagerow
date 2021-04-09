@@ -20,7 +20,7 @@ public class JDBCManager {
         if (connection != null) {
             connection.close();
         }
-        connection = DriverManager.getConnection("jdbc:sqlite:"+db);
+        connection = DriverManager.getConnection("jdbc:sqlite:" + db);
 
     }
 
@@ -39,7 +39,7 @@ public class JDBCManager {
     }
 
     public boolean tableNotExistsInDb(String table) throws SQLException {
-        if(tableMetaDataCache.containsKey(table)) {
+        if (tableMetaDataCache.containsKey(table)) {
             return false;
         }
         return !getTables().contains(table);
@@ -54,7 +54,7 @@ public class JDBCManager {
         return connection;
     }
 
-    private TableMetaDataCacheEntry getTableMetaData(String table) throws SQLException {
+    public TableMetaDataCacheEntry getTableMetaData(String table) throws SQLException {
         TableMetaDataCacheEntry cacheEntry = tableMetaDataCache.get(table);
         if (cacheEntry != null && !cacheEntry.isExpired()) {
             return cacheEntry;
@@ -69,9 +69,12 @@ public class JDBCManager {
 
         List<ColumnMetaData> columns = new ArrayList<>();
         while (resultSet.next()) {
-            columns.add(new ColumnMetaData().setDatatype(resultSet.getString("DATA_TYPE")).setName(resultSet.getString("COLUMN_NAME")));
+            columns.add(new ColumnMetaData()
+                    .setDatatype(Integer.parseInt(resultSet.getString("DATA_TYPE")))
+                    .setName(resultSet.getString("COLUMN_NAME"))
+                    .setAutoIncrement(resultSet.getString("IS_AUTOINCREMENT"))
+            );
         }
-
         TableMetaDataCacheEntry cacheEntry = new TableMetaDataCacheEntry().setName(table).setColumns(columns);
         tableMetaDataCache.put(table, cacheEntry);
         return cacheEntry;

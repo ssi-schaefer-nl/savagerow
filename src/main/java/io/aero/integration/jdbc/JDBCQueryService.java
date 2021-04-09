@@ -1,8 +1,7 @@
 package io.aero.integration.jdbc;
 
 import io.aero.QueryService;
-import io.aero.dto.RowInsertDTO;
-import io.aero.dto.RowUpdateDTO;
+import io.aero.dto.*;
 import io.aero.integration.jdbc.preparedstatements.PreparedInsertStatementBuilder;
 import io.aero.integration.jdbc.preparedstatements.PreparedSelectStatementBuilder;
 import io.aero.integration.jdbc.preparedstatements.PreparedUpdateStatementBuilder;
@@ -19,11 +18,21 @@ public class JDBCQueryService implements QueryService {
     }
 
     @Override
-    public List<Map<String, String>> findAll(String table) throws Exception {
+    public TableDataDTO findAll(String table) throws Exception {
         if (jdbcManager.tableNotExistsInDb(table)) {
             throw new IllegalArgumentException("Invalid table name");
         }
-        return new PreparedSelectStatementBuilder().setTable(table).setConnection(jdbcManager.getConnection()).execute();
+
+        List<ColumnSchemaDTO> columns = jdbcManager.getTableMetaData(table).getColumns().stream()
+                .map(columnMetaData -> new ColumnSchemaDTO()
+                        .setColumn(columnMetaData.getName())
+                        .setDatatype(JDBCDatatypeConverter.convertTypeToStringName(columnMetaData.getDatatype()))
+                        .setEditable(!columnMetaData.getAutoIncrement().equals("YES")))
+                .collect(Collectors.toList());
+
+        return new TableDataDTO()
+                .setData(new PreparedSelectStatementBuilder().setTable(table).setConnection(jdbcManager.getConnection()).execute())
+                .setTableSchema(new TableSchemaDTO().setTable(table).setColumns(columns));
     }
 
     @Override
@@ -36,7 +45,6 @@ public class JDBCQueryService implements QueryService {
         if (dataIsNotWhitelisted(table, update)) {
             throw new IllegalArgumentException("Invalid table or column names");
         }
-
         new PreparedUpdateStatementBuilder()
                 .setTable(table)
                 .setOriginalRow(update.getOldRow())
@@ -58,8 +66,6 @@ public class JDBCQueryService implements QueryService {
                 .setColumnMetaData(jdbcManager.getColumnsForTable(table))
                 .setConnection(jdbcManager.getConnection())
                 .execute();
-        System.out.println("Done");
-
     }
 
     @Override
@@ -77,6 +83,7 @@ public class JDBCQueryService implements QueryService {
         if (tableDoesNotHaveAllColumns(table, new ArrayList<>(update.getNewRow().keySet()))) return true;
         return false;
     }
+
     private boolean dataIsNotWhitelisted(String table, Map<String, String> newRow) throws Exception {
         if (jdbcManager.tableNotExistsInDb(table)) return true;
         if (tableDoesNotHaveAllColumns(table, new ArrayList<>(newRow.keySet()))) return true;
