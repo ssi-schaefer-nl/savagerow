@@ -62,12 +62,5 @@ class TableManager {
         )
     }
 
-    // deleteRowFromLocalTable(index) {
-    //     var newRowSet = [...this.rows]
-    //     newRowSet.splice(index, 1)
-    //     this.rows = newRowSet;
-    //     this.updateUnsynchronizedRowsAfterDeletion(index);
-    // }
-
 }
 export default TableManager

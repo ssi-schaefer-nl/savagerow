@@ -2,6 +2,9 @@ import DataGrid, { TextEditor } from "react-data-grid";
 
 
 const DataGridTable = (props) => {
+    if(props.columns.length == 0) {
+        return null
+    }
     const columns = props.columns.map(col => ({
         key: col.column,
         name: col.column,

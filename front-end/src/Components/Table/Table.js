@@ -3,7 +3,7 @@ import TableService from '../../Service/TableService';
 import ContextMenu from '../ContextMenu/ContextMenu';
 import DataGridControlBar from './DataGridControlBar';
 import DataGridTable from './DataGridTable';
-import NotificationArea from './NotificationArea';
+import NotificationArea from '../NotificationArea/NotificationArea';
 import TableManager from './TableManager';
 
 
