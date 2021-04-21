@@ -41,6 +41,15 @@ public class TableController {
         }
     }
 
+    @GetMapping(value = "/api/table/{table}/schema", produces = "application/json")
+    public ResponseEntity<?> tableGetSchema(@PathVariable String table) {
+        try {
+            return new ResponseEntity<>(queryService.getSchema(table), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
 }

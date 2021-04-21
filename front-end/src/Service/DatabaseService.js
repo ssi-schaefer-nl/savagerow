@@ -1,13 +1,16 @@
 import HttpHelper from './HttpHelper';
 
-class DatabaseHelper {
+class DatabaseService {
     constructor() {
         this.httpHelper = new HttpHelper()
     }
 
     listAll(onSuccess, onFailure) {
-        this.httpHelper.post('/api/database/all', onSuccess, onFailure)
-    }    
+        this.httpHelper.post('/api/database/all')
+            .then(res => { onSuccess(res) })
+            .catch(res => { onFailure(res) });
+    }
+}    
     
 
 }

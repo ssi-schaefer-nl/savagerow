@@ -1,10 +1,6 @@
 package io.aero.integration.sqlite;
 
 import io.aero.exceptions.NoDatabaseConnectionException;
-import io.aero.integration.sqlite.ColumnMetaData;
-import io.aero.integration.sqlite.JDBCDatatypeConverter;
-import io.aero.integration.sqlite.JDBCMetaDataManager;
-import io.aero.integration.sqlite.SQLiteDataSource;
 import io.aero.service.QueryService;
 import io.aero.dto.*;
 import io.aero.integration.sqlite.preparedstatements.PreparedDeleteStatementBuilder;
@@ -23,7 +19,21 @@ public class JDBCQueryService implements QueryService {
 
 
     @Override
-    public TableDataDTO findAll(String table) throws Exception {
+    public RowSetDTO findAll(String table) throws Exception {
+        if (jdbcManager.tableNotExistsInDb(table)) {
+            throw new IllegalArgumentException("Invalid table name");
+        }
+
+        List<Map<String, String>> rows = new PreparedSelectStatementBuilder()
+                .setTable(table)
+                .setConnection(SQLiteDataSource.getConnection())
+                .execute();
+
+        return new RowSetDTO().setRows(rows);
+    }
+
+    @Override
+    public TableSchemaDTO getSchema(String table) throws Exception {
         if (jdbcManager.tableNotExistsInDb(table)) {
             throw new IllegalArgumentException("Invalid table name");
         }
@@ -36,9 +46,7 @@ public class JDBCQueryService implements QueryService {
                         .setNullable(columnMetaData.getNullable().equals("YES")))
                 .collect(Collectors.toList());
 
-        return new TableDataDTO()
-                .setData(new PreparedSelectStatementBuilder().setTable(table).setConnection(SQLiteDataSource.getConnection()).execute())
-                .setTableSchema(new TableSchemaDTO().setTable(table).setColumns(columns));
+        return new TableSchemaDTO().setTable(table).setColumns(columns);
     }
 
     @Override

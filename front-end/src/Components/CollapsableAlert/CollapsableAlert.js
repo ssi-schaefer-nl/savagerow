@@ -8,7 +8,7 @@ import CloseIcon from '@material-ui/icons/Close';
 class CollapsableAlert extends Component {
 
     render() {
-        return <Collapse in={this.props.shouldShow ? this.props.shouldShow : true} style={{ marginBottom: "2em" }}>
+        return <Collapse in={this.props.shouldShow ? this.props.shouldShow : true} style={{ marginBottom: "0.5em" }}>
             <Alert
                 severity={this.props.severity}
                 action={this.props.onClose ?

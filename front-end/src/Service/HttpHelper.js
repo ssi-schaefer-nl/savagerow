@@ -14,24 +14,19 @@ class HttpHelper {
       error => {
         const { status } = error.response;
         if (status === 401) {
-          this.userService.logout();
+          // Do something
         }
         return Promise.reject(error);
       }
     );
   }
 
-  post(url, data, onSuccess, onFailure) {
-    this.http.post(url, data)
-      .then(res => { onSuccess(res) })
-      .catch(res => { onFailure(res) });
+  post(url, data) {
+    return this.http.post(url, data)
   }
 
-  get(url, onSuccess, onFailure) {
-
-    this.http({ method: 'get', url: url })
-      .then(res => { onSuccess(res) })
-      .catch(res => { onFailure(res) });
+  get(url) {
+    return this.http({ method: 'get', url: url })
   }
 
 
