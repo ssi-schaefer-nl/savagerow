@@ -1,18 +1,18 @@
-import TableService from '../../Service/TableService';
+import TableServiceHelper from '../../Service/TableServiceHelper';
 
 
-class TableManager {
+class TableService {
     constructor(table) {
         this.table = table
-        this.tableService = new TableService()
+        this.tableServiceHelper = new TableServiceHelper()
     }
 
     getRowSet(onSuccess, onFailure) {
-        this.tableService.getRowsOfTable(this.table, onSuccess, onFailure)
+        this.tableServiceHelper.getRowsOfTable(this.table, onSuccess, onFailure)
     }
 
     getSchema(onSuccess, onFailure) {
-        this.tableService.getSchemaOfTable(this.table, onSuccess, onFailure)
+        this.tableServiceHelper.getSchemaOfTable(this.table, onSuccess, onFailure)
     }
 
     addRow(rows, index) {
@@ -25,20 +25,22 @@ class TableManager {
 
 
     update(rows, newRow, index, onSuccess, onFailure) {
-        this.tableService.updateRowOfTable(
+        this.tableServiceHelper.updateRowOfTable(
             this.table,
             { oldRow: rows[index], newRow: newRow },
-            () => {
-                var copyOfRows = [...rows]
-                copyOfRows[index] = newRow
-                onSuccess(copyOfRows)
-            },
+            () => onSuccess(this.updateLocal(rows, newRow, index)),
             (data) => onFailure(data.response.data)
         );
     }
 
+    updateLocal(rows, newRow, index) {
+        var copyOfRows = [...rows]
+        copyOfRows[index] = newRow
+        return copyOfRows
+    }
+
     delete(rows, index, onSuccess, onFailure) {
-        this.tableService.deleteRowOfTable(
+        this.tableServiceHelper.deleteRowOfTable(
             this.table,
             { row: rows[index] },
             () => {
@@ -51,11 +53,12 @@ class TableManager {
     }
 
     save(rows, index, onSuccess, onFailure) {
-        this.tableService.addRowToTable(
+        this.tableServiceHelper.addRowToTable(
             this.table,
             { row: rows[index] },
             (data) => {
-                var copyOfRows = Object.assign([], rows, { index: data.data.row })
+                var copyOfRows = [...rows]
+                copyOfRows[index] = data.data.row
                 onSuccess(copyOfRows)
             },
             (data) => onFailure(data.response.data)
@@ -63,4 +66,4 @@ class TableManager {
     }
 
 }
-export default TableManager
+export default TableService

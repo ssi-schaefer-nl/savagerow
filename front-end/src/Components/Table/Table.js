@@ -1,78 +1,113 @@
 import React, { Component, useEffect, useState } from 'react';
-import TableService from '../../Service/TableService';
-import ContextMenu from '../ContextMenu/ContextMenu';
 import DataGridControlBar from './DataGridControlBar';
 import DataGridTable from './DataGridTable';
 import NotificationArea from '../NotificationArea/NotificationArea';
-import TableManager from './TableManager';
-
-
-
-const createNotification = (content, severity) => {
-  return {
-    content: content,
-    severity: severity,
-  }
-}
+import TableService from './TableService';
 
 const SavageTable = (props) => {
-  const tableManager = new TableManager(props.table)
-  const [selectedRow, setSelectedRow] = useState(null)
+  const tableService = new TableService(props.table)
   const [rows, setRows] = useState([])
   const [columns, setColumns] = useState([])
   const [notifications, setNotifications] = useState([])
+  const [insertedRows, setInsertedRows] = useState([])
+  const [errorRows, setErrorRows] = useState([])
 
-  const addNotification = (notification) => {
+  const addNotification = (content, severity) => {
+    const notification = { content: content, severity: severity }
     setNotifications(notifications => [...notifications, notification])
   }
-  
-  const loadTableRows = () => {
-    tableManager.getRowSet(data => setRows(data.data.rows), () => addNotification(createNotification("Unable to fetch table rows", "error")))
+
+  const addErrorRow = (id, message) => {
+    const error = { id: id, message: message }
+    setErrorRows(er => [...er, error])
   }
+
+
+  const addNotificationUnique = (content, severity) => {
+    if (notifications.find(x => x.content === content) == undefined) {
+      addNotification(content, severity)
+    }
+  }
+
+  const loadTableRows = () => {
+    tableService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows", "error"))
+    setInsertedRows([])
+    setNotifications([])
+    setErrorRows([])
+  }
+
+  const insertAction = (rId, before) => {
+    if (!before)
+      rId = rId + 1
+
+    setInsertedRows(irs => [...irs.map(ir => ir >= rId ? ir + 1 : ir), rId])
+    setRows(tableService.addRow(rows, rId))
+  }
+
+  const deleteAction = (rId) => {
+    tableService.delete(rows, rId, (resultingRows) => {
+      setInsertedRows(irs => irs.filter(r => r != rId).map(ir => ir > rId ? ir - 1 : ir))
+      setRows(resultingRows)
+    }, (e) => addErrorRow(rId, e))
+  }
+
+  const saveAction = (rId) => {
+    if (insertedRows.indexOf(rId) == -1) return
+
+    tableService.save(rows, rId, (resultingRows) => {
+      setRows(resultingRows)
+      setInsertedRows(irs => irs.filter(r => r != rId))
+    }, (e) => addErrorRow(rId, e))
+  }
+
+  const handleRowChange = (newRow, index) => {
+    if (insertedRows.indexOf(index) == -1)
+      tableService.update(rows, newRow, index, (rows) => setRows(rows), (e) => {
+        var message = e.message.length == 0 ? " Undefined error" : e.message
+        addErrorRow(index, message)
+        console.log(e)
+      })
+    else
+      setRows(tableService.updateLocal(rows, newRow, index))
+  }
+
 
   useEffect(() => {
     loadTableRows()
-    tableManager.getSchema(data => setColumns(data.data.columns), () => addNotification(createNotification("Unable to fetch table schema", "error")))
+    tableService.getSchema(data => setColumns(data.data.columns), () => addNotification("Unable to fetch table schema", "error"))
   }, [])
 
+  var highlightedRowsFinal = []
+  if (errorRows.length > 0) {
+    addNotificationUnique("One or more rows have errors. Hover over the highlighted rows to see the errors.", "error")
+    highlightedRowsFinal = highlightedRowsFinal.concat(errorRows.map(er => { return { id: er.id, message: er.message, type: "error" } }))
+  }
 
-  const contextMenuActions = {
-    "Insert": () => setRows(tableManager.addRow(rows, selectedRow)),
-    "Delete": () => tableManager.delete(rows, selectedRow, (rows) => setRows(rows), (e) => addNotification(createNotification("Unable to delete row: " + e, "warning"))),
-    "Save": () => tableManager.save(rows, selectedRow, (rows) => setRows(rows), (e) => addNotification(createNotification("Unable to save data: " + e, "warning"))),
-    "Reload": loadTableRows
+  if (insertedRows.length > 0) {
+    addNotificationUnique("The highlighted rows are not saved. Save them to prevent loss of new data.", "warning")
+    highlightedRowsFinal = highlightedRowsFinal.concat(insertedRows.map(i => { return { id: i, message: "This row is not saved", type: "warning" } }))
   }
 
   return (
-    <>
+    <div>
       <NotificationArea
         notifications={notifications}
         handleClose={(index) => setNotifications(curr => curr.filter((notifications, i) => i !== index))}
       />
-
-      <ContextMenu
-        menuItems={Object.keys(contextMenuActions)}
-        onItemClick={(a) => contextMenuActions[a]()}
-      >
-
-        <DataGridTable
-          rows={rows}
-          columns={columns}
-          onRowChange={(newRow, index) => 
-            tableManager.update(rows, newRow, index, (rows) => setRows(rows), (e) => addNotification(createNotification("Unable to update row: " + e, "warning")))
-          }
-          onRowSelect={setSelectedRow}
-        />
-
-      </ContextMenu>
-
-      <DataGridControlBar
-        rowCount={rows.length}
-        columnCount={columns.length}
+      <DataGridTable
+        rows={rows}
+        columns={columns}
+        highlightRows={highlightedRowsFinal}
+        onRowChange={handleRowChange}
+        onDelete={deleteAction}
+        onInsertAbove={(idx) => insertAction(idx, true)}
+        onInsertBelow={(idx) => insertAction(idx, false)}
+        onSave={saveAction}
+        onRefresh={loadTableRows}
       />
-    </>
+      <DataGridControlBar rowCount={rows.length} columnCount={columns.length} unsavedRows={insertedRows} />
+    </div>
   )
 }
-
 
 export default SavageTable

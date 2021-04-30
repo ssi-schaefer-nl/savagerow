@@ -1,0 +1,13 @@
+.row-warning {
+    border: 1px solid rgb(201, 204, 2);
+    background-color: rgba(0, 0, 0, 0.01);
+}
+.row-error {
+  border: 1px solid rgb(202, 19, 19);
+  background-color: rgba(0, 0, 0, 0.01);
+}
+.row {
+  border: 1px solid rgba(0, 0, 0, 0.089);
+
+}
+

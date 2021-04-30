@@ -106,7 +106,7 @@ function ScrollableTabsButtonAuto(props) {
       </AppBar>
 
       {props.tables.map((table, index) => (
-        <TabPanel value={value} index={index} >
+        <TabPanel value={value} index={index}  >
           <SavageTable table={table} />
         </TabPanel>
       ))}
@@ -127,7 +127,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box p={3} padding="1em 0.5em">
           <Typography>{children}</Typography>
         </Box>
       )}
