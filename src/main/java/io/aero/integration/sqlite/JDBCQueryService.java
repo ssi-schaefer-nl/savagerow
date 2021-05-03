@@ -7,6 +7,7 @@ import io.aero.integration.sqlite.preparedstatements.PreparedDeleteStatementBuil
 import io.aero.integration.sqlite.preparedstatements.PreparedInsertStatementBuilder;
 import io.aero.integration.sqlite.preparedstatements.PreparedSelectStatementBuilder;
 import io.aero.integration.sqlite.preparedstatements.PreparedUpdateStatementBuilder;
+import io.aero.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.*;
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 public class JDBCQueryService implements QueryService {
     @Autowired
     private JDBCMetaDataManager jdbcManager;
+
+    @Autowired
+    WorkspaceService workspaceService;
 
 
     @Override

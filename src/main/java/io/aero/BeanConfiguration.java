@@ -6,6 +6,7 @@ import io.aero.service.QueryService;
 import io.aero.service.WorkspaceService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 import java.sql.SQLException;
 
@@ -18,6 +19,7 @@ public class BeanConfiguration {
     }
 
     @Bean
+    @Scope("singleton")
     public WorkspaceService getWorkspaceService() throws Exception {
         return new SQLiteWorkspaceService();
     }

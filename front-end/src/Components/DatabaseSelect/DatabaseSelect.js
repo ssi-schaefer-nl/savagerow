@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component, useEffect, useState } from 'react';
 
 import Typography from '@material-ui/core/Typography';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -11,7 +11,74 @@ import CollapsableAlert from "../CollapsableAlert/CollapsableAlert";
 import ConfigureService from "../../Service/ConfigureService";
 
 
-class DatabaseSelect extends React.Component {
+export default function DatabaseSelect(props) {
+    const configureService = new ConfigureService()
+    const onSelect = props.onSelect
+    const [databases, setDatabases] = useState([])
+    const [database, setDatabase] = useState(undefined)
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [loadingAvailableDatabases, setLoadingAvailableDatabases] = useState(true)
+    const [initialValue, setInitialValue] = useState(null)
+    const [loadingError, setLoadingError] = useState(false)
+
+    useEffect(() => {
+        setInitialValue(props.initialValue)
+
+        configureService.listAllDatabases(
+            function (data) {
+                setDatabases(data.data)
+                setLoadingAvailableDatabases(false)
+            },
+            function (data) {
+                setLoadingAvailableDatabases(false)
+                setLoadingError(true)
+            });
+    }, [])
+
+    const handleChange = (e) => {
+        var db = e.target.value
+        configureService.changeDatabases(
+            db,
+            () => {
+                localStorage.setItem('database', db);
+                setDatabase(db)
+                if (onSelect) onSelect()
+            },
+            undefined
+        );
+    }
+
+    if (loadingAvailableDatabases) {
+        return (<CircularProgress />)
+    } else if (loadingError) {
+        return (<CollapsableAlert severity="warning" message="Unable to fetch available databases. Check database connection." />)
+    }
+
+    var val = database ? database : initialValue ? initialValue : ""
+    return (
+
+        <FormControl style={{ margin: 1, minWidth: 120 }}>
+            <InputLabel htmlFor="demo-customized-select-native">Database</InputLabel>
+            <NativeSelect
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={val}
+                onChange={handleChange}
+            >
+                <option aria-label="None" value="" />
+
+                {databases.map(d => (
+                    <option value={d}>{d}</option>
+                ))}
+
+            </NativeSelect>
+        </FormControl>
+    )
+
+}
+
+
+class DatabaseSelectOld extends React.Component {
     state = {
         configureService: new ConfigureService(),
         databases: [],
@@ -65,7 +132,7 @@ class DatabaseSelect extends React.Component {
                         value={val}
                         onChange={this.handleChange}
                     >
-                                  <option aria-label="None" value="" />
+                        <option aria-label="None" value="" />
 
                         {this.state.databases.map(d => (
                             <option value={d}>{d}</option>
@@ -78,4 +145,4 @@ class DatabaseSelect extends React.Component {
     }
 }
 
-export default DatabaseSelect
+// export default DatabaseSelect

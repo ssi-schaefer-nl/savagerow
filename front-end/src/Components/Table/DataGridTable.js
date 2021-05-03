@@ -1,10 +1,20 @@
 import DataGrid, { TextEditor, Row as GridRow } from "react-data-grid";
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+
 import { ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } from 'react-contextmenu';
 import Tooltip from '@material-ui/core/Tooltip';
 import './react-contextmenu.css'
 
 import './highlight.css'
 
+const LightTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: 12,
+    },
+  }))(Tooltip);
 
 const DataGridTable = (props) => {
     if (props.columns.length == 0) {
@@ -55,8 +65,8 @@ const DataGridTable = (props) => {
         }
 
         return (
-            <ContextMenuTrigger id="grid-context-menu" collect={() => ({ rowIdx: props.rowIdx })}>
-                <Tooltip
+            <ContextMenuTrigger id="grid-context-menu" collect={() => ({ rowIdx: props.rowIdx })} holdToDisplay="-1"> 
+                <LightTooltip
                     title={rowTooltip}
                     enterDelay={1000}
                     enterNextDelay={1000}
@@ -65,7 +75,7 @@ const DataGridTable = (props) => {
                     arrow
                 >
                     <GridRow {...props} className={classname} />
-                </Tooltip>
+                </LightTooltip>
             </ContextMenuTrigger>
         );
     }
@@ -90,7 +100,10 @@ const DataGridTable = (props) => {
                 minHeight="1000"
             />
 
-            <ContextMenu id="grid-context-menu" style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px" }}>
+            <ContextMenu 
+            id="grid-context-menu" 
+            style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px" }}
+            >
                 <MenuItem onClick={onRowSave}>Save Row</MenuItem>
                 <MenuItem onClick={onRowDelete}>Delete Row</MenuItem>
                 <SubMenu title="Insert Row" onClick={onRowInsertAbove}>

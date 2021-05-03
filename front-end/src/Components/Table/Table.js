@@ -12,28 +12,28 @@ const SavageTable = (props) => {
   const [insertedRows, setInsertedRows] = useState([])
   const [errorRows, setErrorRows] = useState([])
 
+
   const addNotification = (content, severity) => {
     const notification = { content: content, severity: severity }
     setNotifications(notifications => [...notifications, notification])
   }
 
+  const removeErrorsForRow = id => {
+    setErrorRows(er => er.filter(r => r.id != id))
+  }
+
   const addErrorRow = (id, message) => {
     const error = { id: id, message: message }
+    removeErrorsForRow(id)
     setErrorRows(er => [...er, error])
   }
 
-
-  const addNotificationUnique = (content, severity) => {
-    if (notifications.find(x => x.content === content) == undefined) {
-      addNotification(content, severity)
-    }
-  }
-
   const loadTableRows = () => {
-    tableService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows", "error"))
     setInsertedRows([])
     setNotifications([])
     setErrorRows([])
+    tableService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
+    
   }
 
   const insertAction = (rId, before) => {
@@ -57,20 +57,23 @@ const SavageTable = (props) => {
     tableService.save(rows, rId, (resultingRows) => {
       setRows(resultingRows)
       setInsertedRows(irs => irs.filter(r => r != rId))
-    }, (e) => addErrorRow(rId, e))
+      removeErrorsForRow(rId)
+    }, (e) => addErrorRow(rId, " Error saving the row: " + e))
   }
 
   const handleRowChange = (newRow, index) => {
     if (insertedRows.indexOf(index) == -1)
-      tableService.update(rows, newRow, index, (rows) => setRows(rows), (e) => {
-        var message = e.message.length == 0 ? " Undefined error" : e.message
+      tableService.update(rows, newRow, index, (rows) => {
+        setRows(rows)
+        removeErrorsForRow(index)
+      }, (e) => {
+        var message = e.message.length == 0 ? " Undefined error during row update" : " Error updating row: " + e.message
         addErrorRow(index, message)
         console.log(e)
       })
     else
       setRows(tableService.updateLocal(rows, newRow, index))
   }
-
 
   useEffect(() => {
     loadTableRows()
@@ -79,12 +82,12 @@ const SavageTable = (props) => {
 
   var highlightedRowsFinal = []
   if (errorRows.length > 0) {
-    addNotificationUnique("One or more rows have errors. Hover over the highlighted rows to see the errors.", "error")
-    highlightedRowsFinal = highlightedRowsFinal.concat(errorRows.map(er => { return { id: er.id, message: er.message, type: "error" } }))
+    // addNotificationUnique("One or more rows have errors. Hover over the highlighted rows to see the errors.", "error")
+    highlightedRowsFinal = highlightedRowsFinal.concat(errorRows.slice(0).reverse().map(er => { return { id: er.id, message: er.message, type: "error" } }))
   }
 
   if (insertedRows.length > 0) {
-    addNotificationUnique("The highlighted rows are not saved. Save them to prevent loss of new data.", "warning")
+    // addNotificationUnique("The highlighted rows are not saved. Save them to prevent loss of new data.", "warning")
     highlightedRowsFinal = highlightedRowsFinal.concat(insertedRows.map(i => { return { id: i, message: "This row is not saved", type: "warning" } }))
   }
 
