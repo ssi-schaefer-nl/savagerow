@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -11,79 +11,55 @@ import { Button, Toolbar } from "@material-ui/core";
 import ConfigureService from "../Service/ConfigureService";
 import CollapsableAlert from "../Components/CollapsableAlert/CollapsableAlert";
 import DatabaseSelect from "../Components/DatabaseSelect/DatabaseSelect";
-import { yellow } from "@material-ui/core/colors";
-import { AddOutlined } from "@material-ui/icons";
 
-
-class Tables extends Component {
-  state = {
-    tables: [],
-    configureService: new ConfigureService(),
-    loading: true,
-    database: "",
-  }
-
-  componentDidMount() {
-    this.state.configureService.getCurrentDatabase(
-      function (data) {
-        this.setState({ database: data.data })
-      }.bind(this),
-      function (data) {
-        this.setState({ database: null, loadCurrentDatabaseError: true })
-        console.log(data)
-      }.bind(this));
-
-    this.state.configureService.getTables(
-      function (data) {
-        this.setState({ tables: data.data })
-        this.setState({ loading: false })
-      }.bind(this),
-      function (data) {
-        console.log(data)
-        this.setState({ loading: false, loadTableDataError: true })
-
-      }.bind(this));
-
-
-  }
-
-  render() {
-    if (this.state.loading) {
-      return (<></>)
-    }
-
-    if (!this.state.loadCurrentDatabaseError && this.state.database.length == 0) return (
-      <div>
-        <Typography style={{ marginBottom: "2em" }}>No database is selected. Please select a database</Typography>
-        <DatabaseSelect onSelect={() => window.location.reload(false)} />
-      </div>
-    )
-    if (this.state.loadTableDataError || this.state.loadCurrentDatabaseError) {
-      return (<CollapsableAlert severity="error" message="Error while retrieving data." />)
-    }
-
-    return (
-      <ScrollableTabsButtonAuto tables={this.state.tables} database={this.state.database} />
-    );
-  }
-}
-
-
-function ScrollableTabsButtonAuto(props) {
+const Tables = (props) => {
+  const configureService = new ConfigureService()
   const classes = useStyles();
+  const database = localStorage.getItem("database")
+  const [tables, setTables] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    configureService.getTables(
+      (data) => {
+        setTables(data.data)
+        setLoading(false)
+      },
+      () => {
+        setLoading(true)
+        setError(true)
+      })
+  }, [])
+
+
+
+  if (loading) {
+    return (<></>)
+  }
+
+  if (database == null) return (
+    <div>
+      <Typography style={{ marginBottom: "2em" }}>No database is selected. Please select a database</Typography>
+      <DatabaseSelect onSelect={() => window.location.reload(false)} />
+    </div>
+  )
+  if (error) {
+    return (<CollapsableAlert severity="error" message={"Error while retrieving tables for database: " + database} />)
+  }
+
   return (
     <div className={classes.root}>
 
       <AppBar position="static" color="default">
         <Toolbar>
-          <Typography variant="h6" color="primary" style={{ marginRight: "1em", fontWeight: "bold"}}>
-            {props.database}
+          <Typography variant="h6" color="primary" style={{ marginRight: "1em", fontWeight: "bold" }}>
+            {database}
           </Typography>
           <Tabs
             selectionFollowsFocus
@@ -96,7 +72,7 @@ function ScrollableTabsButtonAuto(props) {
             scrollButtons="auto"
             aria-label="scrollable auto tabs example"
           >
-            {props.tables.map((table, index) => (
+            {tables.map((table, index) => (
               <Tab label={table} {...a11yProps(index)} />
             ))}
 
@@ -105,15 +81,15 @@ function ScrollableTabsButtonAuto(props) {
         </Toolbar>
       </AppBar>
 
-      {props.tables.map((table, index) => (
+      {tables.map((table, index) => (
         <TabPanel value={value} index={index}  >
           <SavageTable table={table} />
         </TabPanel>
       ))}
     </div>
   );
-}
 
+}
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

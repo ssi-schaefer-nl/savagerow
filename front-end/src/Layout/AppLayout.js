@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function DefaultLayout() {
+export default function AppLayout() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -124,7 +124,7 @@ export default function DefaultLayout() {
         })}
       >
         <Toolbar>
-          <IconButton  
+          <IconButton
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -155,7 +155,7 @@ export default function DefaultLayout() {
         }}
 
       >
-        <div className={classes.toolbar} style={{  backgroundColor: grey[300]}}>
+        <div className={classes.toolbar} style={{ backgroundColor: grey[300] }}>
           <Typography variant="h6" noWrap >
             Menu
           </Typography>
@@ -178,7 +178,7 @@ export default function DefaultLayout() {
 
       <main className={classes.content} >
 
-        <div className={classes.toolbar}/>
+        <div className={classes.toolbar} />
         <RoutedComponent />
 
       </main>
@@ -187,15 +187,13 @@ export default function DefaultLayout() {
   );
 }
 
-class ListElement extends Component {
-  render() {
-    const TheIcon = this.props.icon;
+const ListElement = (props) => {
+  const TheIcon = props.icon;
 
-    return (
-      <ListItem component={Link} to={this.props.link} button key={this.props.text}>
-        <ListItemIcon><TheIcon /></ListItemIcon>
-        <ListItemText primary={this.props.text} />
-      </ListItem>
-    )
-  }
+  return (
+    <ListItem component={Link} to={props.link} button key={props.text}>
+      <ListItemIcon><TheIcon /></ListItemIcon>
+      <ListItemText primary={props.text} />
+    </ListItem>
+  )
 }

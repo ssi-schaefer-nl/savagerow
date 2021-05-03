@@ -19,14 +19,14 @@ public class TableController {
 
     @PostMapping(value = "/api/{database}/table/{table}/delete", consumes = "application/json")
     public void tableDeleteRow(@RequestBody RowDTO row, @PathVariable String database, @PathVariable String table) throws Exception {
-        setDatabaseIfNotSet(database);
+        workspaceService.setDatabaseIfNotSet(database);
         queryService.deleteRow(table, row);
     }
 
     @PostMapping(value = "/api/{database}/table/{table}/add", consumes = "application/json")
     public ResponseEntity<?> tableAddRow(@RequestBody RowDTO row, @PathVariable String database, @PathVariable String table) {
         try {
-            setDatabaseIfNotSet(database);
+            workspaceService.setDatabaseIfNotSet(database);
             return new ResponseEntity<>(queryService.addRow(table, row), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -35,14 +35,14 @@ public class TableController {
 
     @PostMapping(value = "/api/{database}/table/{table}/update", consumes = "application/json")
     public void tableUpdateRow(@RequestBody RowUpdateDTO rowUpdate, @PathVariable String database, @PathVariable String table) throws Exception {
-        setDatabaseIfNotSet(database);
+        workspaceService.setDatabaseIfNotSet(database);
         queryService.updateRow(table, rowUpdate);
     }
 
     @GetMapping(value = "/api/{database}/table/{table}/all", produces = "application/json")
     public ResponseEntity<?> tableGetAll(@PathVariable String table, @PathVariable String database) {
         try {
-            setDatabaseIfNotSet(database);
+            workspaceService.setDatabaseIfNotSet(database);
             return new ResponseEntity<>(queryService.findAll(table), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -52,17 +52,11 @@ public class TableController {
     @GetMapping(value = "/api/{database}/table/{table}/schema", produces = "application/json")
     public ResponseEntity<?> tableGetSchema(@PathVariable String table, @PathVariable String database) {
         try {
-            setDatabaseIfNotSet(database);
+            workspaceService.setDatabaseIfNotSet(database);
             return new ResponseEntity<>(queryService.getSchema(table), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    private void setDatabaseIfNotSet(String database) throws Exception {
-        String curDb = workspaceService.getCurrentDatabase();
-        if(curDb == null || !curDb.equals(database)) {
-            workspaceService.setDatabase(database);
-        }
-    }
 }

@@ -80,7 +80,6 @@ const DataGridTable = (props) => {
         );
     }
 
-    console.log(highlightedRows)
     return (
         <>
             <DataGrid

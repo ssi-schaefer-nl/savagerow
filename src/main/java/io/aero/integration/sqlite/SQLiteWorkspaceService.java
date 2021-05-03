@@ -17,7 +17,7 @@ public class SQLiteWorkspaceService implements WorkspaceService {
 
     public SQLiteWorkspaceService() throws Exception {
         Properties properties = getWorkspaceProperties();
-        if (properties == null ||  properties.getProperty("workspace") == null) {
+        if (properties == null || properties.getProperty("workspace") == null) {
             throw new Exception("Workspace configuration missing!");
         }
 
@@ -90,5 +90,13 @@ public class SQLiteWorkspaceService implements WorkspaceService {
     @Override
     public String getCurrentDatabase() {
         return currentDatabase;
+    }
+
+    @Override
+    public void setDatabaseIfNotSet(String database) throws Exception {
+            String curDb = getCurrentDatabase();
+            if(curDb == null || !curDb.equals(database)) {
+                setDatabase(database);
+            }
     }
 }
