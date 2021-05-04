@@ -1,22 +1,25 @@
 import DataGrid, { TextEditor, Row as GridRow } from "react-data-grid";
+import React, { useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-
 import { ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } from 'react-contextmenu';
 import Tooltip from '@material-ui/core/Tooltip';
 import './react-contextmenu.css'
-
 import './highlight.css'
+
 
 const LightTooltip = withStyles((theme) => ({
     tooltip: {
-      backgroundColor: theme.palette.common.white,
-      color: 'rgba(0, 0, 0, 0.87)',
-      boxShadow: theme.shadows[1],
-      fontSize: 12,
+        backgroundColor: theme.palette.common.white,
+        color: 'rgba(0, 0, 0, 0.87)',
+        boxShadow: theme.shadows[1],
+        fontSize: 12,
     },
-  }))(Tooltip);
+}))(Tooltip);
+
+
 
 const DataGridTable = (props) => {
+
     if (props.columns.length == 0) {
         return null
     }
@@ -32,6 +35,7 @@ const DataGridTable = (props) => {
     var rows = [...props.rows]
     const onRowChange = props.onRowChange
     const highlightedRows = props.highlightRows ? props.highlightRows : []
+
 
     const onRowDelete = (e, { rowIdx }) => {
         props.onDelete(rowIdx)
@@ -57,15 +61,15 @@ const DataGridTable = (props) => {
     const RowRenderer = (props) => {
         var classname = "row"
         var rowTooltip = "Row " + props.rowIdx
-        
+
         var highlightedRow = highlightedRows.find(hr => hr.id == props.rowIdx)
-        if(highlightedRow != undefined) {
+        if (highlightedRow != undefined) {
             rowTooltip = rowTooltip.concat(" - " + highlightedRow.message)
             classname = highlightedRow.type === "warning" ? "row-warning" : "row-error"
         }
 
         return (
-            <ContextMenuTrigger id="grid-context-menu" collect={() => ({ rowIdx: props.rowIdx })} holdToDisplay="-1"> 
+            <ContextMenuTrigger id="grid-context-menu" collect={() => ({ rowIdx: props.rowIdx })} holdToDisplay="-1">
                 <LightTooltip
                     title={rowTooltip}
                     enterDelay={1000}
@@ -80,6 +84,7 @@ const DataGridTable = (props) => {
         );
     }
 
+
     return (
         <>
             <DataGrid
@@ -93,15 +98,14 @@ const DataGridTable = (props) => {
                 rowGetter={i => rows[i]}
                 enableCellSelect={true}
                 rowRenderer={RowRenderer}
-                style={{ 'height': "65vh", overflowX: 'hidden' }}
+                style={{ marginTop: '1em', 'height': "65vh", overflowX: 'hidden' }}
                 className="fill-grid"
-                // rowClass={row => highlightedRows.includes(rows.indexOf(row)) ? "row-highlighted" : "row"}
                 minHeight="1000"
             />
 
-            <ContextMenu 
-            id="grid-context-menu" 
-            style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px" }}
+            <ContextMenu
+                id="grid-context-menu"
+                style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px" }}
             >
                 <MenuItem onClick={onRowSave}>Save Row</MenuItem>
                 <MenuItem onClick={onRowDelete}>Delete Row</MenuItem>

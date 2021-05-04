@@ -7,6 +7,7 @@ import TableService from './TableService';
 const SavageTable = (props) => {
   const tableService = new TableService(props.table)
   const [rows, setRows] = useState([])
+  const [columnFilter, setColumnFilter] = useState([])
   const [columns, setColumns] = useState([])
   const [notifications, setNotifications] = useState([])
   const [insertedRows, setInsertedRows] = useState([])
@@ -33,7 +34,7 @@ const SavageTable = (props) => {
     setNotifications([])
     setErrorRows([])
     tableService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
-    
+
   }
 
   const insertAction = (rId, before) => {
@@ -42,12 +43,14 @@ const SavageTable = (props) => {
 
     setInsertedRows(irs => [...irs.map(ir => ir >= rId ? ir + 1 : ir), rId])
     setRows(tableService.addRow(rows, rId))
+    setErrorRows([])
   }
 
   const deleteAction = (rId) => {
     tableService.delete(rows, rId, (resultingRows) => {
       setInsertedRows(irs => irs.filter(r => r != rId).map(ir => ir > rId ? ir - 1 : ir))
       setRows(resultingRows)
+      setErrorRows([])
     }, (e) => addErrorRow(rId, e))
   }
 
@@ -82,14 +85,13 @@ const SavageTable = (props) => {
 
   var highlightedRowsFinal = []
   if (errorRows.length > 0) {
-    // addNotificationUnique("One or more rows have errors. Hover over the highlighted rows to see the errors.", "error")
     highlightedRowsFinal = highlightedRowsFinal.concat(errorRows.slice(0).reverse().map(er => { return { id: er.id, message: er.message, type: "error" } }))
   }
 
   if (insertedRows.length > 0) {
-    // addNotificationUnique("The highlighted rows are not saved. Save them to prevent loss of new data.", "warning")
     highlightedRowsFinal = highlightedRowsFinal.concat(insertedRows.map(i => { return { id: i, message: "This row is not saved", type: "warning" } }))
   }
+
 
   return (
     <div>
@@ -97,9 +99,11 @@ const SavageTable = (props) => {
         notifications={notifications}
         handleClose={(index) => setNotifications(curr => curr.filter((notifications, i) => i !== index))}
       />
+      <DataGridControlBar rowCount={rows.length} columns={columns} onChangeColumnFilter={setColumnFilter} />
+
       <DataGridTable
         rows={rows}
-        columns={columns}
+        columns={columnFilter.length > 0 ? columns.filter(c => columnFilter.includes(c.column)) : columns}
         highlightRows={highlightedRowsFinal}
         onRowChange={handleRowChange}
         onDelete={deleteAction}
@@ -108,7 +112,6 @@ const SavageTable = (props) => {
         onSave={saveAction}
         onRefresh={loadTableRows}
       />
-      <DataGridControlBar rowCount={rows.length} columnCount={columns.length} unsavedRows={insertedRows} />
     </div>
   )
 }
