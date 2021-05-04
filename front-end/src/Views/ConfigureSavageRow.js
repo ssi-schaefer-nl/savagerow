@@ -7,37 +7,16 @@ import ConfigureService from "../Service/ConfigureService";
 
 
 
-class Configure extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+export default function Configure(props) {
 
-    state = {
-        configureService: new ConfigureService(),
-    }
+    return (
+        <div>
+            <Typography variant="h6" noWrap>Configure Database</Typography>
+            <Divider style={{ marginBottom: "2em" }} />
+            <DatabaseSelect initialValue={localStorage.getItem("database")} />
 
+        </div>
+    );
 
-    componentDidMount() {
-        this.state.configureService.getCurrentDatabase(
-            function (data) {
-                this.setState({ database: data.data })
-            }.bind(this),
-            function (data) {
-                console.log(data)
-            }.bind(this));
-    }
-
-    render() {
-        return (
-            <div>
-                <Typography variant="h6" noWrap>Configure Database</Typography>
-                <Divider style={{ marginBottom: "2em" }} />
-                <DatabaseSelect initialValue={this.state.database}/>
-
-            </div>
-        );
-    }
 }
 
-
-export default Configure;
