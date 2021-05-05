@@ -1,7 +1,7 @@
 package io.aero.integration.sqlite.preparedstatements;
 
 import io.aero.integration.sqlite.ColumnMetaData;
-import io.aero.integration.sqlite.JDBCDatatypeConverter;
+import io.aero.integration.sqlite.SQLiteDatatypeConverter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ public class ParameterSetter {
         this.statement = statement;
     }
 
-    public void setParameters(List<String> sortedColumns, Map<String, String> colValMap, List<ColumnMetaData> columnMetaData) throws SQLException {
+    public void setParameters(List<String> sortedColumns, Map<String, String> colValMap, List<ColumnMetaData> columnMetaData) throws Exception {
         for (String col : sortedColumns) {
             int type = columnMetaData.stream().filter(c -> c.getName().equals(col)).findFirst().map(ColumnMetaData::getDatatype).orElse(0);
             setParameterWithAppropriateType(index, colValMap.get(col), type);
@@ -24,12 +24,12 @@ public class ParameterSetter {
         }
     }
 
-    private void setParameterWithAppropriateType(int paramIndex, String colVal, int type) throws SQLException {
+    private void setParameterWithAppropriateType(int paramIndex, String colVal, int type) throws Exception {
         if(colVal == null || colVal.isEmpty()) {
             statement.setNull(paramIndex, type);
             return;
         }
-        Object data = JDBCDatatypeConverter.convertStringToType(colVal, type);
+        Object data = SQLiteDatatypeConverter.convertStringToType(colVal, type);
         statement.setObject(paramIndex, data, type);
     }
 

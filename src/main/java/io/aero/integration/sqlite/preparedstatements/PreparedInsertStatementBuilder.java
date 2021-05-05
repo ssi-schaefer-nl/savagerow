@@ -53,13 +53,13 @@ public class PreparedInsertStatementBuilder {
     }
 
 
-    public int execute() throws SQLException {
+    public int execute() throws Exception {
         build();
         statement.executeUpdate();
         return statement.getGeneratedKeys().getInt(1);
     }
 
-    private void build() throws SQLException {
+    private void build() throws Exception {
         List<String> columnsNewRowSorted = newRow.keySet().stream().sorted().collect(Collectors.toList());
         String sql = createSqlString(columnsNewRowSorted);
         statement = connection.prepareStatement(sql);

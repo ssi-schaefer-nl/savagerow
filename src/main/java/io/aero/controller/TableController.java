@@ -34,9 +34,14 @@ public class TableController {
     }
 
     @PostMapping(value = "/api/{database}/table/{table}/update", consumes = "application/json")
-    public void tableUpdateRow(@RequestBody RowUpdateDTO rowUpdate, @PathVariable String database, @PathVariable String table) throws Exception {
-        workspaceService.setDatabaseIfNotSet(database);
-        queryService.updateRow(table, rowUpdate);
+    public ResponseEntity<?> tableUpdateRow(@RequestBody RowUpdateDTO rowUpdate, @PathVariable String database, @PathVariable String table) throws Exception {
+        try {
+            workspaceService.setDatabaseIfNotSet(database);
+            queryService.updateRow(table, rowUpdate);
+            return new ResponseEntity<>("", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping(value = "/api/{database}/table/{table}/all", produces = "application/json")

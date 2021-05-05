@@ -63,12 +63,12 @@ public class PreparedUpdateStatementBuilder {
         return this;
     }
 
-    public void execute() throws SQLException {
+    public void execute() throws Exception {
         build();
         statement.executeUpdate();
     }
 
-    private void build() throws SQLException {
+    private void build() throws Exception {
         List<String> columnsNewRowSorted = newRow.keySet().stream().sorted().collect(Collectors.toList());
         List<String> columnsOldRowSorted = originalRow.keySet().stream().sorted().filter(row -> originalRow.get(row)!=null).collect(Collectors.toList());
 

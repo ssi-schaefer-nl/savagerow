@@ -1,12 +1,9 @@
 package io.aero.integration.sqlite;
 
 import io.aero.exceptions.NoDatabaseConnectionException;
+import io.aero.integration.sqlite.preparedstatements.*;
 import io.aero.service.QueryService;
 import io.aero.dto.*;
-import io.aero.integration.sqlite.preparedstatements.PreparedDeleteStatementBuilder;
-import io.aero.integration.sqlite.preparedstatements.PreparedInsertStatementBuilder;
-import io.aero.integration.sqlite.preparedstatements.PreparedSelectStatementBuilder;
-import io.aero.integration.sqlite.preparedstatements.PreparedUpdateStatementBuilder;
 import io.aero.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,7 +42,6 @@ public class JDBCQueryService implements QueryService {
         List<ColumnSchemaDTO> columns = jdbcManager.getTableMetaData(table).getColumns().stream()
                 .map(columnMetaData -> new ColumnSchemaDTO()
                         .setColumn(columnMetaData.getName())
-                        .setDatatype(JDBCDatatypeConverter.convertTypeToStringName(columnMetaData.getDatatype()))
                         .setEditable(!columnMetaData.getAutoIncrement().equals("YES"))
                         .setNullable(columnMetaData.getNullable().equals("YES")))
                 .collect(Collectors.toList());
@@ -102,6 +98,26 @@ public class JDBCQueryService implements QueryService {
                 .setConnection(SQLiteDataSource.getConnection())
                 .execute();
     }
+
+    @Override
+    public void deleteColumn(String table, String column) throws Exception {
+        if (jdbcManager.tableNotExistsInDb(table) || tableDoesNotHaveAllColumns(table, Arrays.asList(column))) {
+            throw new IllegalArgumentException("Invalid table or column name");
+        }
+        SQLiteDataSource.getConnection().prepareStatement("ALTER TABLE " + table + " DROP " + column).executeUpdate();
+        jdbcManager.updateTableMetaDataForTable(table);
+    }
+
+    @Override
+    public void addColumn(String table, AddColumnDTO column) throws Exception {
+        if (jdbcManager.tableNotExistsInDb(table)) {
+            throw new IllegalArgumentException("Invalid table");
+        }
+
+        new PreparedStatementAddColumnBuilder().setTable(table).setColumn(column).setConnection(SQLiteDataSource.getConnection()).execute();
+        jdbcManager.updateTableMetaDataForTable(table);
+    }
+
 
     public RowDTO find(String table, int rowId) throws SQLException, NoDatabaseConnectionException {
         if (jdbcManager.tableNotExistsInDb(table)) {

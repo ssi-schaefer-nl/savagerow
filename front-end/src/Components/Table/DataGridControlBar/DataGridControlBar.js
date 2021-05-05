@@ -1,8 +1,7 @@
-import React, { Component, useEffect, useState } from 'react';
-import { green, grey, yellow } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import { grey } from '@material-ui/core/colors';
 
-import MultiSelect from "../MultiSelect/MultiSelect";
+import MultiSelect from "../../MultiSelect/MultiSelect";
 import { Grid } from "@material-ui/core";
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';

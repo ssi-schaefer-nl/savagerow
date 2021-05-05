@@ -1,10 +1,13 @@
 import React, { Component, useEffect, useState } from 'react';
-import DataGridControlBar from './DataGridControlBar';
-import DataGridTable from './DataGridTable';
+import DataGridTable from './DataGrid/DataGridTable';
 import NotificationArea from '../NotificationArea/NotificationArea';
-import TableService from './TableService';
+import DataGridControlBar from './DataGridControlBar/DataGridControlBar';
+import TableService from '../../Service/TableService';
+import DefineColumnDialog from '../DefineColumnDialog/DefineColumnDialog';
+import AddColumn from './AddColumn/AddColumn';
 
 const SavageTable = (props) => {
+
   const tableService = new TableService(props.table)
   const [rows, setRows] = useState([])
   const [columnFilter, setColumnFilter] = useState([])
@@ -12,6 +15,7 @@ const SavageTable = (props) => {
   const [notifications, setNotifications] = useState([])
   const [insertedRows, setInsertedRows] = useState([])
   const [errorRows, setErrorRows] = useState([])
+  const [addColumnDialogOpen, setAddColumnDialogOpen] = useState(false)
 
 
   const addNotification = (content, severity) => {
@@ -34,12 +38,15 @@ const SavageTable = (props) => {
     setNotifications([])
     setErrorRows([])
     tableService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
-
   }
 
-  const insertAction = (rId, before) => {
-    if (!before)
-      rId = rId + 1
+  const reloadSchema = () => {
+    tableService.getSchema(data => setColumns(data.data.columns), () => addNotification("Unable to fetch table schema", "error"))
+    tableService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
+  }
+
+  const insertAction = (rId) => {
+    rId = rId + 1
 
     setInsertedRows(irs => [...irs.map(ir => ir >= rId ? ir + 1 : ir), rId])
     setRows(tableService.addRow(rows, rId))
@@ -70,8 +77,7 @@ const SavageTable = (props) => {
         setRows(rows)
         removeErrorsForRow(index)
       }, (e) => {
-        var message = e.message.length == 0 ? " Undefined error during row update" : " Error updating row: " + e.message
-        addErrorRow(index, message)
+        addErrorRow(index, " Error updating row: " + e)
         console.log(e)
       })
     else
@@ -107,10 +113,21 @@ const SavageTable = (props) => {
         highlightRows={highlightedRowsFinal}
         onRowChange={handleRowChange}
         onDelete={deleteAction}
-        onInsertAbove={(idx) => insertAction(idx, true)}
-        onInsertBelow={(idx) => insertAction(idx, false)}
+        onInsert={(idx) => insertAction(idx, true)}
         onSave={saveAction}
         onRefresh={loadTableRows}
+        onColumnDelete={(col) => {
+          tableService.dropColumn(col, () => setColumns(columns => columns.filter(c => c.column != col)), (e) => {addNotification(e, "error")})
+        }}
+
+        onColumnRename={(old, newName) => {console.log(old + " to " + newName)}}
+        onColumnInsert={() => setAddColumnDialogOpen(true)}
+      />
+      <AddColumn
+        open={addColumnDialogOpen}
+        table={props.table}
+        handleClose={() => setAddColumnDialogOpen(false)}
+        onSuccess={reloadSchema}
       />
     </div>
   )

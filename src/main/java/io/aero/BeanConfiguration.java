@@ -14,6 +14,7 @@ import java.sql.SQLException;
 public class BeanConfiguration {
 
     @Bean
+    @Scope("singleton")
     public QueryService getQueryService() throws SQLException {
             return new JDBCQueryService();
     }

@@ -75,7 +75,7 @@ const MultiSelect = (props) => {
     }
 
     return (
-        <Grid container direction="row" alignItems="center" justify="center">
+        <Grid container direction="row" alignItems="center" justify="center" wrap="nowrap">
 
             <Grid item xs={9}>
                 <FormControl className={classes.formControl}>

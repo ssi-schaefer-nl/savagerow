@@ -53,12 +53,12 @@ public class PreparedDeleteStatementBuilder {
     }
 
 
-    public void execute() throws SQLException {
+    public void execute() throws Exception {
         boolean succeeded = build();
         if(succeeded) statement.executeUpdate();
     }
 
-    private boolean build() throws SQLException {
+    private boolean build() throws Exception {
         List<String> columnsNewRowSorted = row.keySet().stream().filter(r -> row.get(r) != null && !row.get(r).isEmpty()).sorted().collect(Collectors.toList());
         if(columnsNewRowSorted.isEmpty()) return false;
 

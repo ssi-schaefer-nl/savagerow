@@ -52,7 +52,7 @@ public class JDBCMetaDataManager {
         }
     }
 
-    private TableMetaDataCacheEntry updateTableMetaDataForTable(String table) throws SQLException, NoDatabaseConnectionException {
+    public TableMetaDataCacheEntry updateTableMetaDataForTable(String table) throws SQLException, NoDatabaseConnectionException {
         DatabaseMetaData databaseMetaData = SQLiteDataSource.getConnection().getMetaData();
         ResultSet resultSet = databaseMetaData.getColumns(null, null, table, null);
 

@@ -28,7 +28,8 @@ class ConfigureService {
 
 
     getTables(onSuccess, onFailure) {
-        this.httpHelper.get('/api/database/tables/all')
+        var db = localStorage.getItem('database')
+        this.httpHelper.get('/api/'+db+'/tables/all')
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
 

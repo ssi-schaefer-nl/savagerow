@@ -45,6 +45,21 @@ class TableService {
 
     }
 
+    addColumnToTable(table, data, onSuccess, onFailure) {
+        var db = localStorage.getItem('database')
+        this.httpHelper.post('/api/'+db+'/'+table+'/column/add', data)
+            .then(res => { onSuccess(res) })
+            .catch(res => { onFailure(res) });
+
+    }
+
+    dropColumnFromTable(table, column, onSuccess, onFailure) {
+        var db = localStorage.getItem('database')
+        this.httpHelper.post('/api/'+db+'/'+table+'/'+column+'/drop')
+            .then(res => { onSuccess(res) })
+            .catch(res => { onFailure(res) });
+
+    }
 }
 
 export default TableService;

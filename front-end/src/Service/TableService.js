@@ -1,4 +1,4 @@
-import TableServiceHelper from '../../Service/TableServiceHelper';
+import TableServiceHelper from './TableServiceHelper';
 
 
 class TableService {
@@ -19,7 +19,7 @@ class TableService {
         var copyOfRows = [...rows]
         var newRow = {}
         Object.keys(rows[0]).forEach(col => { newRow[col] = "" })
-        copyOfRows.splice(index, 0, newRow)
+        copyOfRows.splice(index, 0, newRow) 
         return copyOfRows
     }
 
@@ -63,6 +63,14 @@ class TableService {
             },
             (data) => onFailure(data.response.data)
         )
+    }
+
+    addColumn(data, onSuccess, onFailure) {
+        this.tableServiceHelper.addColumnToTable(this.table, data, onSuccess, (data) => onFailure(data.response.data))
+    }
+
+    dropColumn(column, onSuccess, onFailure) {
+        this.tableServiceHelper.dropColumnFromTable(this.table, column, onSuccess, (data) => onFailure(data.response.data))
     }
 
 }
