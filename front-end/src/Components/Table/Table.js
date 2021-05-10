@@ -36,20 +36,19 @@ const SavageTable = (props) => {
     setErrorRows(er => [...er, error])
   }
 
-  const clearRowMarkings = () => {
-    setInsertedRows([])
-    setErrorRows([])
-  }
-
   const loadTableRows = () => {
-    clearRowMarkings()
+    setInsertedRows([])
+    setErrorRows([])    
     setNotifications([])
     queryService.getRowSet(data => setRows(data.data.rows), () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
   }
 
   const reloadSchema = () => {
-    queryService.getSchema(data => { clearRowMarkings(); setColumns(data.data.columns) }, () => addNotification("Unable to fetch table schema", "error"))
-    queryService.getRowSet(data => { clearRowMarkings(); setRows(data.data.rows)}, () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
+    queryService.getSchema(data => { setColumns(data.data.columns) }, () => addNotification("Unable to fetch table schema", "error"))
+    queryService.getRowSet(data => { 
+      if(insertedRows.length > 0) insertedRows.forEach(i => setRows(manipulationService.addRow(data.data.rows, i))) 
+      else setRows(data.data.rows)
+    }, () => addNotification("Unable to fetch table rows for database: " + localStorage.getItem("database"), "error"))
 
   }
 
