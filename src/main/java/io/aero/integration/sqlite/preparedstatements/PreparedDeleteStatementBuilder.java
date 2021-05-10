@@ -1,10 +1,9 @@
 package io.aero.integration.sqlite.preparedstatements;
 
-import io.aero.integration.sqlite.ColumnMetaData;
+import io.aero.integration.sqlite.metadata.ColumnMetaData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,12 +52,12 @@ public class PreparedDeleteStatementBuilder {
     }
 
 
-    public void execute() throws SQLException {
+    public void execute() throws Exception {
         boolean succeeded = build();
         if(succeeded) statement.executeUpdate();
     }
 
-    private boolean build() throws SQLException {
+    private boolean build() throws Exception {
         List<String> columnsNewRowSorted = row.keySet().stream().filter(r -> row.get(r) != null && !row.get(r).isEmpty()).sorted().collect(Collectors.toList());
         if(columnsNewRowSorted.isEmpty()) return false;
 

@@ -1,10 +1,9 @@
 package io.aero.integration.sqlite.preparedstatements;
 
-import io.aero.integration.sqlite.ColumnMetaData;
+import io.aero.integration.sqlite.metadata.ColumnMetaData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,13 +52,13 @@ public class PreparedInsertStatementBuilder {
     }
 
 
-    public int execute() throws SQLException {
+    public int execute() throws Exception {
         build();
         statement.executeUpdate();
         return statement.getGeneratedKeys().getInt(1);
     }
 
-    private void build() throws SQLException {
+    private void build() throws Exception {
         List<String> columnsNewRowSorted = newRow.keySet().stream().sorted().collect(Collectors.toList());
         String sql = createSqlString(columnsNewRowSorted);
         statement = connection.prepareStatement(sql);

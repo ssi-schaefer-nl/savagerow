@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 class Home extends Component {
   render() {
     return (
-      <div>
+      <div style={{margin: "1em"}}>
         <h2>Home</h2>
         <CenteredGrid />
       </div>

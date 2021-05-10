@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -7,10 +7,11 @@ import FormControl from '@material-ui/core/FormControl';
 import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Button, Container, Grid, IconButton } from "@material-ui/core";
+import { Button, Container, Grid, IconButton, Tooltip } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import { grey } from "@material-ui/core/colors";
+
 const useStyles = makeStyles((theme) => ({
     formControl: {
         margin: theme.spacing(0.5),
@@ -35,6 +36,15 @@ const useStyles = makeStyles((theme) => ({
     }
 
 }));
+
+const LightTooltip = withStyles((theme) => ({
+    tooltip: {
+        backgroundColor: theme.palette.common.white,
+        color: 'rgba(0, 0, 0, 0.87)',
+        boxShadow: theme.shadows[1],
+        fontSize: 12,
+    },
+}))(Tooltip);
 
 
 const ITEM_HEIGHT = 48;
@@ -75,9 +85,10 @@ const MultiSelect = (props) => {
     }
 
     return (
-        <Grid container direction="row" alignItems="center" justify="center">
+        <Grid container direction="row" alignItems="center" justify="left" wrap="nowrap">
 
             <Grid item xs={9}>
+
                 <FormControl className={classes.formControl}>
                     <InputLabel id="demo-mutiple-checkbox-label">{placeholder}</InputLabel>
                     <Select
@@ -101,8 +112,10 @@ const MultiSelect = (props) => {
                         ))}
                     </Select>
                 </FormControl>
+
             </Grid>
-            <Grid item>
+
+            <Grid item hidden={selection.length == 0}>
                 <Button
                     size="small"
                     aria-label="delete"
@@ -115,7 +128,9 @@ const MultiSelect = (props) => {
                 </Button>
             </Grid>
 
-        </Grid>)
+
+
+        </Grid >)
 }
 
 export default MultiSelect

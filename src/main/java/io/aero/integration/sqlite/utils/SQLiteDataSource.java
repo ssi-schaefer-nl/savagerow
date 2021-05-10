@@ -1,4 +1,4 @@
-package io.aero.integration.sqlite;
+package io.aero.integration.sqlite.utils;
 
 import io.aero.exceptions.NoDatabaseConnectionException;
 

@@ -10,7 +10,7 @@ import ConfigureService from "../Service/ConfigureService";
 export default function Configure(props) {
 
     return (
-        <div>
+        <div style={{margin: '1em'}}>
             <Typography variant="h6" noWrap>Configure Database</Typography>
             <Divider style={{ marginBottom: "2em" }} />
             <DatabaseSelect initialValue={localStorage.getItem("database")} />

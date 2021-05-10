@@ -1,10 +1,9 @@
 package io.aero.integration.sqlite.preparedstatements;
 
-import io.aero.integration.sqlite.ColumnMetaData;
+import io.aero.integration.sqlite.metadata.ColumnMetaData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,12 +62,12 @@ public class PreparedUpdateStatementBuilder {
         return this;
     }
 
-    public void execute() throws SQLException {
+    public void execute() throws Exception {
         build();
         statement.executeUpdate();
     }
 
-    private void build() throws SQLException {
+    private void build() throws Exception {
         List<String> columnsNewRowSorted = newRow.keySet().stream().sorted().collect(Collectors.toList());
         List<String> columnsOldRowSorted = originalRow.keySet().stream().sorted().filter(row -> originalRow.get(row)!=null).collect(Collectors.toList());
 

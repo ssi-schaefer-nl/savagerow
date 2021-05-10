@@ -1,7 +1,11 @@
 package io.aero;
 
-import io.aero.integration.sqlite.JDBCQueryService;
-import io.aero.integration.sqlite.SQLiteWorkspaceService;
+import io.aero.integration.sqlite.service.SQLiteDataDefinitionService;
+import io.aero.integration.sqlite.service.SQLiteDataManipulationService;
+import io.aero.integration.sqlite.service.SQLiteQueryService;
+import io.aero.integration.sqlite.service.SQLiteWorkspaceService;
+import io.aero.service.DataDefinitionService;
+import io.aero.service.DataManipulationService;
 import io.aero.service.QueryService;
 import io.aero.service.WorkspaceService;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +18,22 @@ import java.sql.SQLException;
 public class BeanConfiguration {
 
     @Bean
+    @Scope("singleton")
+    public DataDefinitionService getDataDefinitionService() throws SQLException {
+        return new SQLiteDataDefinitionService();
+    }
+
+    @Bean
+    @Scope("singleton")
+    public DataManipulationService getDataManipulationService() throws SQLException {
+        return new SQLiteDataManipulationService();
+    }
+
+
+    @Bean
+    @Scope("singleton")
     public QueryService getQueryService() throws SQLException {
-            return new JDBCQueryService();
+            return new SQLiteQueryService();
     }
 
     @Bean

@@ -1,16 +1,24 @@
-package io.aero.integration.sqlite;
+package io.aero.integration.sqlite.metadata;
 
 
 import io.aero.exceptions.NoDatabaseConnectionException;
+import io.aero.integration.sqlite.utils.SQLiteDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class JDBCMetaDataManager {
     private final Map<String, TableMetaDataCacheEntry> tableMetaDataCache;
+
+    @Autowired
+    @Qualifier("cacheExpirationSeconds")
+    private Long cacheExpirationSeconds;
 
     public JDBCMetaDataManager() {
         this.tableMetaDataCache = new HashMap<>();
@@ -45,14 +53,16 @@ public class JDBCMetaDataManager {
 
     public TableMetaDataCacheEntry getTableMetaData(String table) throws SQLException, NoDatabaseConnectionException {
         TableMetaDataCacheEntry cacheEntry = tableMetaDataCache.get(table);
-        if (cacheEntry != null && !cacheEntry.isExpired()) {
+
+        if (cacheEntry != null && !cacheEntry.isExpired(cacheExpirationSeconds)) {
             return cacheEntry;
         } else {
             return updateTableMetaDataForTable(table);
         }
     }
 
-    private TableMetaDataCacheEntry updateTableMetaDataForTable(String table) throws SQLException, NoDatabaseConnectionException {
+    public TableMetaDataCacheEntry updateTableMetaDataForTable(String table) throws SQLException, NoDatabaseConnectionException {
+
         DatabaseMetaData databaseMetaData = SQLiteDataSource.getConnection().getMetaData();
         ResultSet resultSet = databaseMetaData.getColumns(null, null, table, null);
 
@@ -68,6 +78,14 @@ public class JDBCMetaDataManager {
         TableMetaDataCacheEntry cacheEntry = new TableMetaDataCacheEntry().setName(table).setColumns(columns);
         tableMetaDataCache.put(table, cacheEntry);
         return cacheEntry;
+    }
+
+    public boolean notAllColumnsExistInTable(String table, List<String> columns) throws SQLException, NoDatabaseConnectionException {
+        return !getColumnsForTable(table)
+                .stream()
+                .map(ColumnMetaData::getName)
+                .collect(Collectors.toList())
+                .containsAll(columns);
     }
 
 
