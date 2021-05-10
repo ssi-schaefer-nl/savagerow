@@ -1,12 +1,12 @@
 package io.aero.integration.sqlite.preparedstatements;
 
 import io.aero.dto.AddColumnDTO;
-import io.aero.integration.sqlite.SQLiteDataSource;
+import io.aero.integration.sqlite.utils.SQLiteDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
-public class PreparedStatementAddColumnBuilder {
+public class PreparedAddColumnStatementBuilder {
     private PreparedStatement statement;
     private Connection connection;
     private String table;
@@ -17,7 +17,7 @@ public class PreparedStatementAddColumnBuilder {
         return connection;
     }
 
-    public PreparedStatementAddColumnBuilder setConnection(Connection connection) {
+    public PreparedAddColumnStatementBuilder setConnection(Connection connection) {
         this.connection = connection;
         return this;
     }
@@ -26,7 +26,7 @@ public class PreparedStatementAddColumnBuilder {
         return table;
     }
 
-    public PreparedStatementAddColumnBuilder setTable(String table) {
+    public PreparedAddColumnStatementBuilder setTable(String table) {
         this.table = table;
         return this;
     }
@@ -46,11 +46,11 @@ public class PreparedStatementAddColumnBuilder {
     private String createSqlString() {
         //todo query is not protected against injection. PreparedStatements do not work for required places
         String sql = "ALTER TABLE " + table + " ADD COLUMN " + column.getColumn();
-        if(!column.isNullable()) sql = sql + "NOT NULL DEFAULT [" + column.getDefaultValue() + "]";
+        if(!column.isNullable()) sql = sql + " NOT NULL DEFAULT [" + column.getDefaultValue() + "]";
         return sql;
     }
 
-    public PreparedStatementAddColumnBuilder setColumn(AddColumnDTO column) {
+    public PreparedAddColumnStatementBuilder setColumn(AddColumnDTO column) {
         this.column = column;
         return this;
     }

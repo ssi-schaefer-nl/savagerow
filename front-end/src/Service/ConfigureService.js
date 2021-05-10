@@ -1,6 +1,6 @@
 import HttpHelper from './HttpHelper';
 
-class ConfigureService {
+class DatabaseService {
     constructor() {
         this.httpHelper = new HttpHelper()
     }
@@ -25,16 +25,6 @@ class ConfigureService {
             .catch(res => { onFailure(res) });
 
     }
-
-
-    getTables(onSuccess, onFailure) {
-        var db = localStorage.getItem('database')
-        this.httpHelper.get('/api/'+db+'/tables/all')
-            .then(res => { onSuccess(res) })
-            .catch(res => { onFailure(res) });
-
-    }
-
 }
 
-export default ConfigureService;
+export default DatabaseService;

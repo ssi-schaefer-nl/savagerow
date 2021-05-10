@@ -1,4 +1,4 @@
-package io.aero.integration.sqlite;
+package io.aero.integration.sqlite.utils;
 
 import java.math.BigDecimal;
 import java.sql.*;

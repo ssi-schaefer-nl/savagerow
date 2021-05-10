@@ -35,11 +35,19 @@ export default function DefineColumnDialog(props) {
         onSubmit(data)
     }
 
+    const onClose = () => {
+        setName("")
+        setDataType(datatypes[0])
+        setNullable(true)
+        setDefaultValue("")
+        handleClose()
+    }
+
     return (
         <div>
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={onClose}
                 aria-labelledby="form-dialog-title"
             >
                 <DialogTitle id="form-dialog-title">Define Column</DialogTitle>
@@ -111,7 +119,7 @@ export default function DefineColumnDialog(props) {
 
 
                     <DialogActions>
-                        <Button onClick={handleClose} color="primary">Cancel</Button>
+                        <Button onClick={onClose} color="primary">Cancel</Button>
                         <Button color="primary" type="submit">Submit</Button>
                     </DialogActions>
                 </form>

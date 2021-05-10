@@ -1,10 +1,9 @@
 package io.aero.integration.sqlite.preparedstatements;
 
-import io.aero.integration.sqlite.ColumnMetaData;
-import io.aero.integration.sqlite.SQLiteDatatypeConverter;
+import io.aero.integration.sqlite.metadata.ColumnMetaData;
+import io.aero.integration.sqlite.utils.SQLiteDatatypeConverter;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 

@@ -5,7 +5,24 @@ import { ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } from 'react-contex
 import Tooltip from '@material-ui/core/Tooltip';
 import './react-contextmenu.css'
 import './highlight.css'
-import { TextField } from "@material-ui/core";
+import AddIcon from '@material-ui/icons/Add';
+import TextField from '@material-ui/core/TextField';
+import InputBase from '@material-ui/core/InputBase';
+
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Checkbox from '@material-ui/core/Checkbox';
+import { Grid, Typography } from '@material-ui/core';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FilterListIcon from '@material-ui/icons/FilterList';
+import TextFormatIcon from '@material-ui/icons/TextFormat';
+import DeleteIcon from '@material-ui/icons/Delete';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import PublishIcon from '@material-ui/icons/Publish';
+import { Delete, Filter } from "@material-ui/icons";
 
 
 const LightTooltip = withStyles((theme) => ({
@@ -20,14 +37,14 @@ const LightTooltip = withStyles((theme) => ({
 const DataGridTable = (props) => {
     const [selectedColumn, setSelectedColumn] = useState(null)
     const [selectedRow, setSelectedRow] = useState(null)
-    if (props.columns.length == 0) {
-        return null
-    }
+    const [openColumnFilter, setOpenColumnFilter] = useState(false)
+    const [columnFilters, setColumnFilters] = useState([])
+    const [rerender, setRerender] = useState(false)
 
     var rows = [...props.rows]
     const onRowChange = props.onRowChange
     const highlightedRows = props.highlightRows ? props.highlightRows : []
-
+    var changingColumnName = null
 
     const HeaderRenderer = (item) => {
         return (
@@ -39,31 +56,22 @@ const DataGridTable = (props) => {
                 }}
                 holdToDisplay="-1"
             >
-                {item.column.name}
+                <InputBase
+                    inputProps={{ 'aria-label': 'naked' }}
+                    autoComplete='off'
+                    id="name"
+                    onChange={(e) => { changingColumnName = e.target.value }}
+                    defaultValue={item.column.name}
+                    value={changingColumnName}
+                    onBlur={() => {
+                        if(changingColumnName != null) onColumnRename(item.column.name, changingColumnName) }}
+                    required
+                    style={{ fontSize: "1em", fontWeight: "bold" }}
+                />
             </ContextMenuTrigger>
         )
 
     }
-
-
-    const columns = props.columns.map(col => ({
-        key: col.column,
-        name: col.column,
-        headerRenderer: HeaderRenderer,
-        resizable: true,
-        nullable: col.nullable,
-        editor: col.editable ? TextEditor : undefined
-    }));
-
-
-    const onRowDelete = (e, { rowIdx }) => props.onDelete(rowIdx)
-    const onRowInsert = (e, { rowIdx }) => props.onInsert(rowIdx)
-    const onRowSave = (e, { rowIdx }) => props.onSave(rowIdx)
-    const onRefresh = (e, { rowIdx }) => props.onRefresh(rowIdx)
-    const onColumnDelete = (e, { column }) => props.onColumnDelete(column)
-    const onColumnRename = (e, { column }) => { }
-    const onColumnInsert = (e, { column }) => props.onColumnInsert(column)
-
 
     const RowRenderer = (props) => {
         var classname = "row"
@@ -101,10 +109,46 @@ const DataGridTable = (props) => {
     }
 
 
+
+    const columns = props.columns.map(col => ({
+        key: col.column,
+        name: col.column,
+        headerRenderer: HeaderRenderer,
+        resizable: true,
+        nullable: col.nullable,
+        editor: col.editable ? TextEditor : undefined
+    }));
+
+
+    const onRowDelete = (e, { rowIdx }) => props.onDelete(rowIdx)
+    const onRowInsert = (e, { rowIdx }) => props.onInsert(rowIdx)
+    const onRowSave = (e, { rowIdx }) => props.onSave(rowIdx)
+    const onRefresh = (e, { rowIdx }) => props.onRefresh(rowIdx)
+    const onColumnDelete = (e, { column }) => props.onColumnDelete(column)
+    const onColumnRename = (oldName, newName) => props.onColumnRename(oldName, newName)
+    const onColumnInsert = (e, { column }) => props.onColumnInsert(column)
+    const onColumnFilter = (e) => setOpenColumnFilter(true)
+
+
+
+    const rowContextMenu = [
+        { text: "Save Row", icon: PublishIcon, onClick: onRowSave },
+        { text: "Delete Row", icon: DeleteIcon, onClick: onRowDelete },
+        { text: "Insert Row", icon: AddIcon, onClick: onRowInsert, dividerAfter: true },
+        { text: "Refresh Table", icon: RefreshIcon, onClick: onRefresh },
+    ]
+
+    const columnContextMenu = [
+        { text: "Delete Column", icon: Delete, onClick: onColumnDelete },
+        { text: "Rename Column", icon: TextFormatIcon, onClick: onColumnRename, dividerAfter: true },
+        { text: "Add Column", icon: AddIcon, onClick: onColumnInsert, dividerAfter: true },
+        { text: "Show/Hide Columns", icon: FilterListIcon, onClick: onColumnFilter },
+    ]
+
     return (
         <>
             <DataGrid
-                columns={columns}
+                columns={columnFilters.length > 0 ? columns.filter(f => columnFilters.includes(f.name)) : columns}
                 rows={rows}
                 onRowsChange={(updatedRows, index) => {
                     var idx = index.indexes[0]
@@ -115,40 +159,126 @@ const DataGridTable = (props) => {
                 enableCellSelect={true}
                 rowRenderer={RowRenderer}
                 headerRenderer={HeaderRenderer}
-                style={{ marginTop: '1em', 'height': "65vh", overflowX: 'hidden' }}
-                className="fill-grid"
-                minHeight="1000"
+                style={{ height: "60vh", overflowX: 'hidden' }}
             />
 
-            <ContextMenu
+            <TableContextMenu
                 id="grid-context-menu"
-                style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px", boxShadow: "2px 2px  5px grey" }}
-            >
-                <MenuItem disabled>{"Row " + selectedRow}</MenuItem>
-                <MenuItem divider />
-                <MenuItem onClick={onRowSave}>Save Row</MenuItem>
-                <MenuItem onClick={onRowDelete}>Delete Row</MenuItem>
-                <MenuItem onClick={onRowInsert}>Insert Row</MenuItem>
-                <MenuItem divider />
-                <MenuItem onClick={onRefresh}>Refresh table</MenuItem>
-                <MenuItem divider />
-                <MenuItem ><b>Cancel</b></MenuItem>
-            </ContextMenu>
+                title={"Row " + selectedRow}
+                items={rowContextMenu}
+            />
 
-            <ContextMenu
+            <TableContextMenu
                 id="header-context-menu"
-                style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px", boxShadow: "2px 2px  5px grey" }}
-            >
-                <MenuItem disabled>{selectedColumn}</MenuItem>
-                <MenuItem divider />
-                <MenuItem onClick={onColumnDelete}>Delete Column</MenuItem>
-                <MenuItem onClick={onColumnRename}>Rename Column</MenuItem>
-                <MenuItem divider />
-                <MenuItem onClick={onColumnInsert}>Add Column</MenuItem>
+                title={selectedColumn}
+                items={columnContextMenu}
+            />
 
-            </ContextMenu>
+            <HideColumnsPopup
+                open={openColumnFilter}
+                values={columns.map(col => col.name)}
+                selection={columnFilters}
+                onApply={(i) => { setColumnFilters(i); setOpenColumnFilter(false) }}
+                onCancel={() => setOpenColumnFilter(false)}
+            />
+
         </>
     )
 }
 
+function TableContextMenu(props) {
+    const { title, id, items } = props
+
+    return (
+        <ContextMenu
+            id={id}
+            style={{ background: "#fafafa", borderRadius: "0px 30px 0px 0px", boxShadow: "2px 2px  5px grey" }}
+        >
+            <MenuItem disabled><b>{title}</b></MenuItem>
+            <MenuItem divider />
+            {items.map(item => (<ContextMenuItem onClick={item.onClick} text={item.text} icon={item.icon} dividerAfter={item.dividerAfter} />))}
+        </ContextMenu>
+    )
+}
+
+function ContextMenuItem(props) {
+    const { onClick, text, dividerAfter } = props
+    const MenuIcon = props.icon
+
+    return (
+        <>
+            <MenuItem onClick={onClick} >
+                <Grid container direction="row" alignItems="center" spacing={2}>
+                    <Grid item>
+                        <MenuIcon fontSize="small" style={{ position: 'relative', top: '2px' }} />
+                    </Grid>
+                    <Grid item>{text}</Grid>
+                </Grid>
+            </MenuItem>
+            {dividerAfter && <MenuItem divider />}
+        </>
+    )
+}
+
+
+function HideColumnsPopup(props) {
+    const { open, values, onApply, onCancel } = props
+    const initialSelection = props.selection
+    const [selection, setSelection] = useState(props.selection)
+
+    const onEnter = (e) => {
+        e.preventDefault()
+        onApply(selection)
+    }
+
+    const cancel = (e) => {
+        setSelection(initialSelection)
+        onCancel()
+    }
+
+
+
+    return (
+        <div>
+            <Dialog open={open} aria-labelledby="form-dialog-title" onClose={cancel}>
+                <form onSubmit={onEnter}>
+
+                    <DialogTitle id="form-dialog-title">Show/Hide Columns</DialogTitle>
+                    <DialogContent>
+                        <Grid container direction="column">
+                            {values.map(v => (
+                                <Grid item>
+                                    <FormControlLabel
+                                        label={v}
+                                        control={
+                                            <Checkbox
+                                                checked={selection.includes(v)}
+                                                onChange={(e) => {
+                                                    if (e.target.checked && !selection.includes(v)) {
+                                                        setSelection(s => [...s, v])
+                                                    } else if (!e.target.checked && selection.includes(v)) {
+                                                        const i = selection.indexOf(v)
+                                                        setSelection(s => [...s.slice(0, i), ...s.slice(i + 1)])
+                                                    }
+                                                }}
+                                                name={v}
+                                                color="primary"
+                                            />
+                                        }
+
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button color="primary" type="submit">Apply</Button>
+                        <Button onClick={() => setSelection([])} color="primary">Clear</Button>
+                    </DialogActions>
+                </form>
+
+            </Dialog>
+        </div>
+    );
+}
 export default DataGridTable

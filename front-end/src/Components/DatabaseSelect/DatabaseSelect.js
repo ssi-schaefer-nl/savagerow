@@ -8,11 +8,11 @@ import Select from '@material-ui/core/Select';
 import { CircularProgress, Divider } from "@material-ui/core";
 import NativeSelect from '@material-ui/core/NativeSelect';
 import CollapsableAlert from "../CollapsableAlert/CollapsableAlert";
-import ConfigureService from "../../Service/ConfigureService";
+import DatabaseService from "../../Service/ConfigureService";
 
 
 export default function DatabaseSelect(props) {
-    const configureService = new ConfigureService()
+    const configureService = new DatabaseService()
     const onSelect = props.onSelect
     const [databases, setDatabases] = useState([])
     const [database, setDatabase] = useState(undefined)

@@ -1,10 +1,10 @@
 import DefineColumnDialog from "../../DefineColumnDialog/DefineColumnDialog";
 import React, { useState } from 'react';
-import TableService from "../../../Service/TableService";
+import DefinitionService from "../../../Service/DefinitionService/DefinitionService";
 
 export default function AddColumn(props) {
     const { onSuccess, table, handleClose, open } = props
-    const tableService = new TableService(table)
+    const definitionService = new DefinitionService(table)
     const [error, setError] = useState(undefined)
 
     const onClose = () => {
@@ -13,12 +13,12 @@ export default function AddColumn(props) {
     }
 
     const submit = (data) => {
-        tableService.addColumn(data,
+        definitionService.addColumn(data,
             () => {
                 onSuccess()
                 onClose()
             },
-            (e) => {console.log(e); setError(e)})
+            (e) => { console.log(e); setError(e) })
     }
 
     return (

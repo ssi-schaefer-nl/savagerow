@@ -1,6 +1,6 @@
-package io.aero.integration.sqlite;
+package io.aero.integration.sqlite.service;
 
-import io.aero.integration.sqlite.SQLiteDataSource;
+import io.aero.integration.sqlite.utils.SQLiteDataSource;
 import io.aero.service.WorkspaceService;
 
 import java.io.*;

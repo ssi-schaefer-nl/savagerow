@@ -1,4 +1,4 @@
-package io.aero.integration.sqlite;
+package io.aero.integration.sqlite.metadata;
 
 public class ColumnMetaData {
     private String name;

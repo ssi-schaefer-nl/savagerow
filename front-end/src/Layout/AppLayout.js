@@ -70,7 +70,9 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    borderRight: "1px solid grey"
   },
+
   drawerClose: {
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -82,6 +84,7 @@ const useStyles = makeStyles((theme) => ({
       width: theme.spacing(9) + 1,
     },
     backgroundColor: grey[200],
+    borderRight: "1px solid grey"
 
   },
   toolbar: {
@@ -96,7 +99,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     width: "80%",
     height: "100vh",
-    padding: theme.spacing(3),
+    padding: theme.spacing(0),
     backgroundColor: '#FFFFFF'
   },
 }));
@@ -116,75 +119,75 @@ export default function AppLayout() {
   };
 
   return (
-      <div className={classes.root}>
-        <CssBaseline />
-        <AppBar
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open,
-          })}
-        >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              className={clsx(classes.menuButton, {
-                [classes.hide]: open,
-              })}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap>
-              SavageRow
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: open,
+        })}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, {
+              [classes.hide]: open,
+            })}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap>
+            SavageRow
           </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
+        </Toolbar>
+      </AppBar>
+      <Drawer
 
-          variant="permanent"
-          className={clsx(classes.drawer, {
+        variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
+        classes={{
+          paper: clsx({
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
-          })}
-          classes={{
-            paper: clsx({
-              [classes.drawerOpen]: open,
-              [classes.drawerClose]: !open,
-            }),
-          }}
+          }),
+        }}
 
-        >
-          <div className={classes.toolbar}>
-            <Typography variant="h6" noWrap >
-              Menu
+      >
+        <div className={classes.toolbar}>
+          <Typography variant="h6" noWrap >
+            Menu
           </Typography>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </IconButton>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
 
-          </div>
-          <Divider />
-          <List>
-            <ListElement link="/" text="Home" icon={HomeIcon} />
-            <ListElement link="/tables" text="Tables" icon={StorageIcon} />
-            <ListElement link="/configuration" text="Configuration" icon={SettingsIcon} />
-          </List>
-          <Divider />
-          <List>
-            <ListElement link="/contact" text="Contact" icon={InfoIcon} />
-          </List>
-        </Drawer>
+        </div>
+        <Divider />
+        <List>
+          <ListElement link="/" text="Home" icon={HomeIcon} />
+          <ListElement link="/tables" text="Tables" icon={StorageIcon} />
+          <ListElement link="/configuration" text="Configuration" icon={SettingsIcon} />
+        </List>
+        <Divider />
+        <List>
+          <ListElement link="/contact" text="Contact" icon={InfoIcon} />
+        </List>
+      </Drawer>
 
-        <main className={classes.content} >
+      <main className={classes.content} >
 
-          <div className={classes.toolbar} />
-          <RoutedComponent />
+        <div className={classes.toolbar} />
+        <RoutedComponent />
 
-        </main>
+      </main>
 
-      </div>
+    </div>
   );
 }
 

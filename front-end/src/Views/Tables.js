@@ -8,12 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import SavageTable from "../Components/Table/Table";
 import { Button, Toolbar } from "@material-ui/core";
-import ConfigureService from "../Service/ConfigureService";
 import CollapsableAlert from "../Components/CollapsableAlert/CollapsableAlert";
 import DatabaseSelect from "../Components/DatabaseSelect/DatabaseSelect";
+import QueryService from "../Service/QueryService/QueryService";
 
 const Tables = (props) => {
-  const configureService = new ConfigureService()
   const classes = useStyles();
   const database = localStorage.getItem("database")
   const [tables, setTables] = useState([])
@@ -26,7 +25,7 @@ const Tables = (props) => {
   };
 
   useEffect(() => {
-    configureService.getTables(
+    new QueryService().getTables(
       (data) => {
         setTables(data.data)
         setLoading(false)
@@ -56,8 +55,8 @@ const Tables = (props) => {
   return (
     <div className={classes.root}>
 
-      <AppBar position="static" color="default">
-        <Toolbar>
+      <AppBar position="static" color="default" style={{ padding: "0.5em", borderBottom: "1px solid grey" }}>
+        <Toolbar >
           <Typography variant="h6" color="primary" style={{ marginRight: "1em", fontWeight: "bold" }}>
             {database}
           </Typography>
@@ -68,7 +67,6 @@ const Tables = (props) => {
             indicatorColor="primary"
             textColor="secundary"
             variant="scrollable"
-
             scrollButtons="auto"
             aria-label="scrollable auto tabs example"
           >
@@ -103,8 +101,8 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3} padding="1em 0.5em">
-          <Typography>{children}</Typography>
+        <Box>
+          {children}
         </Box>
       )}
     </div>
@@ -128,6 +126,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     width: '100%',
+
   },
 }));
 

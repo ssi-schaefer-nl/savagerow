@@ -21,17 +21,6 @@ public class DatabaseController {
     @Autowired
     QueryService queryService;
 
-    @GetMapping(value = "/api/{database}/tables/all", produces = "application/json" )
-    public ResponseEntity<?> databaseGetTables(@PathVariable String database) {
-        try {
-            workspaceService.setDatabaseIfNotSet(database);
-
-            return new ResponseEntity<>(queryService.listTables(), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @GetMapping(value = "/api/database/current", produces = "application/json")
     public String tableAddRow() {
         return workspaceService.getCurrentDatabase();
