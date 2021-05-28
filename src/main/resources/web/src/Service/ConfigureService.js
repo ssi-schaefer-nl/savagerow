@@ -13,7 +13,7 @@ class DatabaseService {
     }
 
     listAllDatabases(onSuccess, onFailure) {
-        this.httpHelper.get('/api/database/all')
+        this.httpHelper.get('/api/v1/database')
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
 
