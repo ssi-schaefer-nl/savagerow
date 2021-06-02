@@ -15,9 +15,14 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-
+import Home from "../Views/Home";
+import Contact from "../Views/Contact";
+import Configure from "../Views/Configuration/Configure";
+import Tables from "../Views/DataTables/Tables";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-
+import {
+  Route, Switch,
+} from "react-router-dom";
 import StorageIcon from '@material-ui/icons/Storage';
 import HomeIcon from '@material-ui/icons/Home';
 import InfoIcon from '@material-ui/icons/Info';
@@ -104,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AppLayout() {
+export default function OverviewFlow() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -183,7 +188,12 @@ export default function AppLayout() {
       <main className={classes.content} >
 
         <div className={classes.toolbar} />
-        <RoutedComponent />
+        <Switch>
+          <Route exact path="/" ><Home/></Route>
+          <Route path="/tables" ><Tables/></Route>
+          <Route path="/contact" ><Contact/></Route>
+          <Route path="/configuration"><Configure/></Route>
+        </Switch>
 
       </main>
 

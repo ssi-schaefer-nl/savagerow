@@ -18,11 +18,11 @@ export default function DatabaseSelect(props) {
     const [database, setDatabase] = useState(undefined)
     const [anchorEl, setAnchorEl] = useState(null)
     const [loadingAvailableDatabases, setLoadingAvailableDatabases] = useState(true)
-    const [initialValue, setInitialValue] = useState(null)
+    const [value, setValue] = useState(null)
     const [loadingError, setLoadingError] = useState(false)
 
     useEffect(() => {
-        setInitialValue(props.initialValue)
+        setValue(localStorage.getItem('database'))
 
         configureService.listAllDatabases(
             function (data) {
@@ -44,7 +44,7 @@ export default function DatabaseSelect(props) {
                 setDatabase(db)
                 if (onSelect) onSelect()
             },
-            undefined
+            (e) => console.log(e)
         );
     }
 
@@ -54,7 +54,7 @@ export default function DatabaseSelect(props) {
         return (<CollapsableAlert severity="warning" message="Unable to fetch available databases. Check database connection." />)
     }
 
-    var val = database ? database : initialValue ? initialValue : ""
+    var val = database ? database : value ? value : ""
     return (
 
         <FormControl style={{ margin: 1, minWidth: 120 }}>
