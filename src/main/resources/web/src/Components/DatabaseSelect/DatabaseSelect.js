@@ -37,15 +37,9 @@ export default function DatabaseSelect(props) {
 
     const handleChange = (e) => {
         var db = e.target.value
-        configureService.changeDatabases(
-            db,
-            () => {
-                localStorage.setItem('database', db);
-                setDatabase(db)
-                if (onSelect) onSelect()
-            },
-            (e) => console.log(e)
-        );
+        localStorage.setItem('database', db);
+        setDatabase(db)
+        if (onSelect) onSelect()
     }
 
     if (loadingAvailableDatabases) {

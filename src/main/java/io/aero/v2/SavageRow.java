@@ -1,10 +1,12 @@
 package io.aero.v2;
 
 import static spark.Spark.*;
+
 import com.fasterxml.jackson.core.JacksonException;
 import io.aero.v2.controller.DatabaseController;
 import io.aero.v2.controller.TableRowController;
 import io.aero.v2.controller.TableSchemaController;
+import io.aero.v2.controller.WorkflowController;
 import io.aero.v2.util.Path;
 import io.aero.v2.util.RequestParams;
 import io.aero.v2.util.Workspace;
@@ -23,12 +25,11 @@ public class SavageRow {
     }
 
     private static void setupBefore() {
-        before(Path.Wildcard.DATABASE, (request, response) -> {
-            String database = request.params(RequestParams.Parameter.Database);
-            Workspace.setCurrentDatabase(database);
+        before("/", (request, response) -> {
+            response.type("application/json");
         });
 
-        before(Path.Get.Tables, (request, response) -> {
+        before(Path.Wildcard.ALL, (request, response) -> {
             String database = request.params(RequestParams.Parameter.Database);
             Workspace.setCurrentDatabase(database);
         });
@@ -36,33 +37,37 @@ public class SavageRow {
 
 
     private static void setupGetRoutes() {
-        get(Path.Get.DATABASES, DatabaseController.getAllDatabases);
-        get(Path.Get.ROWS, TableRowController.getRows);
-        get(Path.Get.SCHEMA, TableSchemaController.getSchema);
-        get(Path.Get.Tables, DatabaseController.getTables);
+        get(Path.Database.DATABASES, DatabaseController.getAllDatabases);
+        get(Path.Database.ROWS, TableRowController.getRows);
+        get(Path.Database.SCHEMA, TableSchemaController.getSchema);
+        get(Path.Database.TABLES, DatabaseController.getTables);
+        get(Path.Workflow.DB_SUMMARY, WorkflowController.getDbSummary);
+        get(Path.Workflow.TABLE_TYPE, WorkflowController.getTableWorkflows);
     }
 
     private static void setupPostRoutes() {
-        post(Path.Post.DATABASE, DatabaseController.createDatabase);
-        post(Path.Post.COLUMN, TableSchemaController.addColumn);
-        post(Path.Post.ROWS, TableRowController.addRows);
+        post(Path.Database.DATABASE, DatabaseController.createDatabase);
+        post(Path.Database.COLUMN, TableSchemaController.addColumn);
+        post(Path.Database.ROWS, TableRowController.addRows);
+        post(Path.Workflow.TYPE, WorkflowController.addWorkflow);
     }
 
     private static void setupPutRoutes() {
-        put(Path.Put.ROWS, TableRowController.updateRow);
+        put(Path.Database.ROWS_ID, TableRowController.updateRow);
+        put(Path.Database.COLUMN_NAME, TableSchemaController.renameColumn);
     }
 
     private static void setupDeleteRoutes() {
-        delete(Path.Delete.ROWS, TableRowController.deleteRow);
+        delete(Path.Database.ROWS, TableRowController.deleteRow);
+        delete(Path.Database.COLUMN, TableSchemaController.deleteColumn);
     }
 
     private static void setupExceptions() {
-        exception(JacksonException.class, (e, request, response) -> {
-            response.status(400);
-            System.out.println(e);
-            response.body("Error parsing JSON");
-
-        });
+//        exception(JacksonException.class, (e, request, response) -> {
+//            response.status(400);
+//            response.body("Error parsing JSON");
+//
+//        });
 
         exception(Exception.class, (e, request, response) -> {
             response.status(500);

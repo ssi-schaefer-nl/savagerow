@@ -30,6 +30,14 @@ class HttpHelper {
   }
 
 
+  put(url, data) {
+    return this.http.put(url, data)
+  }
+
+  delete(url) {
+    return this.http.delete(url)
+  }
+
 }
 
 export default HttpHelper;

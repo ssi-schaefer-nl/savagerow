@@ -26,7 +26,7 @@ export default function DefineColumnDialog(props) {
     const onEnter = (e) => {
         e.preventDefault()
         const data = {
-            column: name,
+            name: name,
             datatype: dataType,
             nullable: nullable,
             defaultValue: defaultValue

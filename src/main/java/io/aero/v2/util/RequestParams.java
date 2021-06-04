@@ -9,5 +9,8 @@ public class RequestParams {
         public static final String Table = "table";
         public static final String Row = "row";
         public static final String Database = "Database";
+        public static final String Column = "column";
+
+        public static final String WorkflowType = "type";
     }
 }

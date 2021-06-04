@@ -1,28 +1,63 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Typography } from "@material-ui/core";
 import HorizontalLinearStepper from "../../../../../../Components/HorizontalLinearStepper/HorizontalLinearStepper"
 import CreateWorkflowActions from "./CreateWorkflowActions/CreateWorkflowActions"
-
+import WorkflowService from "../../../../../../Service/WorkflowService/WorkflowService";
 
 export default function AddSimpleWorkflow(props) {
+    const { table, type, onFinish } = props
+    const workflowService = new WorkflowService()
+
+    const [saving, setSaving] = useState(false)
+    const [valid, setValid] = useState(false)
+    const [finalStatus, setFinalStatus] = useState(null)
     const [name, setName] = useState(null);
     const [actions, setActions] = useState([]);
 
+    const saveWorkflow = () => {
+        const data = { table: table, name: name, actions: actions, active: true, type: type}
+        setSaving(true)
+        setFinalStatus("Saving..")
+        workflowService.saveWorkflow(type, data, () => {
+            setSaving(false)
+            setValid(true)
+            setFinalStatus("Workflow has been sucessfully added")
+        }, (data) => {
+            setSaving(false)
+            setValid(false)
+            setFinalStatus(data)
+        })
+
+    }
+
     const steps = [
-        { "name": "Enter a name", "Component": <WorkflowStepName onChange={setName} value={name} /> },
-        { "name": "Create actions", "Component": <WorkflowStepCreateActions /> },
-        { "name": "Add conditions", "Component": <p>Not Implemented</p> },
-        { "name": "Validate Workflow", "Component": <WorkflowStepValidate /> },
+        {
+            "name": "Enter a name",
+            "Component": <WorkflowStepName onChange={setName} value={name} />,
+            "nextAllowed": name != null
+        },
+        {
+            "name": "Create actions",
+            "Component": <CreateWorkflowActions actions={actions} table={table} onChange={setActions} />,
+            "nextAllowed": actions.length > 0
+        },
+        {
+            "name": "Add conditions",
+            "Component": <p>Not Implemented</p>,
+            "nextButton": "Save",
+            "onNext": saveWorkflow
+        },
+        {
+            "name": "Finalize",
+            "Component": <FinalizeStep message={finalStatus} saving={saving} valid={valid} />,
+            "nextButton": "Finish",
+            "nextAllowed": valid,
+            "onNext": onFinish
+        },
 
     ]
-    return (
-        <div>
-            <HorizontalLinearStepper steps={steps} />
-        </div>
-    )
+    return <HorizontalLinearStepper steps={steps} />
 }
-
-
 
 
 const WorkflowStepName = props => {
@@ -36,27 +71,15 @@ const WorkflowStepName = props => {
     )
 }
 
-
-const WorkflowStepCreateActions = props => {
-    const [actions, setActions] = useState([]);
-    const { onChange } = props
+const FinalizeStep = (props) => {
+    const { valid, message } = props
 
     return (
-        <div>
-            <Typography variant="h6">Create actions for the workflow</Typography>
-            <CreateWorkflowActions onChange={onChange} />
-        </div>
-    )
-}
-
-const WorkflowStepValidate = props => {
-    const { name, actions } = props
-
-    return (
-        <div>
-            <div>
-                <Typography variant="h6">Validate the workflow configuration</Typography>
-            </div>
-        </div>
+        <>
+            <Typography variant="h6">Finalizing</Typography>
+            <Typography color={valid ? "default" : "error"}>
+                {message}
+            </Typography>
+        </>
     )
 }

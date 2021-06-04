@@ -2,24 +2,27 @@ import HttpHelper from "../HttpHelper";
 
 class QueryService {
     constructor(table) {
-        this.prefix = `/api/query/${localStorage.getItem('database')}/${table}`
+        this.table = table
+        this.prefix = `/api/v1/${localStorage.getItem('database').toLowerCase()}/database`
         this.httpHelper = new HttpHelper();
     }
 
     getRowSet(onSuccess, onFailure) {
-        this.httpHelper.get(`${this.prefix}/rows/all`)
+        this.httpHelper.get(`${this.prefix}/${this.table}`)
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
     }
 
     getSchema(onSuccess, onFailure) {
-        this.httpHelper.get(`${this.prefix}/schema`)
+        const url = `${this.prefix}/${this.table}/schema`
+        console.log(url)
+        this.httpHelper.get(url)
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) })
     }
 
     getTables(onSuccess, onFailure) {
-        this.httpHelper.get(`/api/query/${localStorage.getItem('database')}/tables`)
+        this.httpHelper.get(this.prefix)
         .then(res => { onSuccess(res) })
         .catch(res => { onFailure(res) });
     }

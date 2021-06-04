@@ -25,10 +25,10 @@ const useStyles = makeStyles({
 
 function SimpleDialog(props) {
     const classes = useStyles();
-    const { onClose, open, title, children } = props;
+    const { onClose, open, title, children, outsideClickClose } = props;
 
     return (
-        <Dialog onClose={onClose} aria-labelledby="simple-dialog-title" open={open} fullWidth={true}>
+        <Dialog onClose={outsideClickClose ? onClose : () => undefined} aria-labelledby="simple-dialog-title" open={open} fullWidth={true}>
             <Toolbar>
                 <IconButton edge="start" color="inherit" onClick={onClose} aria-label="close">
                     <CloseIcon />

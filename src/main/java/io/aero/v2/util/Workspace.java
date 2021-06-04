@@ -12,16 +12,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Workspace {
+    private static String currentWorkspace;
 
     public static void setCurrentDatabase(String databaseName) throws IOException, SQLException {
-        SQLiteDataSource.connect("jdbc:sqlite:"+getDatabasePath(databaseName));
+        String workSpace = getDatabasePath(databaseName);
+        String connUrl = workSpace + databaseName + ".db";
+        currentWorkspace = workSpace;
+        SQLiteDataSource.connect("jdbc:sqlite:"+connUrl);
+    }
+
+    public static String getCurrentWorkspace() {
+        return currentWorkspace;
     }
 
     private static String getDatabasePath(String databaseName) throws IOException {
         String url = Configuration.workspace+"\\\\"+databaseName;
         Path path = Paths.get(url);
         Files.createDirectories(path);
-        return url+"\\\\"+databaseName+".db";
+        return url+"\\\\";
     }
 
     public static List<String> listDatabases() {

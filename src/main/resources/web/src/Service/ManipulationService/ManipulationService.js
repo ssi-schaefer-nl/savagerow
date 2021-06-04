@@ -2,21 +2,21 @@ import HttpHelper from "../HttpHelper";
 
 class ManipulationService {
     constructor(table) {
-        this.prefix = `/api/manipulate/${localStorage.getItem('database')}/${table}`
+        this.prefix = `/api/v1/${localStorage.getItem('database').toLowerCase()}/database/${table}`
         this.httpHelper = new HttpHelper();
     }
 
-    addRow(rows, index) {
+    addRow(rows, index, columns) {
         var copyOfRows = [...rows]
         var newRow = {}
-        Object.keys(rows[0]).forEach(col => { newRow[col] = "" })
+        columns.map(c => newRow[c.name] = "" )
         copyOfRows.splice(index, 0, newRow)
         return copyOfRows
     }
 
 
     update(rows, newRow, index, onSuccess, onFailure) {
-        this.httpHelper.post(`${this.prefix}/update`, { oldRow: rows[index], newRow: newRow })
+        this.httpHelper.put(`${this.prefix}/${newRow.rowid}`, { row: newRow })
             .then(() => onSuccess(this.updateLocal(rows, newRow, index)))
             .catch((data) => onFailure(data.response.data));
     }
@@ -28,20 +28,22 @@ class ManipulationService {
     }
 
     delete(rows, index, onSuccess, onFailure) {
-        this.httpHelper.post(`${this.prefix}/delete`, { row: rows[index] })
-            .then(() => {
-                var copyOfRows = [...rows]
-                copyOfRows.splice(index, 1)
-                onSuccess(copyOfRows)
-            })
+        this.httpHelper.delete(`${this.prefix}/${rows[index].rowid}`, { row: rows[index] })
+            .then(() => onSuccess(this.deleteLocal(rows, index)))
             .catch(res => onFailure(res.response.data));
     }
 
+    deleteLocal(rows, index) {
+        var copyOfRows = [...rows]
+        copyOfRows.splice(index, 1)
+        return copyOfRows
+    }
+
     save(rows, index, onSuccess, onFailure) {
-        this.httpHelper.post(`${this.prefix}/add`, { row: rows[index] })
+        this.httpHelper.post(`${this.prefix}`, { row: rows[index] })
             .then(res => {
                 var copyOfRows = [...rows]
-                copyOfRows[index] = res.data.row
+                copyOfRows[index] = res.data
                 onSuccess(copyOfRows)
             })
             .catch(res => onFailure(res.response.data));

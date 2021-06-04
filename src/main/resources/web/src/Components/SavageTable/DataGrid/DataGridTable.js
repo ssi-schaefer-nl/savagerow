@@ -1,5 +1,5 @@
 import DataGrid, { TextEditor, Row as GridRow } from "react-data-grid";
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { ContextMenu, MenuItem, SubMenu, ContextMenuTrigger } from 'react-contextmenu';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -23,6 +23,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import PublishIcon from '@material-ui/icons/Publish';
 import { Delete, Filter } from "@material-ui/icons";
+import { grey } from "@material-ui/core/colors";
 
 
 const LightTooltip = withStyles((theme) => ({
@@ -39,7 +40,6 @@ const DataGridTable = (props) => {
     const [selectedRow, setSelectedRow] = useState(null)
     const [openColumnFilter, setOpenColumnFilter] = useState(false)
     const [columnFilters, setColumnFilters] = useState([])
-    const [rerender, setRerender] = useState(false)
 
     var rows = [...props.rows]
     const onRowChange = props.onRowChange
@@ -64,7 +64,8 @@ const DataGridTable = (props) => {
                     defaultValue={item.column.name}
                     value={changingColumnName}
                     onBlur={() => {
-                        if(changingColumnName != null) onColumnRename(item.column.name, changingColumnName) }}
+                        if (changingColumnName != null) onColumnRename(item.column.name, changingColumnName)
+                    }}
                     required
                     style={{ fontSize: "1em", fontWeight: "bold" }}
                 />
@@ -111,12 +112,12 @@ const DataGridTable = (props) => {
 
 
     const columns = props.columns.map(col => ({
-        key: col.column,
-        name: col.column,
+        key: col.name,
+        name: col.name,
         headerRenderer: HeaderRenderer,
         resizable: true,
         nullable: col.nullable,
-        editor: col.editable ? TextEditor : undefined
+        editor: col.pk ? undefined : TextEditor
     }));
 
 
@@ -139,12 +140,14 @@ const DataGridTable = (props) => {
     ]
 
     const columnContextMenu = [
-        { text: "Delete Column", icon: Delete, onClick: onColumnDelete },
-        { text: "Rename Column", icon: TextFormatIcon, onClick: onColumnRename, dividerAfter: true },
-        { text: "Add Column", icon: AddIcon, onClick: onColumnInsert, dividerAfter: true },
+        { text: "Delete Column", icon: Delete, onClick: onColumnDelete, dividerAfter: true  },
+        { text: "Add Column", icon: AddIcon, onClick: onColumnInsert},
         { text: "Show/Hide Columns", icon: FilterListIcon, onClick: onColumnFilter },
     ]
 
+    const defaultRowHeight = 35
+    const height = ((rows.length + 1) * defaultRowHeight) + 2;
+    
     return (
         <>
             <DataGrid
@@ -159,9 +162,18 @@ const DataGridTable = (props) => {
                 enableCellSelect={true}
                 rowRenderer={RowRenderer}
                 headerRenderer={HeaderRenderer}
-                style={{ height: "60vh", overflowX: 'hidden' }}
+                style={{ height: height, maxHeight: "100%", overflowX: 'hidden' }}
+                rowHeight={defaultRowHeight}
             />
-
+            <Button
+                aria-controls="add-row"
+                aria-haspopup="true"
+                onClick={() =>  props.onInsert(-1)}
+                variant="contained"
+                style={{marginTop: "0em", backgroundColor: grey[100], width: "100%"}}
+            >
+                <AddIcon />
+            </Button>
             <TableContextMenu
                 id="grid-context-menu"
                 title={"Row " + selectedRow}

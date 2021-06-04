@@ -1,42 +1,53 @@
 import React, { useEffect } from "react";
 
-import { Button, Divider, Menu, MenuItem } from "@material-ui/core";
+import { Button, Divider, Menu, MenuItem, Toolbar, Typography } from "@material-ui/core";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/MoreVert';
 import AddIcon from '@material-ui/icons/Add';
 import FullscreenDialog from "../../../../Components/FullscreenDialog/FullscreenDialog";
 import AddSimpleWorkflow from "./AddWorkflow/AddSimpleWorkflow/AddSimpleWorkflow";
-import Workflow from "../Workflow";
 import WorkflowService from "../../../../Service/WorkflowService/WorkflowService";
+import { useHistory, useParams } from "react-router"
 
 const ManageWorkflows = (props) => {
     const workflowService = new WorkflowService()
-    const { table, type } = props
-    const [anchorEditMenu, setAnchorEditMenu] = React.useState(null);
-    const [anchorAddMenu, setAnchorAddMenu] = React .useState(null);
-    const [selectedWorkflow, setSelectedWorkflow] = React.useState(0);
-    const [workflowType, setWorkflowType] = React.useState(null)
-    const [summary, setSummary] = React.useState([])
+    const { type, onChange } = props
+    const { table } = useParams();
+    const history = useHistory()
 
-    useEffect(() => {
-        workflowService.getTableSummary(table, type, (data) => setSummary(data[0].workflows), () => undefined);
-    }, [])
+    const [anchorEditMenu, setAnchorEditMenu] = React.useState(null);
+    const [anchorAddMenu, setAnchorAddMenu] = React.useState(null);
+    const [selectedWorkflow, setSelectedWorkflow] = React.useState(null);
+    const [workflowType, setWorkflowType] = React.useState(null)
+    const [summary, setSummary] = React.useState(null)
+
+    useEffect(() => (workflowService.getTableWorkflows(table, type, (data) => setSummary(data), () => undefined)), [])
 
     const handleClick = (event, indexOfWorkflow) => {
         setAnchorEditMenu(event.currentTarget);
         setSelectedWorkflow(indexOfWorkflow)
     };
 
+    const handleAddedSimpleWorkflow = () => {
+        setWorkflowType(null)
+        workflowService.getTableWorkflows(table, type, (data) => setSummary(data))
+        onChange()
+    }
+
     const handleClose = () => {
         setAnchorEditMenu(null);
         setAnchorAddMenu(null);
     };
-    console.log(summary)
-    if(summary.length == 0) return null
+
+    if (summary == null) return null // must signal loading
 
 
     return (
         <div>
+            <Toolbar style={{ justifyContent: "space-between" }}>
+                <Typography variant="h6">{type.charAt(0).toUpperCase() + type.slice(1)} Workflows ({table})</Typography>
+                <Button variant="contained" onClick={() => history.goBack()}>Back</Button>
+            </Toolbar>
             <TableContainer component={Paper} style={{ maxHeight: "50vh" }}>
                 <Table stickyHeader >
                     <TableHead >
@@ -78,7 +89,7 @@ const ManageWorkflows = (props) => {
                 <MenuItem onClick={handleClose}>Edit</MenuItem>
                 <MenuItem onClick={handleClose}>Delete</MenuItem>
                 <Divider />
-                <MenuItem onClick={handleClose}>{summary[selectedWorkflow].active ? "Deactivate" : "Activate"}</MenuItem>
+                <MenuItem onClick={handleClose}>{selectedWorkflow != null && summary[selectedWorkflow].active ? "Deactivate" : "Activate"}</MenuItem>
             </Menu>
             <Menu
                 id="add-workflow"
@@ -87,12 +98,21 @@ const ManageWorkflows = (props) => {
                 open={Boolean(anchorAddMenu)}
                 onClose={handleClose}
             >
-                <MenuItem disabled>Add Workflow</MenuItem>
+                <Typography style={{margin: "0.5em 1em"}}><strong>Add Workflow</strong></Typography>
+                <Divider/>
                 <MenuItem onClick={() => { setWorkflowType("simple"); handleClose(); }}>Simple Workflow</MenuItem>
                 <MenuItem onClick={() => { setWorkflowType("advanced"); handleClose(); }}>Advanced Workflow</MenuItem>
             </Menu>
-            <FullscreenDialog open={Boolean(workflowType)} handleClose={() => setWorkflowType(null)} title={"Add a new workflow".concat(workflowType === "advanced" ? ' (advanced)' : '')} >
-                {workflowType === "simple" ? <AddSimpleWorkflow/> : <p> not implemented </p> }
+
+            <FullscreenDialog
+                open={Boolean(workflowType)}
+                handleClose={() => setWorkflowType(null)}
+                title={"Add a new workflow".concat(workflowType === "advanced" ? ' (advanced)' : '')}
+            >
+                {workflowType === "simple"
+                    ? <AddSimpleWorkflow table={table} type={type} onFinish={handleAddedSimpleWorkflow} />
+                    : <p> not implemented </p>
+                }
             </FullscreenDialog>
         </div >
     )

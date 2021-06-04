@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class InsertRowQuery {
     private String table;
@@ -38,11 +39,18 @@ public class InsertRowQuery {
     }
 
     public InsertRowQuery generate() throws SQLException {
-        List<String> columns = new ArrayList<>(data.getRow().keySet());
+        List<String> columns = new ArrayList<>(
+                data.getRow().keySet())
+                .stream()
+                .filter(c -> !c.equals("rowid"))
+                .filter(c -> !data.getRow().get(c).isEmpty())
+                .collect(Collectors.toList()
+                );
         sql = String.format("INSERT INTO %s (%s) VALUES (%s)", table, String.join(",", columns), String.join(",", Collections.nCopies(columns.size(), "?")));
         this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
         for (int i = 0; i < columns.size(); i++) {
-            preparedStatement.setString(i + 1, data.getRow().get(columns.get(i)));
+            String fieldValue = data.getRow().get(columns.get(i));
+            preparedStatement.setString(i + 1, fieldValue.isEmpty() ? null : fieldValue);
         }
         return this;
     }
@@ -50,7 +58,7 @@ public class InsertRowQuery {
     public InsertRowQuery execute() throws SQLException {
         preparedStatement.executeUpdate();
         ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-        if(generatedKeys.next()) this.generatedKey = generatedKeys.getLong(1);
+        if (generatedKeys.next()) this.generatedKey = generatedKeys.getLong(1);
         return this;
     }
 

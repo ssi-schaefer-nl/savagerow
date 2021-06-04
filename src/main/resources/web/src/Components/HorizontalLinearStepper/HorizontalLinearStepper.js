@@ -18,22 +18,23 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function HorizontalLinearStepper(props) {
-    const { steps } = props;
+    const { steps, onFinish } = props;
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
 
 
     const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        const currentStep = steps[activeStep]
+        if(currentStep.onNext != undefined)
+             currentStep.onNext()
+        if(activeStep != steps.length - 1 ) 
+            setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleFinish = () => {
-        console.log("finished")
-    }
 
     return (
         <div className={classes.root}>
@@ -55,12 +56,15 @@ export default function HorizontalLinearStepper(props) {
                 </Grid>
                 <Grid item>
                     <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>Back</Button>
-                    {activeStep === steps.length - 1
-                        ?
-                        <Button variant="contained" color="primary" onClick={handleFinish} className={classes.button}>Finish</Button>
-                        :
-                        <Button variant="contained" color="primary" onClick={handleNext} className={classes.button}>Next</Button>
-                    }
+                    <Button
+                        variant="contained" color="primary"
+                        onClick={handleNext}
+                        className={classes.button}
+                        disabled={steps[activeStep].nextAllowed != undefined ? !steps[activeStep].nextAllowed : false}
+                    >
+                        {steps[activeStep].nextButton != undefined ? steps[activeStep].nextButton : "Next"}
+                    </Button>
+
 
                 </Grid>
             </Grid>

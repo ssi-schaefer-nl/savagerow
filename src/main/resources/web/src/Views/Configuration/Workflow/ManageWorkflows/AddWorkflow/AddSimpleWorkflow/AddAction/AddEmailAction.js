@@ -14,16 +14,14 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function AddAction(props) {
-    const { onApply } = props;
+    const { onApply, columns } = props;
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [body, setBody] = useState("");
 
-
     const [appender, setAppender] = useState(() => () => undefined)
-    const fields = ["id", "name", "customer", "date"]
-
+    const availableFields = columns.map(c => c.name)
     const classes = useStyles();
 
     const onSubmit = (e) => {
@@ -36,8 +34,6 @@ export default function AddAction(props) {
         })
     }
 
-
-
     return (
         <div>
             <form onSubmit={onSubmit} className={classes.root} autoComplete="off">
@@ -47,7 +43,7 @@ export default function AddAction(props) {
                         <Divider style={{ margin: "2em 0" }} />
                         <DefaultTextField id="email" onChange={(e) => setEmail(e.target.value)} value={email} required label="E-mail address" />
 
-                        <ContextMenuTrigger id="field-menu" collect={() => setAppender(() => (x) => setSubject(d => d += x))}>
+                        <ContextMenuTrigger id="field-menu" collect={() => setAppender(() => (x) => setSubject(d => d += x))} holdToDisplay="-1">
                             <DefaultTextField id="subject" onChange={(e) => setSubject(e.target.value)} required label="Subject" value={subject} />
                         </ContextMenuTrigger>
 
@@ -64,7 +60,7 @@ export default function AddAction(props) {
             <ContextMenu id="field-menu">
                 <MenuItem disabled><b>Insert field placeholder</b></MenuItem>
                 <MenuItem divider />
-                {fields.map(field => (<MenuItem onClick={(e) => appender(` {${field}} `)}>{field}</MenuItem>))}
+                {availableFields.map(field => (<MenuItem onClick={(e) => appender(`{${field}} `)}>{field}</MenuItem>))}
             </ContextMenu>
         </div >
     );

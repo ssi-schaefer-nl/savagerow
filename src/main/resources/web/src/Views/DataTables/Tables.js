@@ -54,7 +54,7 @@ const Tables = (props) => {
   }
 
   return (
-    <div className={classes.root}>
+    <div>
 
       <AppBar position="static" color="default" style={{ padding: "0.5em", borderBottom: "1px solid grey" }}>
         <Toolbar >
@@ -81,7 +81,7 @@ const Tables = (props) => {
       </AppBar>
 
       {tables.map((table, index) => (
-        <TabPanel value={value} index={index}  >
+        <TabPanel value={value} index={index}>
           <SavageTable table={table} />
         </TabPanel>
       ))}

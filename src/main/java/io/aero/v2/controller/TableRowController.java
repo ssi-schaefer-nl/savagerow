@@ -23,14 +23,14 @@ public class TableRowController {
 
         GetRowQuery sqlStatement = new GetRowQuery().setTable(table);
         if (!row.isEmpty() && NumberUtils.isParsable(row)) sqlStatement.setRowId(Integer.valueOf(row));
-        return sqlStatement.generate().execute().getResult();
+        return new ObjectMapper().writeValueAsString(sqlStatement.generate().execute().getResult());
     };
 
     public static final Route addRows = (Request request, Response response) -> {
         String table = request.params(RequestParams.Parameter.Table);
 
         RowDTO row = new ObjectMapper().readValue(request.body(), RowDTO.class);
-        return new InsertRowQuery().setTable(table).setData(row).generate().execute().getResult().get(0);
+        return new ObjectMapper().writeValueAsString(new InsertRowQuery().setTable(table).setData(row).generate().execute().getResult().get(0));
     };
 
 

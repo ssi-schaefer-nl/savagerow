@@ -1,29 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Button from '@material-ui/core/Button';
-import { Grid, makeStyles, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Grid, makeStyles, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
 import SimpleDialog from "../../../../../../../Components/SimpleDialog/SimpleDialog";
 import AddAction from "../AddAction/AddEmailAction";
 import { MenuItem } from "react-contextmenu";
+import QueryService from "../../../../../../../Service/QueryService/QueryService";
 
 
 const CreateWorkflowActions = props => {
+
     const [anchorMenu, setAnchorMenu] = React.useState(null);
     const [actionType, setActionType] = React.useState(null);
-    const [actions, setActions] = useState([]);
-    const [addAction, setAddAction] = useState(null)
+    const [tableColumns, setTableColumns] = React.useState(null);
+    const { onChange, actions, table } = props
+    const queryService = new QueryService(table)
+
+    useEffect(() => {
+        queryService.getSchema(data => setTableColumns(data.data.columns), () => setTableColumns([]))
+    }, [])
+
 
     const addActionToList = (action) => {
         const step = actions.length + 1
-        const newAction = { step: step, ...action }
-        setActions(prevActions => [...prevActions, newAction]);
-
+        const newActions = [...actions, { step: step, ...action }]
+        onChange(newActions)
     }
 
     return (
         <div>
+            <Typography variant="h6">Create actions for the workflow</Typography>
 
             <TableContainer component={Paper} style={{ maxHeight: "50vh", margin: "2em 0" }}>
                 <Table stickyHeader >
@@ -71,9 +79,10 @@ const CreateWorkflowActions = props => {
 
                 </Table>
             </TableContainer>
+
             <SelectActionTypeMenu onSelect={setActionType} anchorMenu={anchorMenu} onClose={() => setAnchorMenu(null)} />
 
-            <AddActionDialogSwitch type={actionType} onClose={() => setActionType(null)} onAdd={(action) => addActionToList(action)}/>
+            <AddActionDialogSwitch columns={tableColumns} type={actionType} onClose={() => setActionType(null)} onAdd={(action) => addActionToList(action)} />
 
 
 
@@ -84,17 +93,17 @@ const CreateWorkflowActions = props => {
 
 
 const AddActionDialogSwitch = props => {
-    const { type, onClose, onAdd } = props
+    const { type, onClose, onAdd, columns } = props
 
     const getDialog = () => {
         switch (type) {
-            case "email": return <AddAction onApply={(email) => {
+            case "email": return <AddAction columns={columns} onApply={(email) => {
                 const action = {
                     ...email,
                     "type": "email"
                 }
                 onAdd(action)
-                onClose() 
+                onClose()
             }} />
         }
     }

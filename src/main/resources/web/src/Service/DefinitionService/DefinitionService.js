@@ -3,26 +3,26 @@ import HttpHelper from "../HttpHelper";
 class DefinitionService {
     constructor(table) {
         this.table = table
-        this.prefix = `/api/definition/${localStorage.getItem('database')}/${table}`
+        this.prefix = `/api/v1/${localStorage.getItem('database').toLowerCase()}/database/${table}/column`
         this.httpHelper = new HttpHelper();
     }
 
     addColumn(data, onSuccess, onFailure) {
-        this.httpHelper.post(`${this.prefix}/column/add`, data)
+        this.httpHelper.post(`${this.prefix}`, data)
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
 
     }
 
     dropColumn(column, onSuccess, onFailure) {
-        this.httpHelper.post(`${this.prefix}/${column}/drop`)
+        this.httpHelper.delete(`${this.prefix}/${column}`)
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
 
     }
 
     renameColumn(column, newName, onSuccess, onFailure) {
-        this.httpHelper.post(`${this.prefix}/${column}/rename/${newName}`)
+        this.httpHelper.put(`${this.prefix}/${column}`, {name: newName})
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
 
