@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class GetRowQuery {
     private String table;
-    private Integer rowId;
+    private Long rowId;
     private PreparedStatement preparedStatement;
     private List<Map<String, String>> result;
 
@@ -25,11 +25,11 @@ public class GetRowQuery {
         return this;
     }
 
-    public Integer getRowId() {
+    public Long getRowId() {
         return rowId;
     }
 
-    public GetRowQuery setRowId(Integer rowId) {
+    public GetRowQuery setRowId(Long rowId) {
         this.rowId = rowId;
         return this;
     }
@@ -39,7 +39,7 @@ public class GetRowQuery {
         if (rowId != null) {
             sql = sql.concat(" where rowid=?");
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
-            preparedStatement.setInt(1, rowId);
+            preparedStatement.setLong(1, rowId);
         }
         else {
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);

@@ -2,7 +2,9 @@ package io.aero.v2.model;
 
 import io.aero.v2.model.action.Action;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class Workflow {
     private String table;
@@ -54,5 +56,10 @@ public class Workflow {
     public Workflow setActive(boolean active) {
         this.active = active;
         return this;
+    }
+
+    public void execute(Map<String, String> data) {
+        actions.sort(Comparator.comparing(Action::getStep));
+        actions.forEach(a -> a.perform(data));
     }
 }

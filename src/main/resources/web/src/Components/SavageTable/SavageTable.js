@@ -89,14 +89,14 @@ const SavageTable = (props) => {
   const handleRowChange = (newRow, index) => {
     if (insertedRows.indexOf(index) == -1)
       manipulationService.update(rows, newRow, index, (rows) => {
+
         setRows(rows)
         removeErrorsForRow(index)
       }, (e) => {
         addErrorRow(index, " Error updating row: " + e)
         console.log(e)
       })
-    else
-      setRows(manipulationService.updateLocal(rows, newRow, index))
+    else setRows(manipulationService.updateLocal(rows, newRow, index))
   }
 
   useEffect(() => {

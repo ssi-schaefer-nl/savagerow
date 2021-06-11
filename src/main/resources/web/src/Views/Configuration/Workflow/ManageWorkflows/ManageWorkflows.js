@@ -25,7 +25,8 @@ const ManageWorkflows = (props) => {
 
     const handleClick = (event, indexOfWorkflow) => {
         setAnchorEditMenu(event.currentTarget);
-        setSelectedWorkflow(indexOfWorkflow)
+        setSelectedWorkflow(summary[indexOfWorkflow])
+        console.log(summary[indexOfWorkflow])
     };
 
     const handleAddedSimpleWorkflow = () => {
@@ -39,83 +40,103 @@ const ManageWorkflows = (props) => {
         setAnchorAddMenu(null);
     };
 
-    if (summary == null) return null // must signal loading
+    const handleDelete = () => {
+        const table = selectedWorkflow.table
+        const type = selectedWorkflow.type
+        const name = selectedWorkflow.name
+
+        workflowService.deleteWorkflow(table, type, name,
+            () => setSummary(s => s.filter(w => JSON.stringify(w) !== JSON.stringify(selectedWorkflow))),
+            () => undefined)
+    };
+
+    const handleChangeActive = () => {
+        const table = selectedWorkflow.table
+        const type = selectedWorkflow.type
+        const name = selectedWorkflow.name
+
+        workflowService.changeActive(table, type, name, !selectedWorkflow.active,
+            () => workflowService.getTableWorkflows(table, type, (data) => setSummary(data), () => undefined),
+            () => undefined)
+    };
+
+if (summary == null) return null // must signal loading
 
 
-    return (
-        <div>
-            <Toolbar style={{ justifyContent: "space-between" }}>
-                <Typography variant="h6">{type.charAt(0).toUpperCase() + type.slice(1)} Workflows ({table})</Typography>
-                <Button variant="contained" onClick={() => history.goBack()}>Back</Button>
-            </Toolbar>
-            <TableContainer component={Paper} style={{ maxHeight: "50vh" }}>
-                <Table stickyHeader >
-                    <TableHead >
-                        <TableRow>
-                            <TableCell>Workflow name</TableCell>
-                            <TableCell align="right">Active</TableCell>
+return (
+    <div>
+        <Toolbar style={{ justifyContent: "space-between" }}>
+            <Typography variant="h6">{type.charAt(0).toUpperCase() + type.slice(1)} Workflows ({table})</Typography>
+            <Button variant="contained" onClick={() => history.goBack()}>Back</Button>
+        </Toolbar>
+        <TableContainer component={Paper} style={{ maxHeight: "50vh" }}>
+            <Table stickyHeader >
+                <TableHead >
+                    <TableRow>
+                        <TableCell>Workflow name</TableCell>
+                        <TableCell align="right">Active</TableCell>
+                        <TableCell align="right">
+                            <Button aria-controls="add-workflow" aria-haspopup="true" onClick={(e) => setAnchorAddMenu(e.currentTarget)}>
+                                <AddIcon />
+                            </Button>
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {summary.map((data, i) => (
+                        <TableRow key={data.name}>
+
+                            <TableCell component="th" scope="row">{data.name}</TableCell>
+                            <TableCell align="right">{data.active ? "Yes" : "No"}</TableCell>
                             <TableCell align="right">
-                                <Button aria-controls="add-workflow" aria-haspopup="true" onClick={(e) => setAnchorAddMenu(e.currentTarget)}>
-                                    <AddIcon />
+                                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={(e) => handleClick(e, i)}>
+                                    <EditIcon />
                                 </Button>
                             </TableCell>
                         </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {summary.map((data, i) => (
-                            <TableRow key={data.name}>
+                    ))}
+                </TableBody>
 
-                                <TableCell component="th" scope="row">{data.name}</TableCell>
-                                <TableCell align="right">{data.active ? "Yes" : "No"}</TableCell>
-                                <TableCell align="right">
-                                    <Button aria-controls="simple-menu" aria-haspopup="true" onClick={(e) => handleClick(e, i)}>
-                                        <EditIcon />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
+            </Table>
+        </TableContainer>
 
-                </Table>
-            </TableContainer>
+        <Menu
+            id="simple-menu"
+            anchorEl={anchorEditMenu}
+            keepMounted
+            open={Boolean(anchorEditMenu)}
+            onClose={handleClose}
+        >
+            <MenuItem disabled onClick={handleClose}>Edit</MenuItem>
+            <MenuItem onClick={() => { handleClose(); handleDelete(); }}>Delete</MenuItem>
+            <Divider />
+            <MenuItem onClick={() => {handleClose(); handleChangeActive();} }>{selectedWorkflow != null && selectedWorkflow.active ? "Activate" : "Deactivate"}</MenuItem>
+        </Menu>
+        <Menu
+            id="add-workflow"
+            anchorEl={anchorAddMenu}
+            keepMounted
+            open={Boolean(anchorAddMenu)}
+            onClose={handleClose}
+        >
+            <Typography style={{ margin: "0.5em 1em" }}><strong>Add Workflow</strong></Typography>
+            <Divider />
+            <MenuItem onClick={() => { setWorkflowType("simple"); handleClose(); }}>Simple Workflow</MenuItem>
+            <MenuItem disabled onClick={() => { setWorkflowType("advanced"); handleClose(); }}>Advanced Workflow</MenuItem>
+        </Menu>
 
-            <Menu
-                id="simple-menu"
-                anchorEl={anchorEditMenu}
-                keepMounted
-                open={Boolean(anchorEditMenu)}
-                onClose={handleClose}
-            >
-                <MenuItem onClick={handleClose}>Edit</MenuItem>
-                <MenuItem onClick={handleClose}>Delete</MenuItem>
-                <Divider />
-                <MenuItem onClick={handleClose}>{selectedWorkflow != null && summary[selectedWorkflow].active ? "Deactivate" : "Activate"}</MenuItem>
-            </Menu>
-            <Menu
-                id="add-workflow"
-                anchorEl={anchorAddMenu}
-                keepMounted
-                open={Boolean(anchorAddMenu)}
-                onClose={handleClose}
-            >
-                <Typography style={{margin: "0.5em 1em"}}><strong>Add Workflow</strong></Typography>
-                <Divider/>
-                <MenuItem onClick={() => { setWorkflowType("simple"); handleClose(); }}>Simple Workflow</MenuItem>
-                <MenuItem onClick={() => { setWorkflowType("advanced"); handleClose(); }}>Advanced Workflow</MenuItem>
-            </Menu>
-
-            <FullscreenDialog
-                open={Boolean(workflowType)}
-                handleClose={() => setWorkflowType(null)}
-                title={"Add a new workflow".concat(workflowType === "advanced" ? ' (advanced)' : '')}
-            >
-                {workflowType === "simple"
-                    ? <AddSimpleWorkflow table={table} type={type} onFinish={handleAddedSimpleWorkflow} />
-                    : <p> not implemented </p>
-                }
-            </FullscreenDialog>
-        </div >
-    )
+        <FullscreenDialog
+            open={Boolean(workflowType)}
+            handleClose={() => setWorkflowType(null)}
+            title={"Add a new workflow".concat(workflowType === "advanced" ? ' (advanced)' : '')}
+        >
+            {workflowType === "simple"
+                ? <AddSimpleWorkflow table={table} type={type} onFinish={handleAddedSimpleWorkflow} />
+                : <p> not implemented </p>
+            }
+        </FullscreenDialog>
+    </div >
+)
 
 }
 

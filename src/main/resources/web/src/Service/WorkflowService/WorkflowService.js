@@ -23,6 +23,19 @@ class WorkflowService {
             .then(res => onSuccess(res))
             .catch(res => onFailure(res.response.data));
     }
+
+
+    changeActive(table, type, name, active, onSuccess, onFailure) {
+        this.httpHelper.post(`${this.prefix}/${table}/${type}/${name}/active/${active}`)
+            .then(res => onSuccess(res))
+            .catch(res => onFailure(res.response.data));
+    }
+
+    deleteWorkflow(table, type, name, onSuccess, onFailure) {
+        this.httpHelper.delete(`${this.prefix}/${table}/${type}/${name}`)
+            .then(res => onSuccess(res))
+            .catch(res => onFailure(res.response.data));
+    }
 }
 
 export default WorkflowService

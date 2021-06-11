@@ -44,17 +44,14 @@ const Workflow = (props) => {
         <Switch>
             <Route exact path={url}>
                 <div className={classes.root}>
-                    <div style={{ margin: "2em 0" }}>
-                        <Typography variant="h6" color="primary">Workflow overview</Typography>
-                        <Typography>Expand the workflow sections to manage the workflows per table</Typography>
-                    </div>
+                
                     {types.map(type => {
                         const presentingType = type.charAt(0).toUpperCase() + type.slice(1)
                         return (
                             <AccordionSection onChange={handleChange(type)} expanded={expanded === type} title={presentingType + " Workflows"}>
                                 <WorkflowOverview
                                     summary={summary.map(s => ({ "table": s.table, "workflows": s[type] }))}
-                                    onEdit={(table) => { history.push(`${url}/${type}/${table}`) }}
+                                    onEdit={(table) => history.push(`${url}/${type}/${table}`)}
                                 />
                             </AccordionSection>
                         )

@@ -11,7 +11,7 @@ export default function AddSimpleWorkflow(props) {
     const [saving, setSaving] = useState(false)
     const [valid, setValid] = useState(false)
     const [finalStatus, setFinalStatus] = useState(null)
-    const [name, setName] = useState(null);
+    const [name, setName] = useState("");
     const [actions, setActions] = useState([]);
 
     const saveWorkflow = () => {
@@ -34,7 +34,7 @@ export default function AddSimpleWorkflow(props) {
         {
             "name": "Enter a name",
             "Component": <WorkflowStepName onChange={setName} value={name} />,
-            "nextAllowed": name != null
+            "nextAllowed": name != null && name.length > 0
         },
         {
             "name": "Create actions",

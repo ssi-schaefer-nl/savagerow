@@ -30,7 +30,7 @@ class ManipulationService {
     delete(rows, index, onSuccess, onFailure) {
         this.httpHelper.delete(`${this.prefix}/${rows[index].rowid}`, { row: rows[index] })
             .then(() => onSuccess(this.deleteLocal(rows, index)))
-            .catch(res => onFailure(res.response.data));
+            .catch(res => onFailure(res.response));
     }
 
     deleteLocal(rows, index) {

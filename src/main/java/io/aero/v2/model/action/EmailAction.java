@@ -1,5 +1,7 @@
 package io.aero.v2.model.action;
 
+import java.util.Map;
+
 public class EmailAction extends Action {
     private String email;
     private String subject;
@@ -33,7 +35,7 @@ public class EmailAction extends Action {
     }
 
     @Override
-    public void perform() {
+    public void perform(Map<String, String> data) {
         System.out.println(String.format("Recipient: %s\nSubject: %s\nBody: %s", email, subject, body));
     }
 }
