@@ -20,7 +20,7 @@ public class WorkflowTaskConsumer implements Runnable {
                 try {
                     handle(task);
                 } catch (Exception e) {
-                    queue.offer(task);
+                    e.printStackTrace();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

@@ -17,7 +17,7 @@ public class SavageRow {
     public static void main(String[] args) {
         port(9010);
 
-        WorkflowTaskQueue taskQueue = new WorkflowTaskQueue(1);
+        WorkflowTaskQueue taskQueue = new WorkflowTaskQueue(2);
         taskQueue.start();
 
         rowController = new TableRowController(taskQueue);

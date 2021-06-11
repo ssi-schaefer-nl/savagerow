@@ -13,6 +13,7 @@ const ActionFormRow = props => {
     const [appender, setAppender] = useState(() => () => undefined)
     const [initialTable, setInitialTable] = useState(table)
     const [columns, setColumns] = useState(null)
+    const [contextMenuId, setContextMenuId] = useState( Math.floor(Math.random() * 100))
 
 
     useEffect(() => {
@@ -30,17 +31,15 @@ const ActionFormRow = props => {
 
 
     if (columns != null && columns.length > 0) {
-        console.log(value)
         return (
             <>
-                <Typography style={{ margin: "1em 0em" }}>Define the fields for the row</Typography>
                 <TableContainer component={Paper} style={{ padding: "1em", width: "90%" }}>
 
                     <Table  >
                         <TableHead >
                             <TableRow>
                                 {columns.map((col) =>
-                                    <TableCell size="small" style={{ border: "1px solid", borderColor: grey[200] }}>{col.name + (!col.pk && !col.nullable ? "*" : "")}</TableCell>
+                                    <TableCell size="small" style={{ border: "1px solid", borderColor: grey[200] }}>{col.name + (props.requireValues && (!col.pk && !col.nullable) ? "*" : "")}</TableCell>
                                 )}
                             </TableRow>
                         </TableHead>
@@ -48,11 +47,11 @@ const ActionFormRow = props => {
                             <TableRow key={1}>
                                 {value != null && columns.map(c => (
                                     <TableCell size="small" style={{ padding: "0em", margin: "0em", border: "1px solid", borderColor: grey[200] }}>
-                                        <ContextMenuTrigger id="x-menu" collect={() => setAppender(() => (x) => onChange({...value, [c.name]: value != undefined ? value[c.name] + x : value[c.name]}))}>
+                                        <ContextMenuTrigger id={contextMenuId} collect={() => setAppender(() => (x) => onChange({...value, [c.name]: value != undefined ? value[c.name] + x : value[c.name]}))}>
                                             <TextField
                                                 id={c.name}
                                                 value={value[c.name]}
-                                                required={!c.pk && !c.nullable}
+                                                required={props.requireValues && (!c.pk && !c.nullable)}
                                                 InputLabelProps={{ shrink: true }}
                                                 InputProps={{ disableUnderline: true, autoComplete: 'new-password' }}
                                                 autoComplete='off'
@@ -68,10 +67,10 @@ const ActionFormRow = props => {
                 </TableContainer>
 
 
-                <ContextMenu id="x-menu">
+                <ContextMenu id={contextMenuId}>
                     <MenuItem disabled><b>Insert field placeholder</b></MenuItem>
                     <MenuItem divider />
-                    {placeholders.map(f => (<MenuItem onClick={(e) => appender(`{${f}} `)}>{f}</MenuItem>))}
+                    {placeholders.map(f => (<MenuItem onClick={(e) => {console.log(e); appender(`{${f}} `);}}>{f}</MenuItem>))}
                 </ContextMenu>
             </>
         )

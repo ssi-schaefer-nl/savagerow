@@ -11,6 +11,8 @@ import java.util.Map;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = EmailAction.class, name = "email"),
         @JsonSubTypes.Type(value = InsertAction.class, name = "insert"),
+        @JsonSubTypes.Type(value = UpdateAction.class, name = "update"),
+        @JsonSubTypes.Type(value = DeleteAction.class, name = "delete"),
 })
 public abstract class Action {
     private int step;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Typography from '@material-ui/core/Typography';
 
-import { makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Divider, makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/EditOutlined';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
@@ -26,11 +26,11 @@ const useStyles = makeStyles((theme) => ({
 
 const Workflow = (props) => {
     const classes = useStyles();
-    
+
     const { url } = useRouteMatch();
     const history = useHistory();
     const workflowService = new WorkflowService()
-    
+
     const [expanded, setExpanded] = React.useState(null);
     const [summary, setSummary] = useState([])
 
@@ -41,32 +41,37 @@ const Workflow = (props) => {
     useEffect(() => (workflowService.getDbSummary(setSummary, () => undefined)), [])
 
     return (
-        <Switch>
-            <Route exact path={url}>
-                <div className={classes.root}>
-                
-                    {types.map(type => {
-                        const presentingType = type.charAt(0).toUpperCase() + type.slice(1)
-                        return (
-                            <AccordionSection onChange={handleChange(type)} expanded={expanded === type} title={presentingType + " Workflows"}>
-                                <WorkflowOverview
-                                    summary={summary.map(s => ({ "table": s.table, "workflows": s[type] }))}
-                                    onEdit={(table) => history.push(`${url}/${type}/${table}`)}
-                                />
-                            </AccordionSection>
-                        )
-                    })}
-                </div>
-            </Route>
-            {types.map(type => (
-                <Route path={`${url}/${type}/:table`}>
-                    <ManageWorkflows type={type} onChange={() => workflowService.getDbSummary(setSummary, () => undefined)}/>
+        <>
+
+            <Switch>
+                <Route exact path={url}>
+                    <div className={classes.root}>
+                        <Typography variant="h6" color="primary">Workflows</Typography>
+                        <Typography>This configuration section allows you to configure workflows for your data.</Typography>
+                        <Divider style={{ margin: "1em 0em 2em 0em" }} />
+                        {types.map(type => {
+                            const presentingType = type.charAt(0).toUpperCase() + type.slice(1)
+                            return (
+                                <AccordionSection onChange={handleChange(type)} expanded={expanded === type} title={presentingType + " Workflows"}>
+                                    <WorkflowOverview
+                                        summary={summary.map(s => ({ "table": s.table, "workflows": s[type] }))}
+                                        onEdit={(table) => history.push(`${url}/${type}/${table}`)}
+                                    />
+                                </AccordionSection>
+                            )
+                        })}
+                    </div>
                 </Route>
-            ))}
-            <Route>
-                <Redirect to={url} />
-            </Route>
-        </Switch >
+                {types.map(type => (
+                    <Route path={`${url}/${type}/:table`}>
+                        <ManageWorkflows type={type} onChange={() => workflowService.getDbSummary(setSummary, () => undefined)} />
+                    </Route>
+                ))}
+                <Route>
+                    <Redirect to={url} />
+                </Route>
+            </Switch >
+        </>
     )
 }
 

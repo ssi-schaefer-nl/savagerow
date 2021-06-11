@@ -110,7 +110,7 @@ return (
             <MenuItem disabled onClick={handleClose}>Edit</MenuItem>
             <MenuItem onClick={() => { handleClose(); handleDelete(); }}>Delete</MenuItem>
             <Divider />
-            <MenuItem onClick={() => {handleClose(); handleChangeActive();} }>{selectedWorkflow != null && selectedWorkflow.active ? "Activate" : "Deactivate"}</MenuItem>
+            <MenuItem onClick={() => {handleClose(); handleChangeActive();} }>{selectedWorkflow != null && selectedWorkflow.active ? "Deactivate" : "Activate"}</MenuItem>
         </Menu>
         <Menu
             id="add-workflow"

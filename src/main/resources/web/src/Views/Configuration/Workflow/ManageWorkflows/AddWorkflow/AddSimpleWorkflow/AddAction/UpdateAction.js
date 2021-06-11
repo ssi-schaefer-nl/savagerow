@@ -14,13 +14,14 @@ import { grey } from '@material-ui/core/colors';
 import QueryService from '../../../../../../../Service/QueryService/QueryService';
 import ActionFormRow from "./ActionFormRow"
 
-const InsertAction = props => {
+const UpdateAction = props => {
     const { onSubmit, placeholders, initial, open, onClose } = props
     const [tables, setTables] = useState([])
 
     const [name, setName] = useState(initial == null ? "" : initial.name)
     const [table, setTable] = useState(initial == null ? "" : initial.table)
     const [row, setRow] = useState(initial == null ? [] : initial.row)
+    const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.row)
 
     useEffect(() => {
         const queryService = new QueryService("")
@@ -29,7 +30,7 @@ const InsertAction = props => {
 
     const handleSubmit = e => {
         e.preventDefault()
-        onSubmit({ name: name, row: row, table: table, type: "insert" })
+        onSubmit({ name: name, row: row, rowCriteria: rowCriteria, table: table, type: "update" })
     }
 
     return (
@@ -47,12 +48,14 @@ const InsertAction = props => {
             >
                 {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
             </Select>
-            <Typography style={{ margin: "1em 0em" }}>Define the fields for the row</Typography>
-
+            <Typography style={{ marginTop: "1em" }}>Define the fields that must match with a row in order to update it</Typography>
+            <ActionFormRow onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
+            <Typography style={{ marginTop: "1em" }}>Define the fields you want to update on the row</Typography>
             <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
+
 
         </NewActionForm>
     )
 }
 
-export default InsertAction;
+export default UpdateAction;

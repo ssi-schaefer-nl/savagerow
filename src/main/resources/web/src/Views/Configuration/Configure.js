@@ -7,17 +7,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import Workflow from "./Workflow/Workflow";
 
 import { makeStyles } from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { grey } from "@material-ui/core/colors";
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import OverviewFlow from "../../Components/Flow/OverviewFlow";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
@@ -29,8 +19,18 @@ function createConfigSection(name, PanelComponent) {
 }
 
 const ConfigurationSections = [
-    createConfigSection("Overview", <p>This is the configuration overview</p>),
-    createConfigSection("Database", <DatabaseSelect />),
+    createConfigSection("Overview", <>
+        <Typography variant="h6" color="primary">Overview</Typography>
+        <Typography>Nothing here yet.</Typography>
+        <Divider style={{ margin: "1em 0em 2em 0em" }} />
+        <DatabaseSelect />
+    </>),
+    createConfigSection("Database", <>
+        <Typography variant="h6" color="primary">Database</Typography>
+        <Typography>This section allows configuration related to the databases.</Typography>
+        <Divider style={{ margin: "1em 0em 2em 0em" }} />
+        <DatabaseSelect />
+    </>),
     createConfigSection("Workflows", <Workflow />)
 ]
 
@@ -107,7 +107,7 @@ export default function Configure(props) {
                         </Route>
                     ))}
                     <Route>
-                        <Redirect to={`${url}/${ConfigurationSections[0].name.toLowerCase()}`}/>
+                        <Redirect to={`${url}/${ConfigurationSections[0].name.toLowerCase()}`} />
                     </Route>
                 </Switch>
             </div>
