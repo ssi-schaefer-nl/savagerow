@@ -12,8 +12,8 @@ const ActionFormRow = props => {
     const { onChange, placeholders, table, value } = props
     const [appender, setAppender] = useState(() => () => undefined)
     const [initialTable, setInitialTable] = useState(table)
-    const [columns, setColumns] = useState(null)
-    const [contextMenuId, setContextMenuId] = useState( Math.floor(Math.random() * 100))
+    const [columns, setColumns] = useState([])
+    const [contextMenuId, setContextMenuId] = useState(Math.floor(Math.random() * 100))
 
 
     useEffect(() => {
@@ -22,18 +22,18 @@ const ActionFormRow = props => {
                 const tempColumns = data.data.columns
                 const newRow = {}
                 tempColumns.map(c => newRow[c.name] = '')
-                if(value.length == 0 || table != initialTable) onChange(newRow)
                 setColumns(tempColumns)
+                if (value.length == 0 || table != initialTable) onChange(newRow)
             }, () => setColumns([]))
         }
 
     }, [table])
 
 
-    if (columns != null && columns.length > 0) {
+    if (columns.length > 0) {
         return (
             <>
-                <TableContainer component={Paper} style={{ padding: "1em", width: "90%" }}>
+                <TableContainer style={{ padding: "1em 0", width: "90%" }}>
 
                     <Table  >
                         <TableHead >
@@ -47,7 +47,7 @@ const ActionFormRow = props => {
                             <TableRow key={1}>
                                 {value != null && columns.map(c => (
                                     <TableCell size="small" style={{ padding: "0em", margin: "0em", border: "1px solid", borderColor: grey[200] }}>
-                                        <ContextMenuTrigger id={contextMenuId} collect={() => setAppender(() => (x) => onChange({...value, [c.name]: value != undefined ? value[c.name] + x : value[c.name]}))}>
+                                        <ContextMenuTrigger id={contextMenuId} collect={() => setAppender(() => (x) => onChange({ ...value, [c.name]: value != undefined ? value[c.name] + x : x }))}>
                                             <TextField
                                                 id={c.name}
                                                 value={value[c.name]}
@@ -70,7 +70,7 @@ const ActionFormRow = props => {
                 <ContextMenu id={contextMenuId}>
                     <MenuItem disabled><b>Insert field placeholder</b></MenuItem>
                     <MenuItem divider />
-                    {placeholders.map(f => (<MenuItem onClick={(e) => {console.log(e); appender(`{${f}} `);}}>{f}</MenuItem>))}
+                    {placeholders.map(f => (<MenuItem onClick={(e) => { console.log(e); appender(`{${f}} `); }}>{f}</MenuItem>))}
                 </ContextMenu>
             </>
         )
@@ -78,4 +78,6 @@ const ActionFormRow = props => {
     else return null;
 }
 
-    export default ActionFormRow;
+
+
+export default ActionFormRow;

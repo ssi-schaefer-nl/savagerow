@@ -46,7 +46,6 @@ const Workflow = (props) => {
             <Switch>
                 <Route exact path={url}>
                     <div className={classes.root}>
-                        <Typography variant="h6" color="primary">Workflows</Typography>
                         <Typography>This configuration section allows you to configure workflows for your data.</Typography>
                         <Divider style={{ margin: "1em 0em 2em 0em" }} />
                         {types.map(type => {

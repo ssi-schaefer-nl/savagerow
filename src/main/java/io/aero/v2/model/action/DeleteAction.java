@@ -6,16 +6,18 @@ import io.aero.v2.query.UpdateRowByCriteriaQuery;
 import io.aero.v2.util.StringPlaceholderTransformer;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DeleteAction extends CrudAction {
     private String table;
-    private Map<String, String> rowCriteria;
+    private List<RowCriteria> rowCriteria;
 
     @Override
     public void perform(Map<String, String> data) {
-        Map<String, String> transformedRowCriteria = transformPlaceholders(data, rowCriteria);
+        List<RowCriteria> transformedRowCriteria = transformPlaceholders(data, rowCriteria);
 
         try {
             new DeleteRowByCriteriaQuery().setTable(table).setCriteria(transformedRowCriteria).generate().execute();
@@ -24,12 +26,13 @@ public class DeleteAction extends CrudAction {
         }
     }
 
-    private Map<String, String> transformPlaceholders(Map<String, String> data, Map<String, String> target) {
-        Map<String, String> temp = new HashMap<>();
-        target.forEach((key, value) -> {
-            String t = StringPlaceholderTransformer.transform(value, data);
-            temp.put(key, t);
-        });
+    private List<RowCriteria> transformPlaceholders(Map<String, String> data, List<RowCriteria> target) {
+        List<RowCriteria> temp = new ArrayList<>();
+        for(RowCriteria criteria : target) {
+            String t = StringPlaceholderTransformer.transform(criteria.getRequired(), data);
+            temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
+
+        }
         return temp;
     }
 
@@ -43,12 +46,12 @@ public class DeleteAction extends CrudAction {
         return this;
     }
 
-    public DeleteAction setRowCriteria(Map<String, String> rowCriteria) {
-        this.rowCriteria = rowCriteria;
-        return this;
+    public List<RowCriteria> getRowCriteria() {
+        return rowCriteria;
     }
 
-    public Map<String, String> getRowCriteria() {
-        return rowCriteria;
+    public DeleteAction setRowCriteria(List<RowCriteria> rowCriteria) {
+        this.rowCriteria = rowCriteria;
+        return this;
     }
 }

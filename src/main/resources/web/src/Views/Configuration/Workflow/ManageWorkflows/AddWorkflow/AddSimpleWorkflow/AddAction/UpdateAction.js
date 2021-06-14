@@ -13,6 +13,7 @@ import { InputLabel, Select } from '@material-ui/core';
 import { grey } from '@material-ui/core/colors';
 import QueryService from '../../../../../../../Service/QueryService/QueryService';
 import ActionFormRow from "./ActionFormRow"
+import RowCriterion from "./RowCriterion"
 
 const UpdateAction = props => {
     const { onSubmit, placeholders, initial, open, onClose } = props
@@ -48,10 +49,13 @@ const UpdateAction = props => {
             >
                 {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
             </Select>
-            <Typography style={{ marginTop: "1em" }}>Define the fields that must match with a row in order to update it</Typography>
-            <ActionFormRow onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
-            <Typography style={{ marginTop: "1em" }}>Define the fields you want to update on the row</Typography>
-            <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
+            {table.length > 0 && <>
+                <Typography style={{ marginTop: "1em" }}>Define the fields that must match with a row in order to update it</Typography>
+                <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
+
+                <Typography style={{ marginTop: "1em" }}>Define the fields you want to update on the row</Typography>
+                <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
+            </>}
 
 
         </NewActionForm>

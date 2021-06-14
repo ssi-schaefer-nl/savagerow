@@ -13,6 +13,7 @@ import { InputLabel, Select } from '@material-ui/core';
 import { grey } from '@material-ui/core/colors';
 import QueryService from '../../../../../../../Service/QueryService/QueryService';
 import ActionFormRow from "./ActionFormRow"
+import RowCriterion from "./RowCriterion"
 
 const DeleteAction = props => {
     const { onSubmit, placeholders, initial, open, onClose } = props
@@ -20,7 +21,6 @@ const DeleteAction = props => {
 
     const [name, setName] = useState(initial == null ? "" : initial.name)
     const [table, setTable] = useState(initial == null ? "" : initial.table)
-    const [row, setRow] = useState(initial == null ? [] : initial.row)
     const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.row)
 
     useEffect(() => {
@@ -33,6 +33,7 @@ const DeleteAction = props => {
         onSubmit({ name: name, rowCriteria: rowCriteria, table: table, type: "delete" })
     }
 
+    console.log(rowCriteria)
     return (
         <NewActionForm open={open} onSubmit={handleSubmit} onClose={onClose}>
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required />
@@ -46,10 +47,13 @@ const DeleteAction = props => {
                 value={table}
                 required
             >
+                
                 {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
             </Select>
-            <Typography style={{ marginTop: "1em" }}>Define the fields that must match with a row in order to delete it</Typography>
-            <ActionFormRow requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
+            {table.length > 0 && <>
+                <Typography style={{ marginTop: "1em" }}>Define the fields that must match with a row in order to delete it</Typography>
+                <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
+            </>}
 
         </NewActionForm>
     )

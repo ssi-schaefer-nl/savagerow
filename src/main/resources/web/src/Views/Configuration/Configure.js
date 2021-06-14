@@ -20,13 +20,11 @@ function createConfigSection(name, PanelComponent) {
 
 const ConfigurationSections = [
     createConfigSection("Overview", <>
-        <Typography variant="h6" color="primary">Overview</Typography>
         <Typography>Nothing here yet.</Typography>
         <Divider style={{ margin: "1em 0em 2em 0em" }} />
         <DatabaseSelect />
     </>),
     createConfigSection("Database", <>
-        <Typography variant="h6" color="primary">Database</Typography>
         <Typography>This section allows configuration related to the databases.</Typography>
         <Divider style={{ margin: "1em 0em 2em 0em" }} />
         <DatabaseSelect />

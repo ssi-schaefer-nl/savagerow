@@ -1,6 +1,8 @@
 package io.aero.v2.query;
 
 
+import io.aero.v2.model.action.RowCriteria;
+import io.aero.v2.util.OperatorToSQLComparator;
 import io.aero.v2.util.SQLiteDataSource;
 
 import java.sql.PreparedStatement;
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DeleteRowByCriteriaQuery {
     private String table;
-    private Map<String, String> criteria;
+    private List<RowCriteria> criteria;
     private String sql;
     private PreparedStatement preparedStatement;
 
@@ -20,21 +22,24 @@ public class DeleteRowByCriteriaQuery {
         return this;
     }
 
-    public DeleteRowByCriteriaQuery setCriteria(Map<String, String> criteria) {
+    public DeleteRowByCriteriaQuery setCriteria(List<RowCriteria> criteria) {
         this.criteria = criteria;
         return this;
     }
 
     public DeleteRowByCriteriaQuery generate() throws SQLException {
-        List<String> criteriaColumns = this.criteria.keySet().stream().filter(k -> !criteria.get(k).isEmpty()).collect(Collectors.toList());
-        String whereClause = criteriaColumns.stream().map(c -> String.format("%s = ?", c)).collect(Collectors.joining(" AND "));
+        String whereClause = criteria.stream()
+                .map(c -> String.format("%s %s ?", c.getColumn(), OperatorToSQLComparator.convert(c.getOperator())))
+                .collect(Collectors.joining(" AND "));
+
+
         sql = String.format("DELETE FROM %s WHERE %s", this.table, whereClause);
         this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
         int nextParamIndex = 0;
 
-        for (String criteriaColumn : criteriaColumns) {
+        for (RowCriteria c : criteria) {
             nextParamIndex++;
-            preparedStatement.setString(nextParamIndex, criteria.get(criteriaColumn));
+            preparedStatement.setString(nextParamIndex, c.getRequired());
         }
 
         return this;

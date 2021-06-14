@@ -67,7 +67,7 @@ const ActionOnRowForm = props => {
                     <Divider style={{ margin: "2em 0" }} />
 
                     <Typography style={{ margin: "1em 0em" }}>Define the fields for the row</Typography>
-                    <TableContainer component={Paper} style={{ padding: "1em",width: "90%" }}>
+                    <TableContainer>
 
                         <Table  >
                             <TableHead >
