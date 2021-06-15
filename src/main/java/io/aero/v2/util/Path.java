@@ -30,6 +30,7 @@ public class Path {
         private static final String ROOT_WORKFLOW_TABLE_TYPE_NAME_ACTIVE = ROOT_WORKFLOW_TABLE_TYPE_NAME + "/active/:active";
 
         public static final String DB_SUMMARY = ROOT_WORKFLOW;
+        public static final String ALL = ROOT_WORKFLOW + "/all";
         public static final String TYPE = ROOT_WORKFLOW_TYPE;
         public static final String TABLE_TYPE = ROOT_WORKFLOW_TABLE_TYPE;
         public static final String WORKFLOW = ROOT_WORKFLOW_TABLE_TYPE_NAME;

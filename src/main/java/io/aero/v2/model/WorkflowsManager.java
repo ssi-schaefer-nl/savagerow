@@ -40,6 +40,9 @@ public class WorkflowsManager {
         this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> (w.isActive() && w.getTable().equals(table))).forEach(w -> w.execute(data));
     }
 
+    public List<Workflow> get() {
+        return workflows.values().stream().flatMap(List::stream).collect(Collectors.toList());
+    }
 
     public List<Workflow> get(WorkflowType type) {
         return workflows.get(type);

@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import Typography from '@material-ui/core/Typography';
 
-import { Divider, makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
-import EditIcon from '@material-ui/icons/EditOutlined';
+import { Divider, Grid, makeStyles, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { grey } from "@material-ui/core/colors";
 import Button from '@material-ui/core/Button';
-import { Redirect, Route, Switch, useHistory, useRouteMatch } from "react-router";
 import WorkflowService from "../../../Service/WorkflowService/WorkflowService";
-import ManageWorkflows from "./ManageWorkflows/ManageWorkflows";
+import AddIcon from '@material-ui/icons/Add';
+import AddSimpleWorkflow from "./ManageWorkflows/AddWorkflow/AddSimpleWorkflow/AddSimpleWorkflow";
+import FullscreenDialog from "../../../Components/FullscreenDialog/FullscreenDialog";
+import EditIcon from '@material-ui/icons/MoreVert';
+import { MenuItem } from "react-contextmenu";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -26,50 +28,21 @@ const useStyles = makeStyles((theme) => ({
 
 const Workflow = (props) => {
     const classes = useStyles();
-
-    const { url } = useRouteMatch();
-    const history = useHistory();
     const workflowService = new WorkflowService()
 
-    const [expanded, setExpanded] = React.useState(null);
-    const [summary, setSummary] = useState([])
-
-    const types = ["insert", "update", "delete"]
+    const [expanded, setExpanded] = React.useState("simple-workflows");
 
     const handleChange = (panel) => (event, isExpanded) => (setExpanded(isExpanded ? panel : false));
 
-    useEffect(() => (workflowService.getDbSummary(setSummary, () => undefined)), [])
 
     return (
         <>
+            <Typography variant="h6" color="primary" style={{ margin: "1em 0" }}>Workflows</Typography>
 
-            <Switch>
-                <Route exact path={url}>
-                    <div className={classes.root}>
-                        <Typography>This configuration section allows you to configure workflows for your data.</Typography>
-                        <Divider style={{ margin: "1em 0em 2em 0em" }} />
-                        {types.map(type => {
-                            const presentingType = type.charAt(0).toUpperCase() + type.slice(1)
-                            return (
-                                <AccordionSection onChange={handleChange(type)} expanded={expanded === type} title={presentingType + " Workflows"}>
-                                    <WorkflowOverview
-                                        summary={summary.map(s => ({ "table": s.table, "workflows": s[type] }))}
-                                        onEdit={(table) => history.push(`${url}/${type}/${table}`)}
-                                    />
-                                </AccordionSection>
-                            )
-                        })}
-                    </div>
-                </Route>
-                {types.map(type => (
-                    <Route path={`${url}/${type}/:table`}>
-                        <ManageWorkflows type={type} onChange={() => workflowService.getDbSummary(setSummary, () => undefined)} />
-                    </Route>
-                ))}
-                <Route>
-                    <Redirect to={url} />
-                </Route>
-            </Switch >
+            <AccordionSection onChange={handleChange("simple-workflows")} expanded={expanded === "simple-workflows"} title="Simple Workflows">
+                <SimpleWorkflows />
+            </AccordionSection>
+
         </>
     )
 }
@@ -87,48 +60,142 @@ const AccordionSection = (props) => {
             >
                 <Typography className={classes.heading}>{props.title}</Typography>
             </AccordionSummary>
-            <AccordionDetails style={{ flexDirection: "column", padding: "0em" }}>
+            <AccordionDetails style={{ flexDirection: "column", padding: "1em" }}>
                 {props.children}
             </AccordionDetails>
         </Accordion>
     )
 }
 
-const WorkflowOverview = (props) => {
-    const { onEdit, summary } = props
+const SimpleWorkflows = (props) => {
+    const [workflows, setWorkflows] = useState([])
+    const [anchorEditMenu, setAnchorEditMenu] = useState(null);
+    const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+    const [openWorkflowDialog, setOpenWorkflowDialog] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const workflowService = new WorkflowService()
+
+    const handleAddedSimpleWorkflow = () => {
+        setOpenWorkflowDialog(false)
+        workflowService.getAllWorkflows(setWorkflows, () => undefined)
+        setSelectedWorkflow(null)
+
+    }
+
+
+    const handleClickEdit = (event, indexOfWorkflow) => {
+        setAnchorEditMenu(event.currentTarget);
+        setSelectedWorkflow(workflows[indexOfWorkflow])
+    }
+
+
+    const handleDelete = () => {
+        setAnchorEditMenu(null);
+
+        const table = selectedWorkflow.table
+        const type = selectedWorkflow.type
+        const name = selectedWorkflow.name
+
+        workflowService.deleteWorkflow(table, type, name,
+            () => setWorkflows(s => s.filter(w => JSON.stringify(w) !== JSON.stringify(selectedWorkflow))),
+            () => undefined)
+    };
+
+    const handleEdit = () => {
+        setAnchorEditMenu(null);
+        setOpenWorkflowDialog(true)
+    }
+
+    const handleChangeActive = () => {
+        setAnchorEditMenu(null);
+
+        const table = selectedWorkflow.table
+        const type = selectedWorkflow.type
+        const name = selectedWorkflow.name
+
+        workflowService.changeActive(table, type, name, !selectedWorkflow.active,
+            () => workflowService.getTableWorkflows(table, type, (data) => setWorkflows(data), () => undefined),
+            () => undefined)
+    };
+
+    useEffect(() => workflowService.getAllWorkflows((data) => {
+        setWorkflows(data);
+        setLoading(false);
+    }, () => undefined), [])
+
+    if(loading) return null
 
     return (
         <div>
-            <TableContainer component={Paper} style={{ maxHeight: "50vh" }}>
-                <Table stickyHeader >
-                    <TableHead >
-                        <TableRow>
-                            <TableCell>Table</TableCell>
-                            <TableCell align="right">Active Workflows</TableCell>
-                            <TableCell align="right">Total Workflows</TableCell>
-                            <TableCell align="right" />
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {summary.map((data) => (
-                            <TableRow key={data.table}>
-                                <TableCell component="th" scope="row">{data.table}</TableCell>
-                                <TableCell align="right">{data.workflows.active}</TableCell>
-                                <TableCell align="right">{data.workflows.total}</TableCell>
-                                <TableCell align="right">
-                                    <Button onClick={() => onEdit(data.table)}>
-                                        <EditIcon />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
+            {workflows.length > 0
+                ?
+                <>
+                    <TableContainer component={Paper} style={{ maxHeight: "50vh" }}>
+                        <Table stickyHeader >
+                            <TableHead >
+                                <TableRow>
+                                    <TableCell>Table</TableCell>
+                                    <TableCell align="right">Workflow Name</TableCell>
+                                    <TableCell align="right">Type</TableCell>
+                                    <TableCell align="right">Number of actions</TableCell>
+                                    <TableCell align="right">Active</TableCell>
+                                    <TableCell align="right">
+                                        <Button onClick={() => setOpenWorkflowDialog(true)}>
+                                            <AddIcon />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {workflows.map((w, i) => (
+                                    <TableRow key={`${w.table}-${w.name}`}>
+                                        <TableCell component="th" scope="row">{w.table}</TableCell>
+                                        <TableCell align="right">{w.name}</TableCell>
+                                        <TableCell align="right">{w.type}</TableCell>
+                                        <TableCell align="right">{w.actions.length}</TableCell>
+                                        <TableCell align="right">{w.active ? "Yes" : "No"}</TableCell>
+                                        <TableCell align="right">
+                                            <Button aria-controls="simple-menu" aria-haspopup="true" onClick={(e) => handleClickEdit(e, i)}>
+                                                <EditIcon />
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
 
-                </Table>
-            </TableContainer>
+                            </TableBody>
+
+                        </Table>
+                    </TableContainer>
+                    <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEditMenu}
+                        keepMounted
+                        open={Boolean(anchorEditMenu)}
+                        onClose={() => setAnchorEditMenu(null)}
+                    >
+                        <MenuItem onClick={() => handleEdit()}>Inspect</MenuItem>
+                        <MenuItem onClick={() => { handleDelete()}}>Delete</MenuItem>
+                        <Divider />
+                        <MenuItem onClick={() => { handleChangeActive()}}>{selectedWorkflow != null && selectedWorkflow.active ? "Deactivate" : "Activate"}</MenuItem>
+                    </Menu>
+                </>
+                :
+                <Grid container justify="center">
+                    <Grid item>
+                        <Button variant="contained" color="primary" style={{ width: "15em" }} onClick={() => setOpenWorkflowDialog(true)}>Create simple workflow</Button>
+                    </Grid>
+                </Grid>
+            }
+            <FullscreenDialog
+                open={openWorkflowDialog}
+                handleClose={() => setOpenWorkflowDialog(false)}
+                title={Boolean(selectedWorkflow) ? "Inspect existing workflow" : "Add a new simple workflow"}
+            >
+                <AddSimpleWorkflow existing={selectedWorkflow} onFinish={handleAddedSimpleWorkflow} />
+            </FullscreenDialog>
+
         </div >
     )
-
 }
 
 export default Workflow;

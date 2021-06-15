@@ -13,9 +13,9 @@ const RowCriterion = props => {
     const { onChange, placeholders, table, value } = props
     const [initialTable, setInitialTable] = useState(table)
     const [columns, setColumns] = useState([])
-    const [criteria, setCriteria] = useState([])
+    const [criteria, setCriteria] = useState((value == undefined ? [] : value))
 
-
+    console.log(value)
     useEffect(() => {
         if (table != null && table.length > 0) {
             new QueryService(table).getSchema(data => {

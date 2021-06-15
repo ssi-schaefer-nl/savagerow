@@ -55,7 +55,7 @@ export default function HorizontalLinearStepper(props) {
                     {steps[activeStep].Component}
                 </Grid>
                 <Grid item>
-                    <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>Back</Button>
+                    <Button disabled={(activeStep === 0) || steps[activeStep].restrictBack} onClick={handleBack} className={classes.button}>Back</Button>
                     <Button
                         variant="contained" color="primary"
                         onClick={handleNext}

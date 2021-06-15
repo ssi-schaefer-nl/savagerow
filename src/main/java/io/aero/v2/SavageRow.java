@@ -40,8 +40,9 @@ public class SavageRow {
         get(Path.Database.ROWS, rowController::getRows);
         get(Path.Database.SCHEMA, TableSchemaController.getSchema);
         get(Path.Database.TABLES, DatabaseController.getTables);
-        get(Path.Workflow.DB_SUMMARY, WorkflowController.getDbSummary);
+        get(Path.Workflow.DB_SUMMARY, WorkflowController.getSummary);
         get(Path.Workflow.TABLE_TYPE, WorkflowController.getTableWorkflows);
+        get(Path.Workflow.ALL, WorkflowController.getAllWorkflows);
     }
 
     private static void setupPostRoutes() {

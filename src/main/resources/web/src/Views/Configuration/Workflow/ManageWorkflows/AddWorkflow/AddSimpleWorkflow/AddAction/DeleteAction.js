@@ -20,12 +20,15 @@ const DeleteAction = props => {
     const [tables, setTables] = useState([])
 
     const [name, setName] = useState(initial == null ? "" : initial.name)
-    const [table, setTable] = useState(initial == null ? "" : initial.table)
-    const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.row)
+    const [table, setTable] = useState("")
+    const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.rowCriteria)
 
     useEffect(() => {
         const queryService = new QueryService("")
-        queryService.getTables(data => setTables(data.data), () => setTables([]))
+        queryService.getTables(data => { 
+            setTables(data.data)
+            if(initial != null) setTable(initial.table)
+        }, () => { if(initial != null) setTable(initial.table)})
     }, [])
 
     const handleSubmit = e => {
@@ -33,7 +36,6 @@ const DeleteAction = props => {
         onSubmit({ name: name, rowCriteria: rowCriteria, table: table, type: "delete" })
     }
 
-    console.log(rowCriteria)
     return (
         <NewActionForm open={open} onSubmit={handleSubmit} onClose={onClose}>
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required />

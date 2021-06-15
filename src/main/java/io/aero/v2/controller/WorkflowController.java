@@ -20,7 +20,7 @@ public class WorkflowController {
     private WorkflowController() {
     }
 
-    public static final Route getDbSummary = (Request request, Response response) -> {
+    public static final Route getSummary = (Request request, Response response) -> {
         List<String> tables = new GetTablesQuery().execute().getResult();
         WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
         List<WorkflowOverviewDTO> summary = tables.stream().map(table -> {
@@ -37,6 +37,11 @@ public class WorkflowController {
         return new ObjectMapper().writeValueAsString(summary);
     };
 
+    public static final Route getAllWorkflows = (Request request, Response response) -> {
+        WorkflowsManager workflowManager = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+        return new ObjectMapper().writeValueAsString(workflowManager.get());
+    };
+
     public static final Route getTableWorkflows = (Request request, Response response) -> {
         String table = request.params(RequestParams.Parameter.Table);
         WorkflowType type = WorkflowType.fromString(request.params(RequestParams.Parameter.WorkflowType));
@@ -51,8 +56,7 @@ public class WorkflowController {
         Workflow workflow = objectMapper.readValue(request.body(), Workflow.class);
 
         WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        if(!workflows.add(type, workflow)) throw new Exception("Delete workflow with this name already exists");
-
+        workflows.add(type, workflow);
         WorkflowsManager.save(workflows);
         return "";
     };

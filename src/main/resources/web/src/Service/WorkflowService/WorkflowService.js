@@ -6,6 +6,12 @@ class WorkflowService {
         this.httpHelper = new HttpHelper();
     }
 
+    getAllWorkflows(onSuccess, onFailure) {
+        this.httpHelper.get(`${this.prefix}/all`)
+            .then(res => { onSuccess(res.data) })
+            .catch(res => { onFailure(res) });
+    }
+
     getDbSummary(onSuccess, onFailure) {
         this.httpHelper.get(this.prefix)
             .then(res => { onSuccess(res.data) })
