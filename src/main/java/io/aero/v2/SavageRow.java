@@ -32,7 +32,7 @@ public class SavageRow {
     }
 
     private static void setupBefore() {
-        before(API_PREFIX + "/*", (request, response) -> Workspace.setCurrentDatabase(request.params(RequestParams.Parameter.Database)));
+        before(API_PREFIX + "/:database/*", (request, response) -> Workspace.setCurrentDatabase(request.params(RequestParams.Parameter.Database)));
     }
 
 
