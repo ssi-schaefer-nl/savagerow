@@ -16,7 +16,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Home from "../Views/Home";
-import Contact from "../Views/Contact";
 import Configure from "../Views/Configuration/Configure";
 import Tables from "../Views/DataTables/Tables";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -179,10 +178,6 @@ export default function OverviewFlow() {
           <ListElement link="/tables" text="Tables" icon={StorageIcon} />
           <ListElement link="/configuration" text="Configuration" icon={SettingsIcon} />
         </List>
-        <Divider />
-        <List>
-          <ListElement link="/contact" text="Contact" icon={InfoIcon} />
-        </List>
       </Drawer>
 
       <main className={classes.content} >
@@ -191,7 +186,6 @@ export default function OverviewFlow() {
         <Switch>
           <Route exact path="/" ><Home/></Route>
           <Route path="/tables" ><Tables/></Route>
-          <Route path="/contact" ><Contact/></Route>
           <Route path="/configuration"><Configure/></Route>
         </Switch>
 

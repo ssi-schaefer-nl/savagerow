@@ -1,10 +1,9 @@
-import { Button, Grid, Paper } from "@material-ui/core"
-import { Divider } from "@material-ui/core"
+import { Button, Grid } from "@material-ui/core"
 import { useState, useEffect } from "react"
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import { TextField, Typography } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import { InputLabel, Select } from '@material-ui/core';
 
 import QueryService from '../../../../../../../Service/QueryService/QueryService';

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Grid, TextField, Typography } from "@material-ui/core";
+import { TextField, Typography } from "@material-ui/core";
 import HorizontalLinearStepper from "../../../../../../Components/HorizontalLinearStepper/HorizontalLinearStepper"
 import CreateWorkflowActions from "./CreateWorkflowActions/CreateWorkflowActions"
 import WorkflowService from "../../../../../../Service/WorkflowService/WorkflowService";
 import QueryService from "../../../../../../Service/QueryService/QueryService";
-import { InputLabel, Select } from '@material-ui/core';
+import { Select } from '@material-ui/core';
 import { MenuItem } from "react-contextmenu";
 
 export default function AddSimpleWorkflow(props) {
@@ -75,14 +75,16 @@ export default function AddSimpleWorkflow(props) {
         {
             "name": "Create actions",
             "Component": <CreateWorkflowActions actions={actions} table={table} onChange={setActions} />,
-            "nextAllowed": actions.length > 0
-        },
-        {
-            "name": "Add conditions",
-            "Component": <p>Not Implemented yet</p>,
+            "nextAllowed": actions.length > 0,
             "nextButton": "Save",
             "onNext": saveWorkflow
         },
+        // {
+        //     "name": "Add conditions",
+        //     "Component": <p>Not Implemented yet</p>,
+        //     "nextButton": "Save",
+        //     "onNext": saveWorkflow
+        // },
         {
             "name": "Finalize",
             "Component": <FinalizeStep message={finalStatus} saving={saving} valid={valid} />,

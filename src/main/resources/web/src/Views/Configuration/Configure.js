@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Typography from '@material-ui/core/Typography';
 
-import { CircularProgress, Divider, Grid, Paper, Table, TableCell, TableContainer, TableRow } from "@material-ui/core";
+import { Divider } from "@material-ui/core";
 import DatabaseSelect from "../../Components/DatabaseSelect/DatabaseSelect";
-import EditIcon from '@material-ui/icons/Edit';
 import Workflow from "./Workflow/Workflow";
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,8 +10,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
-import TabPanel from "../../Components/TabPanel/TabPanel";
-import { Link, Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 
 function createConfigSection(name, PanelComponent) {
     return { "name": name, "component": PanelComponent }
@@ -22,7 +20,7 @@ const ConfigurationSections = [
     createConfigSection("Overview", <>
         <Typography>Nothing here yet.</Typography>
         <Divider style={{ margin: "1em 0em 2em 0em" }} />
-        <DatabaseSelect />
+
     </>),
     createConfigSection("Database", <>
         <Typography>This section allows configuration related to the databases.</Typography>

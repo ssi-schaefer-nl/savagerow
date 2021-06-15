@@ -71,6 +71,7 @@ const SimpleWorkflows = (props) => {
     const [workflows, setWorkflows] = useState([])
     const [anchorEditMenu, setAnchorEditMenu] = useState(null);
     const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+    const [existingWorkflow, setExistingWorkflow] = useState(null);
     const [openWorkflowDialog, setOpenWorkflowDialog] = useState(false)
     const [loading, setLoading] = useState(true)
     const workflowService = new WorkflowService()
@@ -79,6 +80,7 @@ const SimpleWorkflows = (props) => {
         setOpenWorkflowDialog(false)
         workflowService.getAllWorkflows(setWorkflows, () => undefined)
         setSelectedWorkflow(null)
+        setExistingWorkflow(null)
 
     }
 
@@ -103,6 +105,7 @@ const SimpleWorkflows = (props) => {
 
     const handleEdit = () => {
         setAnchorEditMenu(null);
+        setExistingWorkflow(selectedWorkflow)
         setOpenWorkflowDialog(true)
     }
 
@@ -188,10 +191,10 @@ const SimpleWorkflows = (props) => {
             }
             <FullscreenDialog
                 open={openWorkflowDialog}
-                handleClose={() => setOpenWorkflowDialog(false)}
+                handleClose={() => {setExistingWorkflow(null); setOpenWorkflowDialog(false)}}
                 title={Boolean(selectedWorkflow) ? "Inspect existing workflow" : "Add a new simple workflow"}
             >
-                <AddSimpleWorkflow existing={selectedWorkflow} onFinish={handleAddedSimpleWorkflow} />
+                <AddSimpleWorkflow existing={existingWorkflow} onFinish={handleAddedSimpleWorkflow} />
             </FullscreenDialog>
 
         </div >

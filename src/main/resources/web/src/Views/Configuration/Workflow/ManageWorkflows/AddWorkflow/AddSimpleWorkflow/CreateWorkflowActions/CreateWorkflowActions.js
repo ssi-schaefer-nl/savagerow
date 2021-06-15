@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 import Button from '@material-ui/core/Button';
-import { Grid, makeStyles, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@material-ui/core";
+import {  Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
-import SimpleFormDialog from "../../../../../../../Components/SimpleFormDialog/SimpleFormDialog";
 import { MenuItem } from "react-contextmenu";
 import QueryService from "../../../../../../../Service/QueryService/QueryService";
-import NewActionForm from "../AddAction/NewActionForm";
-import EmailAction from "../AddAction/EmailAction";
 import InsertAction from "../AddAction/InsertAction";
 import UpdateAction from "../AddAction/UpdateAction";
 import DeleteAction from "../AddAction/DeleteAction";
@@ -58,9 +55,7 @@ const CreateWorkflowActions = props => {
             setActionSubmit(() => (x) => replaceAction(step, x))
             setEditAction(a)
             setActionType(a.type)
-
         }
-
     }
 
     const handleEdit = (type, step) => {
@@ -77,9 +72,7 @@ const CreateWorkflowActions = props => {
     return (
         <div>
             <Typography variant="h6">Create actions for the workflow</Typography>
-            {actions != undefined &&
-                <ActionList onAdd={handleAdd} onEdit={handleEdit} actions={actions}/>
-            }
+            {actions != undefined && <ActionList onAdd={handleAdd} onEdit={handleEdit} actions={actions}/>}
 
             <ActionDialogSwitch
                 type={actionType}
@@ -87,9 +80,7 @@ const CreateWorkflowActions = props => {
                 onSubmit={actionSubmit}
                 onClose={handleCloseDialog}
                 initial={editAction}
-
             />
-
         </div >
     )
 
@@ -100,7 +91,7 @@ const ActionDialogSwitch = props => {
     const { type, placeholders, onSubmit, initial, onClose } = props
 
     switch (type) {
-        case "email": return <EmailAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
+        // case "email": return <EmailAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "insert": return <InsertAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "update": return <UpdateAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "delete": return <DeleteAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
@@ -205,8 +196,6 @@ const SelectActionTypeMenu = props => {
             transformOrigin={{ vertical: 'top', horizontal: 'center', }}
         >
             <MenuItem disabled>Add Action</MenuItem>
-            <MenuItem onClick={() => handleClick('email')} >E-mail</MenuItem>
-            <MenuItem disabled onClick={() => handleClick('alert')}>Alert</MenuItem>
             <MenuItem onClick={() => handleClick('insert')}>Insert</MenuItem>
             <MenuItem onClick={() => handleClick('update')}>Update</MenuItem>
             <MenuItem onClick={() => handleClick('delete')}>Delete</MenuItem>

@@ -2,16 +2,17 @@ package io.aero.v2;
 
 import static spark.Spark.*;
 
+import com.fasterxml.jackson.core.JacksonException;
 import io.aero.v2.controller.DatabaseController;
 import io.aero.v2.controller.TableRowController;
 import io.aero.v2.controller.TableSchemaController;
 import io.aero.v2.controller.WorkflowController;
-import io.aero.v2.util.Path;
 import io.aero.v2.util.RequestParams;
 import io.aero.v2.util.Workspace;
 import io.aero.v2.workflowqueue.WorkflowTaskQueue;
 
 public class SavageRow {
+    private static String API_PREFIX = "/api/v1";
     private static TableRowController rowController;
 
     public static void main(String[] args) {
@@ -31,46 +32,46 @@ public class SavageRow {
     }
 
     private static void setupBefore() {
-        before(Path.Wildcard.ALL, (request, response) -> Workspace.setCurrentDatabase(request.params(RequestParams.Parameter.Database)));
+        before(API_PREFIX + "/*", (request, response) -> Workspace.setCurrentDatabase(request.params(RequestParams.Parameter.Database)));
     }
 
 
     private static void setupGetRoutes() {
-        get(Path.Database.DATABASES, DatabaseController.getAllDatabases);
-        get(Path.Database.ROWS, rowController::getRows);
-        get(Path.Database.SCHEMA, TableSchemaController.getSchema);
-        get(Path.Database.TABLES, DatabaseController.getTables);
-        get(Path.Workflow.DB_SUMMARY, WorkflowController.getSummary);
-        get(Path.Workflow.TABLE_TYPE, WorkflowController.getTableWorkflows);
-        get(Path.Workflow.ALL, WorkflowController.getAllWorkflows);
+        get(API_PREFIX + "/:database", DatabaseController.getAllDatabases);
+        get(API_PREFIX + "/:database/database/:table", rowController::getRows);
+        get(API_PREFIX + "/:database/database/:table/schema", TableSchemaController.getSchema);
+        get(API_PREFIX + "/:database/database", DatabaseController.getTables);
+        get(API_PREFIX + "/:database/workflow", WorkflowController.getSummary);
+        get(API_PREFIX + "/:database/workflow/:table/:type", WorkflowController.getTableWorkflows);
+        get(API_PREFIX + "/:database/workflow/all", WorkflowController.getAllWorkflows);
     }
 
     private static void setupPostRoutes() {
-        post(Path.Database.DATABASE, DatabaseController.createDatabase);
-        post(Path.Database.COLUMN, TableSchemaController.addColumn);
-        post(Path.Database.ROWS, rowController::addRows);
-        post(Path.Workflow.TYPE, WorkflowController.addWorkflow);
-        post(Path.Workflow.WORKFLOW_ACTIVE, WorkflowController.setActive);
+        post(API_PREFIX + "/:database", DatabaseController.createDatabase);
+        post(API_PREFIX + "/:database/:table/column", TableSchemaController.addColumn);
+        post(API_PREFIX + "/:database/:table", rowController::addRows);
+        post(API_PREFIX + "/:database/workflow/:type", WorkflowController.addWorkflow);
+        post(API_PREFIX + "/:database/workflow/:table/:type/:name/active/:active", WorkflowController.setActive);
 
     }
 
     private static void setupPutRoutes() {
-        put(Path.Database.ROWS_ID, rowController::updateRow);
-        put(Path.Database.COLUMN_NAME, TableSchemaController.renameColumn);
+        put(API_PREFIX + "/:database/database/:table/:row", rowController::updateRow);
+        put(API_PREFIX + "/:database/:table/column/:column", TableSchemaController.renameColumn);
     }
 
     private static void setupDeleteRoutes() {
-        delete(Path.Database.ROWS_ID, rowController::deleteRow);
-        delete(Path.Database.COLUMN_NAME, TableSchemaController.deleteColumn);
-        delete(Path.Workflow.WORKFLOW, WorkflowController.deleteWorkflow);
+        delete(API_PREFIX + "/:database/database/:table/:row", rowController::deleteRow);
+        delete(API_PREFIX + "/:database/:table/column/:column", TableSchemaController.deleteColumn);
+        delete(API_PREFIX + "/:database/workflow/:table/:type/:name", WorkflowController.deleteWorkflow);
 
     }
 
     private static void setupExceptions() {
-//        exception(JacksonException.class, (e, request, response) -> {
-//            response.status(400);
-//            response.body("Error parsing JSON");
-//        });
+        exception(JacksonException.class, (e, request, response) -> {
+            response.status(400);
+            response.body("Error parsing JSON");
+        });
 
         exception(Exception.class, (e, request, response) -> {
             response.status(500);
