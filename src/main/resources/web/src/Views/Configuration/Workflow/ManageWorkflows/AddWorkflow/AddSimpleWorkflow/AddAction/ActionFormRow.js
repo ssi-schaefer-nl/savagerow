@@ -54,7 +54,7 @@ const ActionFormRow = props => {
                                                 value={value[c.name]}
                                                 required={props.requireValues && (!c.pk && !c.nullable)}
                                                 InputLabelProps={{ shrink: true }}
-                                                InputProps={{ disableUnderline: true, autoComplete: 'new-password' }}
+                                                InputProps={{ disableUnderline: true }}
                                                 autoComplete='off'
                                                 onChange={(e) => onChange({ ...value, [c.name]: e.target.value })}
                                             />
