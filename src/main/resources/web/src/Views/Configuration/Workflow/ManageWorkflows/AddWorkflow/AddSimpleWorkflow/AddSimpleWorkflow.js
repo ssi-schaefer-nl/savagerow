@@ -107,7 +107,7 @@ const WorkflowStepName = props => {
     return (
         <div>
             <Typography variant="h6">Enter a name for the workflow</Typography>
-            <TextField id="standard-basic" label="Workflow name" value={value} onChange={(e) => onChange(e.target.value)} />
+            <TextField id="standard-basic" label="Workflow name" value={value} autoComplete='off' onChange={(e) => onChange(e.target.value)} />
         </div>
     )
 }
