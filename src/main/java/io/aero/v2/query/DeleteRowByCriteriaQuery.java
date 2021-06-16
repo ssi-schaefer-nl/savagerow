@@ -2,13 +2,12 @@ package io.aero.v2.query;
 
 
 import io.aero.v2.model.action.RowCriteria;
-import io.aero.v2.util.OperatorToSQLComparator;
+import io.aero.v2.util.OperatorTransformer;
 import io.aero.v2.util.SQLiteDataSource;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DeleteRowByCriteriaQuery {
@@ -29,7 +28,7 @@ public class DeleteRowByCriteriaQuery {
 
     public DeleteRowByCriteriaQuery generate() throws SQLException {
         String whereClause = criteria.stream()
-                .map(c -> String.format("%s %s ?", c.getColumn(), OperatorToSQLComparator.convert(c.getOperator())))
+                .map(c -> String.format("%s %s ?", c.getColumn(), OperatorTransformer.convertToSql(c.getOperator())))
                 .collect(Collectors.joining(" AND "));
 
 

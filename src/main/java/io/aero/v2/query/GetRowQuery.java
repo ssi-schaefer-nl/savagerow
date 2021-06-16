@@ -1,5 +1,7 @@
 package io.aero.v2.query;
 
+import io.aero.v2.model.action.RowCriteria;
+import io.aero.v2.util.OperatorTransformer;
 import io.aero.v2.util.SQLiteDataSource;
 
 import java.sql.PreparedStatement;
@@ -9,12 +11,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GetRowQuery {
     private String table;
     private Long rowId;
     private PreparedStatement preparedStatement;
     private List<Map<String, String>> result;
+    private List<RowCriteria> criteria;
 
     public String getTable() {
         return table;
@@ -40,8 +44,18 @@ public class GetRowQuery {
             sql = sql.concat(" where rowid=?");
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
             preparedStatement.setLong(1, rowId);
-        }
-        else {
+        } else if(criteria != null) {
+            String whereClause = criteria.stream()
+                    .map(c -> String.format("%s %s ?", c.getColumn(), OperatorTransformer.convertToSql(c.getOperator())))
+                    .collect(Collectors.joining(" AND "));
+            sql = sql.concat(String.format(" WHERE %s", whereClause));
+            int nextParamIndex = 0;
+            preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+            for (RowCriteria c : criteria) {
+                nextParamIndex++;
+                preparedStatement.setString(nextParamIndex, c.getRequired());
+            }
+        } else {
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
         }
 
@@ -65,5 +79,10 @@ public class GetRowQuery {
 
     public List<Map<String, String>> getResult() {
         return result;
+    }
+
+    public GetRowQuery setCriteria(List<RowCriteria> criteria) {
+        this.criteria = criteria;
+        return this;
     }
 }

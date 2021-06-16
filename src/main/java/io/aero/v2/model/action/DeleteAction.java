@@ -1,13 +1,10 @@
 package io.aero.v2.model.action;
 
-import io.aero.v2.dto.RowDTO;
 import io.aero.v2.query.DeleteRowByCriteriaQuery;
-import io.aero.v2.query.UpdateRowByCriteriaQuery;
 import io.aero.v2.util.StringPlaceholderTransformer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +13,8 @@ public class DeleteAction extends CrudAction {
     private List<RowCriteria> rowCriteria;
 
     @Override
-    public void perform(Map<String, String> data) {
-        List<RowCriteria> transformedRowCriteria = transformPlaceholders(data, rowCriteria);
+    public void perform(Map<String, String> oldData) {
+        List<RowCriteria> transformedRowCriteria = transformPlaceholders(oldData, rowCriteria);
 
         try {
             new DeleteRowByCriteriaQuery().setTable(table).setCriteria(transformedRowCriteria).generate().execute();

@@ -13,7 +13,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const datatypes = [
     "text",
-    "number",
+    "integer",
+    "real"
 ]
 
 export default function DefineColumnDialog(props) {
@@ -106,7 +107,7 @@ export default function DefineColumnDialog(props) {
                                         id="default"
                                         required
                                         label="Default"
-                                        type={dataType}
+                                        type={dataType === "text" ? "text" : "number"}
                                         value={defaultValue}
                                         onChange={(e) => setDefaultValue(e.target.value)}
                                     />

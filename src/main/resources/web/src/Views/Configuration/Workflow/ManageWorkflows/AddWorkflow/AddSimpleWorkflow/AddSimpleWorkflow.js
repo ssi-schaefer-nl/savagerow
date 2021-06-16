@@ -6,6 +6,7 @@ import WorkflowService from "../../../../../../Service/WorkflowService/WorkflowS
 import QueryService from "../../../../../../Service/QueryService/QueryService";
 import { Select } from '@material-ui/core';
 import { MenuItem } from "react-contextmenu";
+import WorkflowConditions from "../WorkflowCondition/WorkflowCondition";
 
 export default function AddSimpleWorkflow(props) {
     const { onFinish, existing } = props
@@ -13,15 +14,16 @@ export default function AddSimpleWorkflow(props) {
     const [saving, setSaving] = useState(false)
     const [valid, setValid] = useState(false)
     const [finalStatus, setFinalStatus] = useState(null)
-    console.log(existing)
+
     const [name, setName] = useState(existing == null ? "" : existing.name);
     const [table, setTable] = useState(existing == null ? "" : existing.table);
     const [type, setType] = useState(existing == null ? "" : existing.type.toLowerCase());
     const [actions, setActions] = useState(existing == null ? [] : existing.actions);
+    const [conditions, setConditions] = useState(existing == null ? [] : existing.conditions);
 
 
     const saveWorkflow = () => {
-        const data = { table: table, name: name, actions: actions, active: true, type: type }
+        const data = { table: table, name: name, actions: actions, active: true, type: type, conditions: conditions }
         const workflowService = new WorkflowService()
         setSaving(true)
         setFinalStatus("Saving..")
@@ -76,15 +78,13 @@ export default function AddSimpleWorkflow(props) {
             "name": "Create actions",
             "Component": <CreateWorkflowActions actions={actions} table={table} onChange={setActions} />,
             "nextAllowed": actions.length > 0,
+        },
+        {
+            "name": "Add conditions",
+            "Component": <WorkflowConditions onChange={(c) => {console.log(c); setConditions(c);}} conditions={conditions} table={table}/> ,
             "nextButton": "Save",
             "onNext": saveWorkflow
         },
-        // {
-        //     "name": "Add conditions",
-        //     "Component": <p>Not Implemented yet</p>,
-        //     "nextButton": "Save",
-        //     "onNext": saveWorkflow
-        // },
         {
             "name": "Finalize",
             "Component": <FinalizeStep message={finalStatus} saving={saving} valid={valid} />,
@@ -95,6 +95,8 @@ export default function AddSimpleWorkflow(props) {
         },
 
     ]
+
+    
     return <HorizontalLinearStepper steps={Boolean(existing) ? inspectingSteps : editingSteps} onFinish />
 }
 
@@ -124,7 +126,7 @@ const WorkflowStepTrigger = props => {
         <div>
             <Typography variant="h6">Specify the trigger that must initiate the workflow</Typography>
             <div style={{ margin: "2em" }} >
-                Trigger the workflow when event of type:
+                Trigger the workflow when we 
                     <Select
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "10em", margin: "0 1em" }}
@@ -135,7 +137,7 @@ const WorkflowStepTrigger = props => {
 
                     {["delete", "update", "insert"].map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
                 </Select>
-                    Occurs in table: <nbsp />
+                    a row in table <nbsp />
                 <Select
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "10em", margin: "0 1em" }}

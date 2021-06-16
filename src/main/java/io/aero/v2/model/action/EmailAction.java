@@ -35,7 +35,7 @@ public class EmailAction extends Action {
     }
 
     @Override
-    public void perform(Map<String, String> data) {
+    public void perform(Map<String, String> oldData) {
         System.out.println(String.format("Recipient: %s\nSubject: %s\nBody: %s", email, subject, body));
     }
 }

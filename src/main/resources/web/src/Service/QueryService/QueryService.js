@@ -15,7 +15,6 @@ class QueryService {
 
     getSchema(onSuccess, onFailure) {
         const url = `${this.prefix}/${this.table}/schema`
-        console.log(url)
         this.httpHelper.get(url)
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) })

@@ -18,7 +18,7 @@ export default function AddColumn(props) {
                 onSuccess()
                 onClose()
             },
-            (e) => { console.log(e); setError(e) })
+            (e) => { console.log(e.data); setError(e.data) })
     }
 
     return (

@@ -13,8 +13,8 @@ public class InsertAction extends CrudAction {
     private Map<String, String> row;
 
     @Override
-    public void perform(Map<String, String> data) {
-        Map<String, String> transformedRow = transformPlaceholders(data, row);
+    public void perform(Map<String, String> oldData) {
+        Map<String, String> transformedRow = transformPlaceholders(oldData, row);
         try {
             new InsertRowQuery().setTable(table).setData(new RowDTO().setRow(transformedRow)).generate().execute();
         } catch (SQLException throwables) {

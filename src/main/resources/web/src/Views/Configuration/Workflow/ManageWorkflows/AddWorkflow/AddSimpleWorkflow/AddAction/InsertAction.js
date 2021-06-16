@@ -1,9 +1,9 @@
-import { Divider } from "@material-ui/core"
+import { Divider, Grid } from "@material-ui/core"
 import { useState, useEffect } from "react"
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import ActionFormTextArea from "./ActionFormTextArea"
 import ActionFormTextField from "./ActionFormTextField"
-import NewActionForm from "./NewActionForm"
+import PopupForm from "./PopupForm"
 
 
 import { TextField, Typography } from '@material-ui/core';
@@ -33,25 +33,34 @@ const InsertAction = props => {
     }
 
     return (
-        <NewActionForm open={open} onSubmit={handleSubmit} onClose={onClose}>
-            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required />
+        <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
+            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
 
             <Divider />
-            <InputLabel shrink required id="table">Table</InputLabel>
-            <Select
-                InputLabelProps={{ shrink: true }}
-                style={{ width: "70%" }}
-                onChange={(e) => setTable(e.target.value)}
-                value={table}
-                required
-            >
-                {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-            </Select>
-            <Typography style={{ margin: "1em 0em" }}>Define the fields for the row</Typography>
+            <Grid container direction="row" alignItems="center" spacing={2}>
+                <Grid item>
+                    <Typography>Insert a new row into table </Typography>
+                </Grid>
+                <Grid item>
+                    <Select
+                        InputLabelProps={{ shrink: true }}
+                        style={{ minWidth: "30%" }}
+                        onChange={(e) => setTable(e.target.value)}
+                        value={table}
+                        required
+                    >
+                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
+                    </Select>
+                </Grid>
+            </Grid>
+            {table.length > 0 &&
+                <>
+                    <Typography>With the following fields</Typography>
 
-            <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
-
-        </NewActionForm>
+                    <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
+                </>
+            }
+        </PopupForm>
     )
 }
 

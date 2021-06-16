@@ -15,7 +15,6 @@ import io.aero.v2.workflowqueue.WorkflowTaskQueue;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -55,7 +54,12 @@ public class TableRowController {
         RowDTO row = new ObjectMapper().readValue(request.body(), RowDTO.class);
         new UpdateRowQuery().setTable(table).setRow(row).setRowId(Long.parseLong(rowid)).generate().execute();
 
-        taskQueue.feed(new WorkflowTask().setData(row.getRow()).setTable(table).setType(WorkflowType.UPDATE));
+        WorkflowTask task = new WorkflowTask()
+                .setData(row.getRow())
+                .setTable(table)
+                .setType(WorkflowType.UPDATE);
+
+        taskQueue.feed(task);
         return "";
     }
 

@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 
 import { grey } from '@material-ui/core/colors';
 import QueryService from '../../../../../../../Service/QueryService/QueryService';
+import TableColumnContextMenu from "../../../../../../../Components/TableColumnContextMenu/TableColumnContextMenu";
 
 const ActionFormRow = props => {
     const { onChange, placeholders, table, value } = props
@@ -47,7 +48,7 @@ const ActionFormRow = props => {
                             <TableRow key={1}>
                                 {value != null && columns.map(c => (
                                     <TableCell size="small" style={{ padding: "0em", margin: "0em", border: "1px solid", borderColor: grey[200] }}>
-                                        <ContextMenuTrigger id={contextMenuId} collect={() => setAppender(() => (x) => onChange({ ...value, [c.name]: value != undefined ? value[c.name] + x : x }))}>
+                                        <ContextMenuTrigger id={`contextmenu-${contextMenuId}`} collect={() => setAppender(() => (x) => onChange({ ...value, [c.name]: value != undefined ? value[c.name] + x : x }))}>
                                             <TextField
                                                 id={c.name}
                                                 value={value[c.name]}
@@ -58,6 +59,7 @@ const ActionFormRow = props => {
                                                 onChange={(e) => onChange({ ...value, [c.name]: e.target.value })}
                                             />
                                         </ContextMenuTrigger>
+
                                     </TableCell>
                                 ))}
                             </TableRow>
@@ -65,13 +67,11 @@ const ActionFormRow = props => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+                <TableColumnContextMenu id={`contextmenu-${contextMenuId}`} onClick={(f) => appender(`{${f}}`) } placeholders={placeholders} />
 
 
-                <ContextMenu id={contextMenuId}>
-                    <MenuItem disabled><b>Insert field placeholder</b></MenuItem>
-                    <MenuItem divider />
-                    {placeholders.map(f => (<MenuItem onClick={(e) => { console.log(e); appender(`{${f}} `); }}>{f}</MenuItem>))}
-                </ContextMenu>
+
+
             </>
         )
     }

@@ -1,6 +1,5 @@
 package io.aero.v2.workflowqueue;
 
-import io.aero.v2.model.Workflow;
 import io.aero.v2.model.WorkflowType;
 
 import java.util.Map;
@@ -10,7 +9,6 @@ public class WorkflowTask {
     private String table;
     private WorkflowType type;
 
-//    private Workflow workflow;
 
     public Map<String, String> getData() {
         return data;

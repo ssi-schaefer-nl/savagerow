@@ -76,7 +76,7 @@ const CreateWorkflowActions = props => {
 
             <ActionDialogSwitch
                 type={actionType}
-                placeholders={tableColumns != null ? tableColumns.map(c => c.name) : []}
+                placeholders={{table: table, values: tableColumns != null ? tableColumns.map(c => c.name) : []}}
                 onSubmit={actionSubmit}
                 onClose={handleCloseDialog}
                 initial={editAction}

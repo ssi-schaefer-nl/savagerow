@@ -1,9 +1,9 @@
-import { Divider } from "@material-ui/core"
+import { Divider, Grid } from "@material-ui/core"
 import { useState, useEffect } from "react"
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import ActionFormTextArea from "./ActionFormTextArea"
 import ActionFormTextField from "./ActionFormTextField"
-import NewActionForm from "./NewActionForm"
+import PopupForm from "./PopupForm"
 
 
 import { TextField, Typography } from '@material-ui/core';
@@ -37,27 +37,32 @@ const DeleteAction = props => {
     }
 
     return (
-        <NewActionForm open={open} onSubmit={handleSubmit} onClose={onClose}>
-            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required />
+        <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
+            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action"/>
 
             <Divider />
-            <InputLabel shrink required id="table">Table</InputLabel>
-            <Select
-                InputLabelProps={{ shrink: true }}
-                style={{ width: "70%" }}
-                onChange={(e) => setTable(e.target.value)}
-                value={table}
-                required
-            >
-                
-                {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-            </Select>
+            <Grid container direction="row" alignItems="center" spacing={2}>
+                <Grid item>
+                    <Typography>Delete one or more rows from table </Typography>
+                </Grid>
+                <Grid item>
+                    <Select
+                        InputLabelProps={{ shrink: true }}
+                        style={{ minWidth: "30%" }}
+                        onChange={(e) => setTable(e.target.value)}
+                        value={table}
+                        required
+                    >
+                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
+                    </Select>   
+                </Grid>
+            </Grid>
             {table.length > 0 && <>
-                <Typography style={{ marginTop: "1em" }}>Define the fields that must match with a row in order to delete it</Typography>
+                <Typography >If they match the following criteria</Typography>
                 <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
             </>}
 
-        </NewActionForm>
+        </PopupForm>
     )
 }
 

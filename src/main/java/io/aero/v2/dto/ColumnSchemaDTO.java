@@ -54,4 +54,14 @@ public class ColumnSchemaDTO {
     public SQLiteDatatype getDatatype() {
         return datatype;
     }
+
+    public ColumnSchemaDTO setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+        return this;
+    }
+
+    public ColumnSchemaDTO setDatatype(SQLiteDatatype datatype) {
+        this.datatype = datatype;
+        return this;
+    }
 }

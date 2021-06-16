@@ -48,8 +48,8 @@ public class SavageRow {
 
     private static void setupPostRoutes() {
         post(API_PREFIX + "/:database", DatabaseController.createDatabase);
-        post(API_PREFIX + "/:database/:table/column", TableSchemaController.addColumn);
-        post(API_PREFIX + "/:database/:table", rowController::addRows);
+        post(API_PREFIX + "/:database/database/:table/column", TableSchemaController.addColumn);
+        post(API_PREFIX + "/:database/database/:table", rowController::addRows);
         post(API_PREFIX + "/:database/workflow/:type", WorkflowController.addWorkflow);
         post(API_PREFIX + "/:database/workflow/:table/:type/:name/active/:active", WorkflowController.setActive);
 
@@ -57,21 +57,21 @@ public class SavageRow {
 
     private static void setupPutRoutes() {
         put(API_PREFIX + "/:database/database/:table/:row", rowController::updateRow);
-        put(API_PREFIX + "/:database/:table/column/:column", TableSchemaController.renameColumn);
+        put(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.renameColumn);
     }
 
     private static void setupDeleteRoutes() {
         delete(API_PREFIX + "/:database/database/:table/:row", rowController::deleteRow);
-        delete(API_PREFIX + "/:database/:table/column/:column", TableSchemaController.deleteColumn);
+        delete(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.deleteColumn);
         delete(API_PREFIX + "/:database/workflow/:table/:type/:name", WorkflowController.deleteWorkflow);
 
     }
 
     private static void setupExceptions() {
-        exception(JacksonException.class, (e, request, response) -> {
-            response.status(400);
-            response.body("Error parsing JSON");
-        });
+//        exception(JacksonException.class, (e, request, response) -> {
+//            response.status(400);
+//            response.body("Error parsing JSON");
+//        });
 
         exception(Exception.class, (e, request, response) -> {
             response.status(500);

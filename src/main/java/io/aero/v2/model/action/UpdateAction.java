@@ -1,38 +1,42 @@
 package io.aero.v2.model.action;
 
-import io.aero.v2.dto.RowDTO;
-import io.aero.v2.query.UpdateRowByCriteriaQuery;
+import io.aero.v2.query.UpdateRowsByCriteriaAndTransformActions;
 import io.aero.v2.util.StringPlaceholderTransformer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UpdateAction extends CrudAction {
     private String table;
     private List<RowCriteria> rowCriteria;
-    private Map<String, String> row;
+    private List<FieldUpdate> fieldUpdates;
 
     @Override
     public void perform(Map<String, String> data) {
         List<RowCriteria> transformedRowCriteria = transformPlaceholdersCriteria(data, rowCriteria);
-        Map<String, String> transformedRow = transformPlaceholders(data, row);
+        List<FieldUpdate> transformedFieldUpdates = transformPlaceholdersFieldupdates(data, fieldUpdates);
 
         try {
-            new UpdateRowByCriteriaQuery().setTable(table).setRow(new RowDTO().setRow(transformedRow)).setCriteria(transformedRowCriteria).generate().execute();
+            new UpdateRowsByCriteriaAndTransformActions()
+                    .setTable(table)
+                    .setCriteria(transformedRowCriteria)
+                    .setFieldUpdates(transformedFieldUpdates)
+                    .generate()
+                    .execute();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
-    private Map<String, String> transformPlaceholders(Map<String, String> data, Map<String, String> target) {
-        Map<String, String> temp = new HashMap<>();
-        target.forEach((key, value) -> {
-            String t = StringPlaceholderTransformer.transform(value, data);
-            temp.put(key, t);
-        });
+    private List<FieldUpdate> transformPlaceholdersFieldupdates(Map<String, String> data, List<FieldUpdate> target) {
+        List<FieldUpdate> temp = new ArrayList<>();
+        for(FieldUpdate fieldUpdate : target) {
+            String t = StringPlaceholderTransformer.transform(fieldUpdate.getValue(), data);
+            temp.add(new FieldUpdate().setColumn(fieldUpdate.getColumn()).setAction(fieldUpdate.getAction()).setValue(t));
+
+        }
         return temp;
     }
 
@@ -46,12 +50,12 @@ public class UpdateAction extends CrudAction {
         return temp;
     }
 
-    public Map<String, String> getRow() {
-        return row;
+    public List<FieldUpdate> getFieldUpdates() {
+        return fieldUpdates;
     }
 
-    public UpdateAction setRow(Map<String, String> row) {
-        this.row = row;
+    public UpdateAction setFieldUpdates(List<FieldUpdate> fieldUpdates) {
+        this.fieldUpdates = fieldUpdates;
         return this;
     }
 

@@ -24,8 +24,8 @@ const useStyles = makeStyles({
 
 
 
-function NewActionForm(props) {
-    const { onClose, open, onSubmit, children } = props;
+function PopupForm(props) {
+    const { onClose, open, onSubmit, children, title } = props;
     const classes = useStyles();
 
 
@@ -35,7 +35,7 @@ function NewActionForm(props) {
                 <IconButton edge="start" onClick={onClose} aria-label="close">
                     <CloseIcon />
                 </IconButton>
-                <DialogTitle id="simple-dialog-title">Create a new action</DialogTitle>
+                <DialogTitle id="simple-dialog-title">{title}</DialogTitle>
 
             </Toolbar>
 
@@ -62,8 +62,8 @@ function NewActionForm(props) {
 
 
 
-NewActionForm.propTypes = {
+PopupForm.propTypes = {
     open: PropTypes.bool.isRequired,
 };
 
-export default NewActionForm
+export default PopupForm
