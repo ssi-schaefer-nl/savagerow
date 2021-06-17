@@ -1,5 +1,5 @@
 ## Savagerow
-Opensource Alternative to building linear workflow based lowcode/nocode apps.
+Opensource Alternative for building UI-based linear workflow lowcode/nocode apps.
 
 ![https://circleci.com/gh/ssi-schaefer-nl/savagerow](https://circleci.com/gh/ssi-schaefer-nl/savagerow.svg?style=svg)
 
