@@ -1,6 +1,7 @@
 ## Savagerow
 Opensource Alternative to building fast workflow based lowcode/nocode apps.
-[![SavageRow](https://circleci.com/gh/ssi-schaefer-nl/savagerow.svg?style=svg)](https://circleci.com/gh/ssi-schaefer-nl)
+![https://circleci.com/gh/ssi-schaefer-nl/savagerow](https://circleci.com/gh/ssi-schaefer-nl/savagerow.svg?style=svg)
+
 ### Features
 
 ### Getting Started
