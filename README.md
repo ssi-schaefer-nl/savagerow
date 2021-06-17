@@ -9,7 +9,7 @@ Most of the users came from the world of spreadsheets and flatfiles. Existing ER
 With that in mind we started the journey of savagerow, inspired by airtable and other lowcode/nocode platforms.
 Lot of installation in warehouses, industrial infrastructure are airgapped, therefore you can deploy the platform on-premise.
 
-We see the usage of this platform beyond ERP systems, logistic process etc. As the product reached minimum viable product status, therefore we decided to opensource it.
+We see the usage of this platform beyond ERP systems, logistic process etc. As the product reached minimum viable product status, therefore we decided to publish it.
  
 ### Features    
 
