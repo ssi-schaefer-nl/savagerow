@@ -16,7 +16,6 @@ public class DataManipulationController {
     @Autowired
     WorkspaceService workspaceService;
 
-
     @PostMapping(value = "/api/manipulate/{database}/{table}/delete", consumes = "application/json")
     public ResponseEntity<?>  tableDeleteRow(@RequestBody RowDTO row, @PathVariable String database, @PathVariable String table) throws Exception {
         try {

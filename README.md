@@ -17,6 +17,14 @@ We see the usage of this platform beyond ERP systems, logistic process etc. As t
 
 ### Tutorials
 
-### Contribute
+### Contributor
 
-### License
+- Vincent Beck 
+- Debarshi Basak
+
+### Disclamer
+
+This is not an official project from SSI Schaefer gmbh. This is an initiative from the team based out of the netherlands.
+
+### Roadmap
+
