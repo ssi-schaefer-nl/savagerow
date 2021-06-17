@@ -9,11 +9,23 @@ import java.util.stream.IntStream;
 public class WorkflowTaskQueue {
     protected BlockingQueue<WorkflowTask> queue;
     private ExecutorService executor = null;
-    private final int workerCount;
+    private static int workerCount = 1;
+    private static WorkflowTaskQueue workflowTaskQueue = null;
 
-    public WorkflowTaskQueue(int workerCount) {
-        this.workerCount = workerCount;
+    public static WorkflowTaskQueue getQueue() {
+        if(workflowTaskQueue == null) {
+            workflowTaskQueue = new WorkflowTaskQueue();
+            workflowTaskQueue.start();
+        }
+        return workflowTaskQueue;
+    }
+
+    private WorkflowTaskQueue() {
         queue = new LinkedBlockingQueue<>();
+    }
+
+    public static void setWorkerCount(int workerCount) {
+        WorkflowTaskQueue.workerCount = workerCount;
     }
 
     public boolean start() {

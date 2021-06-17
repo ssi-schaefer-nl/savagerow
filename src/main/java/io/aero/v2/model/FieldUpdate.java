@@ -1,4 +1,4 @@
-package io.aero.v2.model.action;
+package io.aero.v2.model;
 
 public class FieldUpdate {
     private String column;

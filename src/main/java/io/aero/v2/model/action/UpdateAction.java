@@ -1,7 +1,12 @@
 package io.aero.v2.model.action;
 
+import io.aero.v2.model.FieldUpdate;
+import io.aero.v2.model.RowCriteria;
+import io.aero.v2.model.WorkflowType;
 import io.aero.v2.query.UpdateRowsByCriteriaAndTransformActions;
 import io.aero.v2.util.StringPlaceholderTransformer;
+import io.aero.v2.workflowqueue.WorkflowTask;
+import io.aero.v2.workflowqueue.WorkflowTaskQueue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,18 +18,28 @@ public class UpdateAction extends CrudAction {
     private List<RowCriteria> rowCriteria;
     private List<FieldUpdate> fieldUpdates;
 
+
     @Override
     public void perform(Map<String, String> data) {
         List<RowCriteria> transformedRowCriteria = transformPlaceholdersCriteria(data, rowCriteria);
         List<FieldUpdate> transformedFieldUpdates = transformPlaceholdersFieldupdates(data, fieldUpdates);
 
         try {
-            new UpdateRowsByCriteriaAndTransformActions()
+            List<Map<String, String>> updatedRows = new UpdateRowsByCriteriaAndTransformActions()
                     .setTable(table)
                     .setCriteria(transformedRowCriteria)
                     .setFieldUpdates(transformedFieldUpdates)
+                    .setStoreUpdatedRows(triggerWorkflows)
                     .generate()
-                    .execute();
+                    .execute()
+                    .getUpdatedRows();
+            System.out.println("find me");
+            System.out.println(updatedRows);
+            if(triggerWorkflows) {
+                updatedRows.forEach(r -> WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(r).setTable(table).setType(WorkflowType.UPDATE)));
+            }
+
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -33,7 +48,7 @@ public class UpdateAction extends CrudAction {
     private List<FieldUpdate> transformPlaceholdersFieldupdates(Map<String, String> data, List<FieldUpdate> target) {
         List<FieldUpdate> temp = new ArrayList<>();
         for(FieldUpdate fieldUpdate : target) {
-            String t = StringPlaceholderTransformer.transform(fieldUpdate.getValue(), data);
+            String t = StringPlaceholderTransformer.transformPlaceholders(fieldUpdate.getValue(), data);
             temp.add(new FieldUpdate().setColumn(fieldUpdate.getColumn()).setAction(fieldUpdate.getAction()).setValue(t));
 
         }
@@ -43,7 +58,7 @@ public class UpdateAction extends CrudAction {
     private List<RowCriteria> transformPlaceholdersCriteria(Map<String, String> data, List<RowCriteria> target) {
         List<RowCriteria> temp = new ArrayList<>();
         for(RowCriteria criteria : target) {
-            String t = StringPlaceholderTransformer.transform(criteria.getRequired(), data);
+            String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
             temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
 
         }
@@ -76,4 +91,5 @@ public class UpdateAction extends CrudAction {
         this.rowCriteria = rowCriteria;
         return this;
     }
+
 }

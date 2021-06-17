@@ -1,7 +1,11 @@
 package io.aero.v2.model.action;
 
+import io.aero.v2.model.RowCriteria;
+import io.aero.v2.model.WorkflowType;
 import io.aero.v2.query.DeleteRowByCriteriaQuery;
 import io.aero.v2.util.StringPlaceholderTransformer;
+import io.aero.v2.workflowqueue.WorkflowTask;
+import io.aero.v2.workflowqueue.WorkflowTaskQueue;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,11 +17,22 @@ public class DeleteAction extends CrudAction {
     private List<RowCriteria> rowCriteria;
 
     @Override
-    public void perform(Map<String, String> oldData) {
-        List<RowCriteria> transformedRowCriteria = transformPlaceholders(oldData, rowCriteria);
+    public void perform(Map<String, String> data) {
+        List<RowCriteria> transformedRowCriteria = transformPlaceholders(data, rowCriteria);
 
         try {
-            new DeleteRowByCriteriaQuery().setTable(table).setCriteria(transformedRowCriteria).generate().execute();
+            List<Map<String, String>> deletedRows = new DeleteRowByCriteriaQuery()
+                    .setTable(table)
+                    .setCriteria(transformedRowCriteria)
+                    .setStoreDeletedRows(triggerWorkflows)
+                    .generate()
+                    .execute()
+                    .getDeletedRows();
+
+            if(triggerWorkflows) {
+                deletedRows.forEach(r -> WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(r).setTable(table).setType(WorkflowType.DELETE)));
+            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -26,7 +41,7 @@ public class DeleteAction extends CrudAction {
     private List<RowCriteria> transformPlaceholders(Map<String, String> data, List<RowCriteria> target) {
         List<RowCriteria> temp = new ArrayList<>();
         for(RowCriteria criteria : target) {
-            String t = StringPlaceholderTransformer.transform(criteria.getRequired(), data);
+            String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
             temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
 
         }
@@ -51,4 +66,6 @@ public class DeleteAction extends CrudAction {
         this.rowCriteria = rowCriteria;
         return this;
     }
+
+
 }

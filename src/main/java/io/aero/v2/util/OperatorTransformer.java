@@ -4,6 +4,8 @@ public class OperatorTransformer {
     public static String convertToSql(String operator) {
         switch(operator) {
             case "==": return "=";
+            case "<": return "<";
+            case ">": return ">";
             default: return "=";
         }
     }

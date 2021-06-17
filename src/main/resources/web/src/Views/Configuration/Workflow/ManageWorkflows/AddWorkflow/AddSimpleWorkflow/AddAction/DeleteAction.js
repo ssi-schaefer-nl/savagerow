@@ -1,4 +1,4 @@
-import { Divider, Grid } from "@material-ui/core"
+import { Checkbox, Divider, FormControl, Grid } from "@material-ui/core"
 import { useState, useEffect } from "react"
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import ActionFormTextArea from "./ActionFormTextArea"
@@ -22,25 +22,37 @@ const DeleteAction = props => {
     const [name, setName] = useState(initial == null ? "" : initial.name)
     const [table, setTable] = useState("")
     const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.rowCriteria)
+    const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
 
     useEffect(() => {
         const queryService = new QueryService("")
-        queryService.getTables(data => { 
+        queryService.getTables(data => {
             setTables(data.data)
-            if(initial != null) setTable(initial.table)
-        }, () => { if(initial != null) setTable(initial.table)})
+            if (initial != null) setTable(initial.table)
+        }, () => { if (initial != null) setTable(initial.table) })
     }, [])
 
     const handleSubmit = e => {
         e.preventDefault()
-        onSubmit({ name: name, rowCriteria: rowCriteria, table: table, type: "delete" })
+        onSubmit({ name: name, rowCriteria: rowCriteria, table: table, type: "delete", triggerWorkflows: triggerWorkflows })
     }
 
     return (
         <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
-            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action"/>
+            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
 
             <Divider />
+            <FormControl
+                control={
+                    <Checkbox
+                        checked={triggerWorkflows}
+                        onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                        name="trigger"
+                        color="primary"
+                    />
+                }
+                label="Trigger other workflows with this action"
+            />
             <Grid container direction="row" alignItems="center" spacing={2}>
                 <Grid item>
                     <Typography>Delete one or more rows from table </Typography>
@@ -54,7 +66,7 @@ const DeleteAction = props => {
                         required
                     >
                         {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-                    </Select>   
+                    </Select>
                 </Grid>
             </Grid>
             {table.length > 0 && <>

@@ -1,6 +1,5 @@
 package io.aero.v2.model;
 
-import io.aero.v2.model.action.RowCriteria;
 import io.aero.v2.query.GetRowQuery;
 import io.aero.v2.util.StringPlaceholderTransformer;
 
@@ -39,7 +38,7 @@ public class TableCondition {
     private List<RowCriteria> transformPlaceholdersCriteria(Map<String, String> data, List<RowCriteria> target) {
         List<RowCriteria> temp = new ArrayList<>();
         for(RowCriteria criteria : target) {
-            String t = StringPlaceholderTransformer.transform(criteria.getRequired(), data);
+            String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
             temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
 
         }

@@ -26,7 +26,7 @@ const WorkflowConditions = props => {
 
     useEffect(() => {
         const queryService = new QueryService(table)
-        queryService.getSchema(data => setPlaceholders(data.data.columns.map(c => c.name)), () => setPlaceholders([]))
+        queryService.getSchema(data => setPlaceholders({table: table, values: data.data.columns.map(c => c.name)}), () => setPlaceholders([]))
     }, [])
 
     const handleAdd = () => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Button from '@material-ui/core/Button';
-import {  Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import {  Divider, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
 import { MenuItem } from "react-contextmenu";
@@ -9,6 +9,7 @@ import QueryService from "../../../../../../../Service/QueryService/QueryService
 import InsertAction from "../AddAction/InsertAction";
 import UpdateAction from "../AddAction/UpdateAction";
 import DeleteAction from "../AddAction/DeleteAction";
+import APICallAction from "../AddAction/APICallAction";
 
 
 const CreateWorkflowActions = props => {
@@ -95,6 +96,7 @@ const ActionDialogSwitch = props => {
         case "insert": return <InsertAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "update": return <UpdateAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "delete": return <DeleteAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
+        case "api call": return <APICallAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
 
 
         default: return null
@@ -199,6 +201,8 @@ const SelectActionTypeMenu = props => {
             <MenuItem onClick={() => handleClick('insert')}>Insert</MenuItem>
             <MenuItem onClick={() => handleClick('update')}>Update</MenuItem>
             <MenuItem onClick={() => handleClick('delete')}>Delete</MenuItem>
+            <Divider/>
+            <MenuItem onClick={() => handleClick('api call')}>API Call</MenuItem>
 
         </Menu>
     )

@@ -13,15 +13,10 @@ import io.aero.v2.workflowqueue.WorkflowTaskQueue;
 
 public class SavageRow {
     private static String API_PREFIX = "/api/v1";
-    private static TableRowController rowController;
 
     public static void main(String[] args) {
         port(9010);
-
-        WorkflowTaskQueue taskQueue = new WorkflowTaskQueue(2);
-        taskQueue.start();
-
-        rowController = new TableRowController(taskQueue);
+        WorkflowTaskQueue.getQueue().start();
 
         setupBefore();
         setupGetRoutes();
@@ -38,7 +33,7 @@ public class SavageRow {
 
     private static void setupGetRoutes() {
         get(API_PREFIX + "/:database", DatabaseController.getAllDatabases);
-        get(API_PREFIX + "/:database/database/:table", rowController::getRows);
+        get(API_PREFIX + "/:database/database/:table", TableRowController.getRows);
         get(API_PREFIX + "/:database/database/:table/schema", TableSchemaController.getSchema);
         get(API_PREFIX + "/:database/database", DatabaseController.getTables);
         get(API_PREFIX + "/:database/workflow", WorkflowController.getSummary);
@@ -49,19 +44,19 @@ public class SavageRow {
     private static void setupPostRoutes() {
         post(API_PREFIX + "/:database", DatabaseController.createDatabase);
         post(API_PREFIX + "/:database/database/:table/column", TableSchemaController.addColumn);
-        post(API_PREFIX + "/:database/database/:table", rowController::addRows);
+        post(API_PREFIX + "/:database/database/:table", TableRowController.addRows);
         post(API_PREFIX + "/:database/workflow/:type", WorkflowController.addWorkflow);
         post(API_PREFIX + "/:database/workflow/:table/:type/:name/active/:active", WorkflowController.setActive);
 
     }
 
     private static void setupPutRoutes() {
-        put(API_PREFIX + "/:database/database/:table/:row", rowController::updateRow);
+        put(API_PREFIX + "/:database/database/:table/:row", TableRowController.updateRow);
         put(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.renameColumn);
     }
 
     private static void setupDeleteRoutes() {
-        delete(API_PREFIX + "/:database/database/:table/:row", rowController::deleteRow);
+        delete(API_PREFIX + "/:database/database/:table/:row", TableRowController.deleteRow);
         delete(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.deleteColumn);
         delete(API_PREFIX + "/:database/workflow/:table/:type/:name", WorkflowController.deleteWorkflow);
 

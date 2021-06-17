@@ -1,4 +1,4 @@
-import { Divider, Grid } from "@material-ui/core"
+import { Checkbox, Divider, FormControlLabel, Grid } from "@material-ui/core"
 import { useState, useEffect } from "react"
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import ActionFormTextArea from "./ActionFormTextArea"
@@ -22,6 +22,7 @@ const UpdateAction = props => {
     const [table, setTable] = useState(initial == null ? "" : initial.table)
     const [fieldUpdates, setFieldUpdates] = useState(initial == null ? [] : initial.fieldUpdates)
     const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.fieldUpdates)
+    const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
 
     useEffect(() => {
         const queryService = new QueryService("")
@@ -30,7 +31,7 @@ const UpdateAction = props => {
 
     const handleSubmit = e => {
         e.preventDefault()
-        onSubmit({ name: name, fieldUpdates: fieldUpdates, rowCriteria: rowCriteria, table: table, type: "update" })
+        onSubmit({ name: name, fieldUpdates: fieldUpdates, rowCriteria: rowCriteria, table: table, type: "update", triggerWorkflows: triggerWorkflows })
     }
 
     console.log(fieldUpdates)
@@ -40,6 +41,17 @@ const UpdateAction = props => {
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action"/>
 
             <Divider />
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={triggerWorkflows}
+                        onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                        name="trigger"
+                        color="primary"
+                    />
+                }
+                label="Trigger other workflows with this action"
+            />
             <Grid container direction="row" alignItems="center" spacing={2}>
                 <Grid item>
                     <Typography>Update one or more rows in table </Typography>

@@ -13,6 +13,8 @@ import java.util.Map;
         @JsonSubTypes.Type(value = InsertAction.class, name = "insert"),
         @JsonSubTypes.Type(value = UpdateAction.class, name = "update"),
         @JsonSubTypes.Type(value = DeleteAction.class, name = "delete"),
+        @JsonSubTypes.Type(value = APICallAction.class, name = "api"),
+
 })
 public abstract class Action {
     private int step;

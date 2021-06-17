@@ -1,8 +1,11 @@
 package io.aero.v2.model.action;
 
 import io.aero.v2.dto.RowDTO;
+import io.aero.v2.model.WorkflowType;
 import io.aero.v2.query.InsertRowQuery;
 import io.aero.v2.util.StringPlaceholderTransformer;
+import io.aero.v2.workflowqueue.WorkflowTask;
+import io.aero.v2.workflowqueue.WorkflowTaskQueue;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -13,19 +16,21 @@ public class InsertAction extends CrudAction {
     private Map<String, String> row;
 
     @Override
-    public void perform(Map<String, String> oldData) {
-        Map<String, String> transformedRow = transformPlaceholders(oldData, row);
+    public void perform(Map<String, String> data) {
+        Map<String, String> transformedRow = transformPlaceholders(data, row);
         try {
             new InsertRowQuery().setTable(table).setData(new RowDTO().setRow(transformedRow)).generate().execute();
+            if(triggerWorkflows) WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(transformedRow).setTable(table).setType(WorkflowType.INSERT));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
     }
 
+
     private Map<String, String> transformPlaceholders(Map<String, String> data, Map<String, String> target) {
         Map<String, String> temp = new HashMap<>();
         target.forEach((key, value) -> {
-            String t = StringPlaceholderTransformer.transform(value, data);
+            String t = StringPlaceholderTransformer.transformPlaceholders(value, data);
             temp.put(key, t);
         });
         return temp;
@@ -48,4 +53,6 @@ public class InsertAction extends CrudAction {
         this.table = table;
         return this;
     }
+
+
 }

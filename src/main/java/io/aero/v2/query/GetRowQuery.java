@@ -1,6 +1,6 @@
 package io.aero.v2.query;
 
-import io.aero.v2.model.action.RowCriteria;
+import io.aero.v2.model.RowCriteria;
 import io.aero.v2.util.OperatorTransformer;
 import io.aero.v2.util.SQLiteDataSource;
 
@@ -44,7 +44,7 @@ public class GetRowQuery {
             sql = sql.concat(" where rowid=?");
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
             preparedStatement.setLong(1, rowId);
-        } else if(criteria != null) {
+        } else if (criteria != null) {
             String whereClause = criteria.stream()
                     .map(c -> String.format("%s %s ?", c.getColumn(), OperatorTransformer.convertToSql(c.getOperator())))
                     .collect(Collectors.joining(" AND "));
@@ -53,7 +53,11 @@ public class GetRowQuery {
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
             for (RowCriteria c : criteria) {
                 nextParamIndex++;
-                preparedStatement.setString(nextParamIndex, c.getRequired());
+                String op = c.getOperator();
+                if (op.equals(">") || op.equals("<"))
+                    preparedStatement.setLong(nextParamIndex, Long.parseLong(c.getRequired()));
+                else
+                    preparedStatement.setString(nextParamIndex, c.getRequired());
             }
         } else {
             preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
