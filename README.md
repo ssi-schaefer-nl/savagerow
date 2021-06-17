@@ -9,4 +9,6 @@ Opensource Alternative to building linear workflow based lowcode/nocode apps.
 
 ### Tutorials
 
+### Architecture
+
 ### Contribute
