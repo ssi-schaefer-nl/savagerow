@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class TableCondition {
     private String table;
+    private boolean match;
     private List<RowCriteria> rowCriteria;
 
     public String getTable() {
@@ -32,16 +33,26 @@ public class TableCondition {
 
     public boolean isSatisfied(Map<String, String> data) throws SQLException {
         List<RowCriteria> transformedRowCriteria = transformPlaceholdersCriteria(data, rowCriteria);
-        return !new GetRowQuery().setTable(table).setCriteria(transformedRowCriteria).generate().execute().getResult().isEmpty();
+
+        return new GetRowQuery().setTable(table).setCriteria(transformedRowCriteria).generate().execute().getResult().isEmpty() != match;
     }
 
     private List<RowCriteria> transformPlaceholdersCriteria(Map<String, String> data, List<RowCriteria> target) {
         List<RowCriteria> temp = new ArrayList<>();
-        for(RowCriteria criteria : target) {
+        for (RowCriteria criteria : target) {
             String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
             temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
 
         }
         return temp;
+    }
+
+    public boolean isMatch() {
+        return match;
+    }
+
+    public TableCondition setMatch(boolean match) {
+        this.match = match;
+        return this;
     }
 }

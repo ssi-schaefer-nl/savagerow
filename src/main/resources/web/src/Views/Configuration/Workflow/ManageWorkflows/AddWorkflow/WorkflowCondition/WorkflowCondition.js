@@ -67,6 +67,7 @@ const Condition = props => {
                 <TableHead >
                     <TableRow>
                         <TableCell>Table</TableCell>
+                        <TableCell align="right">Must Match</TableCell>
                         <TableCell align="right">Criteria</TableCell>
                         <TableCell align="right">
                             <Button
@@ -86,6 +87,7 @@ const Condition = props => {
                         conditions.map((data, i) => (
                             <TableRow key={data.table}>
                                 <TableCell component="th" scope="row">{data.table}</TableCell>
+                                <TableCell align="right">{data.match ? "Yes" : "No"}</TableCell>
                                 <TableCell align="right">{data.rowCriteria.length}</TableCell>
                                 <TableCell align="right">
                                     <Button
@@ -114,15 +116,19 @@ const Condition = props => {
 }
 
 const NewWorkflowCondition = props => {
-    const { onSubmit, placeholders, open, onClose, initial } = props
+    const { onSubmit, placeholders, open, onClose } = props
     const [tables, setTables] = useState([])
 
-    const [table, setTable] = useState(initial == null ? "" : initial.table)
-    const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.fieldUpdates)
+    const [table, setTable] = useState("")
+    const [match, setMatch] = useState(true)
+    const [rowCriteria, setRowCriteria] = useState([])
 
     const handleSubmit = e => {
         e.preventDefault()
-        onSubmit({ rowCriteria: rowCriteria, table: table })
+        onSubmit({ rowCriteria: rowCriteria, table: table, match: match })
+        setTable("")
+        setMatch(true)
+        setRowCriteria([])
     }
 
     useEffect(() => {
@@ -148,11 +154,22 @@ const NewWorkflowCondition = props => {
                     </Select>
                 </Grid>
                 <Grid item>
-                    <Typography> Has to exist</Typography>
+                    <Select
+                        InputLabelProps={{ shrink: true }}
+                        style={{ minWidth: "20%" }}
+                        onChange={(e) => setMatch(e.target.value)}
+                        value={match}
+                        required
+                    >
+                        {[{label: "should", value: true}, {label: "should not", value: false}].map(item => (<MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>))}
+                    </Select>
+                </Grid>
+                <Grid item>
+                    <Typography> exist</Typography>
                 </Grid>
             </Grid>
             {table.length > 0 && <>
-                <Typography >Of which its rows satisfy the following criteria</Typography>
+                <Typography >That matches the following criteria</Typography>
                 <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table}/>
             </>}
 

@@ -33,16 +33,13 @@ public class TableRowController {
 
     public static final Route addRows = (Request request, Response response) -> {
         String table = request.params(RequestParams.Parameter.Table);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         RowDTO row = new ObjectMapper().readValue(request.body(), RowDTO.class);
 
         Map<String, String> res = new InsertRowQuery().setTable(table).setData(row).generate().execute().getResult().get(0);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
         WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(res).setTable(table).setType(WorkflowType.INSERT));
         System.out.println(res);
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return new ObjectMapper().writeValueAsString(res);
     };
 
