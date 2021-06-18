@@ -5,6 +5,7 @@ public class OperatorTransformer {
         switch(operator) {
             case "==": return "=";
             case "<": return "<";
+            case "!=": return "!=";
             case ">": return ">";
             default: return "=";
         }

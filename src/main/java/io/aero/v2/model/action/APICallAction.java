@@ -28,7 +28,7 @@ public class APICallAction extends Action {
             httpPost.setHeader("Content-type", "application/json");
             CloseableHttpResponse response = client.execute(httpPost);
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            System.out.println(response);
+
             System.out.println(response.getStatusLine());
         } catch (IOException e) {
             e.printStackTrace();
