@@ -37,7 +37,6 @@ public class TableRowController {
         Map<String, String> res = new InsertRowQuery().setTable(table).setData(row).generate().execute().getResult().get(0);
 
         WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(res).setTable(table).setType(WorkflowType.INSERT));
-        System.out.println(res);
         return new ObjectMapper().writeValueAsString(res);
     };
 

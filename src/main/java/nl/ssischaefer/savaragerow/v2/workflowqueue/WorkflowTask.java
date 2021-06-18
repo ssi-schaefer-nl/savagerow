@@ -37,13 +37,4 @@ public class WorkflowTask {
         return this;
     }
 
-    //
-//    public Workflow getWorkflow() {
-//        return workflow;
-//    }
-//
-//    public WorkflowTask setWorkflow(Workflow workflow) {
-//        this.workflow = workflow;
-//        return this;
-//    }
 }

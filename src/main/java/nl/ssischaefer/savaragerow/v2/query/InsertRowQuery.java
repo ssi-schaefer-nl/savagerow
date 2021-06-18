@@ -62,6 +62,6 @@ public class InsertRowQuery {
     }
 
     public List<Map<String, String>> getResult() throws SQLException {
-        return new GetRowQuery().setTable(table).setRowId(Long.valueOf(generatedKey)).generate().execute().getResult();
+        return new GetRowQuery().setTable(table).setRowId(generatedKey).generate().execute().getResult();
     }
 }
