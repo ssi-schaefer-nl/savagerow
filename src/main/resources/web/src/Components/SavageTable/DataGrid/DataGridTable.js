@@ -353,7 +353,6 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
         limit: 500,
     });
     return (
-        <LightTooltip  title={currentRow != null ? Object.values(currentRow).join(', ') : ""} placement="right-start" >
 
             <Autocomplete
                 options={rows}
@@ -384,7 +383,6 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
                 )}
                 renderInput={(params) => <TextField {...params} />}
             />
-        </LightTooltip>
     );
 }
 export default DataGridTable
