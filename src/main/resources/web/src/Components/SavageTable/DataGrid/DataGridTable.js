@@ -122,7 +122,7 @@ const DataGridTable = (props) => {
         editorOptions: {
             editOnClick: col.fk == null
         },
-        editor: col.pk
+        editor: col.pk && col.fk == null
             ?
             undefined
             :
