@@ -339,7 +339,9 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
     const fkTable = column.fk.split(".")[0]
     const fkColumn = column.fk.split(".")[1]
     const [rows, setRows] = useState([])
+    const currentRow = rows.find(r => r[fkColumn] = row[fkColumn]);
 
+    console.log(currentRow)
     useEffect(() => {
         const queryService = new QueryService(fkTable);
         queryService.getRowSet(data => setRows(data.data), () => undefined)
@@ -351,34 +353,38 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
         limit: 500,
     });
     return (
+        <LightTooltip  title={currentRow != null ? Object.values(currentRow).join(', ') : ""} placement="right-start" >
 
-        <Autocomplete
-            options={rows}
-            getOptionLabel={(r) => Object.values(r).join(", ")}
-            style={{
-                appearance: 'none',
-                boxSizing: 'border-box',
-                width: '100%',
-                height: '100%',
-                padding: '1px 6px 0 6px',
-                border: '2px solid #ccc',
-                verticalAlign: 'top',
-            }}
-            filterOptions={filterOptions}
-            disableListWrap
-            groupBy={(option) => option[0]}
-            onChange={(event, value) =>
-                onRowChange({ ...row, [column.key]: value[fkColumn] }, false)} // prints the selected value
-            renderOption={(r) => (
-                <React.Fragment >
-                    <Typography style={{ width: "100%"}}>
-                        <span><strong>{r[fkColumn]} - </strong></span>
-                        {Object.values(r).join(', ')}
-                    </Typography>
-                </React.Fragment>
-            )}
-            renderInput={(params) => <TextField {...params} />}
-        />
+            <Autocomplete
+                options={rows}
+                getOptionLabel={(r) => Object.values(r).join(", ")}
+                style={{
+                    appearance: 'none',
+                    boxSizing: 'border-box',
+                    width: '100%',
+                    height: '100%',
+                    padding: '1px 6px 0 6px',
+                    border: '2px solid #ccc',
+                    verticalAlign: 'top',
+                }}
+                filterOptions={filterOptions}
+                disableListWrap
+                groupBy={(option) => option[0]}
+                onChange={(event, value) => {
+                    if (value != null)
+                        onRowChange({ ...row, [column.key]: value[fkColumn] }, false)
+                }}
+                renderOption={(r) => (
+                    <React.Fragment >
+                        <Typography style={{ width: "100%" }}>
+                            <span><strong>{r[fkColumn]} - </strong></span>
+                            {Object.keys(r).filter(k => k != fkColumn && k != "rowid").map(k => r[k]).join(", ")}
+                        </Typography>
+                    </React.Fragment>
+                )}
+                renderInput={(params) => <TextField {...params} />}
+            />
+        </LightTooltip>
     );
 }
 export default DataGridTable
