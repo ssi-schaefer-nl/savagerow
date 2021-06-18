@@ -3,6 +3,7 @@ package io.aero.v2.query;
 import io.aero.v2.dto.ColumnSchemaDTO;
 import io.aero.v2.dto.TableSchemaDTO;
 import io.aero.v2.util.SQLiteDataSource;
+import io.aero.v2.util.SQLiteDatatype;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -46,10 +47,12 @@ public class GetTableSchema {
 
         while (columns.next()) {
             String name = columns.getString("COLUMN_NAME");
+
             ColumnSchemaDTO columnSchema = new ColumnSchemaDTO()
                     .setName(name)
                     .setNullable(columns.getString("IS_NULLABLE").equalsIgnoreCase("yes"))
                     .setFk(foreignkeys.get(name))
+                    .setDatatype(SQLiteDatatype.fromString(columns.getString("TYPE_NAME")))
                     .setPk(primarykeys.contains(name));
             columnSchemaList.add(columnSchema);
         }
