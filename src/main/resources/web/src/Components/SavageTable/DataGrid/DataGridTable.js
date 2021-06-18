@@ -356,7 +356,7 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
 
             <Autocomplete
                 options={rows}
-                getOptionLabel={(r) => Object.values(r).join(", ")}
+                getOptionLabel={(r) => Object.keys(r).filter(k => k != fkColumn && k != "rowid").map(k => r[k]).join(", ")}
                 style={{
                     appearance: 'none',
                     boxSizing: 'border-box',
