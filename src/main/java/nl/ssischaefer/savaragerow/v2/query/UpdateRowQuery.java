@@ -13,7 +13,6 @@ public class UpdateRowQuery {
     private String table;
     private RowDTO row;
     private long rowId;
-    private String sql;
     private PreparedStatement preparedStatement;
 
     public UpdateRowQuery setTable(String table) {
@@ -35,7 +34,7 @@ public class UpdateRowQuery {
 
     public UpdateRowQuery generate() throws SQLException {
         List<String> columns = new ArrayList<>(this.row.getRow().keySet());
-        sql = String.format("UPDATE %s SET %s WHERE rowid = %s", this.table, columns.stream().map(col -> String.format("%s = ?", col)).collect(Collectors.joining(", ")), this.rowId);
+        String sql = String.format("UPDATE %s SET %s WHERE rowid = %s", this.table, columns.stream().map(col -> String.format("%s = ?", col)).collect(Collectors.joining(", ")), this.rowId);
         this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
         for (int i = 0; i < columns.size(); i++) {
             preparedStatement.setString(i + 1, row.getRow().get(columns.get(i)));

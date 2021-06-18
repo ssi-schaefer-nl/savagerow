@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class InsertRowQuery {
     private String table;
     private RowDTO data;
-    private String sql;
     private PreparedStatement preparedStatement;
     private long generatedKey;
 
@@ -46,7 +45,7 @@ public class InsertRowQuery {
                 .filter(c -> !data.getRow().get(c).isEmpty())
                 .collect(Collectors.toList()
                 );
-        sql = String.format("INSERT INTO %s (%s) VALUES (%s)", table, String.join(",", columns), String.join(",", Collections.nCopies(columns.size(), "?")));
+        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", table, String.join(",", columns), String.join(",", Collections.nCopies(columns.size(), "?")));
         this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
         for (int i = 0; i < columns.size(); i++) {
             String fieldValue = data.getRow().get(columns.get(i));

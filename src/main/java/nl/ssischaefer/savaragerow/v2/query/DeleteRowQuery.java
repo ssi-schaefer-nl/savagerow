@@ -9,7 +9,6 @@ import java.sql.SQLException;
 public class DeleteRowQuery {
     private String table;
     private long row;
-    private String sql;
     private PreparedStatement preparedStatement;
 
     public DeleteRowQuery setTable(String table) {
@@ -23,7 +22,7 @@ public class DeleteRowQuery {
     }
 
     public DeleteRowQuery generate() throws SQLException {
-        sql = String.format("DELETE FROM %s WHERE rowid = %s", this.table, this.row);
+        String sql = String.format("DELETE FROM %s WHERE rowid = %s", this.table, this.row);
         this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
         return this;
     }
