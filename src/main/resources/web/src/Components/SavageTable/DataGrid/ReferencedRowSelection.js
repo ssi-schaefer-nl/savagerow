@@ -1,10 +1,11 @@
 import DataGrid, { TextEditor, Row as GridRow } from "react-data-grid";
 import React, { useEffect, useState } from 'react';
 import Card from '@material-ui/core/Card';
-import TablePagination from '@material-ui/core/TablePagination';
+import Pagination from '@material-ui/lab/Pagination';
+import Toolbar from '@material-ui/core/Toolbar';
 
 import Popover from '@material-ui/core/Popover';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, makeStyles } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Paper, makeStyles } from '@material-ui/core';
 
 import Button from '@material-ui/core/Button';
 
@@ -24,7 +25,15 @@ const useStyles = makeStyles({
 
 const ReferencedRowSelection = ({ row, onRowChange, column }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const fkTable = column.fk.split(".")[0]
+    const fkColumn = column.fk.split(".")[1]
+    const [rows, setRows] = useState([])
 
+    useEffect(() => {
+        const queryService = new QueryService(fkTable);
+        queryService.getRowSet(data => setRows(data.data), () => undefined)
+
+    }, [])
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -56,41 +65,27 @@ const ReferencedRowSelection = ({ row, onRowChange, column }) => {
 
             <Popover
                 open={Boolean(anchorEl)}
-                anchorEl={anchorEl}
-                onClose={handleClose}
+                anchorReference="anchorPosition"
+                anchorPosition={{ top: 100, left: 200 }}
                 anchorOrigin={{
                     vertical: 'top',
-                    horizontal: 'center',
+                    horizontal: 'left',
                 }}
                 transformOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
+                    vertical: 'top',
+                    horizontal: 'left',
                 }}
+                onClose={handleClose}
             >
-                <Content column={column} row={row} onRowChange={onRowChange} />
+                <StickyHeadTable fkColumn={fkColumn} rows={rows} onRowChange={onRowChange} column={column} row={row} />
             </Popover>
         </>
     );
 }
 
-const Content = ({ column, onRowChange, row }) => {
-    const fkTable = column.fk.split(".")[0]
-    const fkColumn = column.fk.split(".")[1]
-    const [rows, setRows] = useState([])
-
-    useEffect(() => {
-        const queryService = new QueryService(fkTable);
-        queryService.getRowSet(data => setRows(data.data), () => undefined)
-
-    }, [])
-
-    return (
-        <StickyHeadTable fkColumn={fkColumn} rows={rows} onRowChange={onRowChange} column={column} row={row}/>
-    )
-}
 
 
-function StickyHeadTable({fkColumn, rows, column, onRowChange, row }) {
+function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
     const classes = useStyles();
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -111,7 +106,7 @@ function StickyHeadTable({fkColumn, rows, column, onRowChange, row }) {
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
-                            {columns.map((column, i) => (
+                            {columns.filter(c => c != "rowid").map((column, i) => (
                                 <TableCell
                                     key={column}
                                     align={i == 0 ? "left" : "right"}
@@ -129,7 +124,7 @@ function StickyHeadTable({fkColumn, rows, column, onRowChange, row }) {
                                     tabIndex={-1}
                                     key={r}
                                     onClick={() => onRowChange({ ...row, [column.key]: r[fkColumn] }, true)}>
-                                    {columns.map((column, i) => {
+                                    {columns.filter(c => c != "rowid").map((column, i) => {
                                         const value = r[column];
                                         return (
                                             <TableCell key={column} align={i == 0 ? "left" : "right"}>
@@ -143,13 +138,16 @@ function StickyHeadTable({fkColumn, rows, column, onRowChange, row }) {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TablePagination
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-            />
+            <Toolbar>
+                <Grid direction="row" container justify="space-between" style={{marginRight: "2em"}}>
+                    <Grid item>
+                        <Pagination count={Math.floor(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} />
+                    </Grid>
+                    <Grid item xs={3}>
+                        {/* <TextField label="Search" fullWidth InputLabelProps={{ shrink: true }}/> */}
+                    </Grid>
+                </Grid>
+            </Toolbar>
         </Paper>
     );
 }
