@@ -339,9 +339,7 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
     const fkTable = column.fk.split(".")[0]
     const fkColumn = column.fk.split(".")[1]
     const [rows, setRows] = useState([])
-    const currentRow = rows.find(r => r[fkColumn] = row[fkColumn]);
-
-    console.log(currentRow)
+    
     useEffect(() => {
         const queryService = new QueryService(fkTable);
         queryService.getRowSet(data => setRows(data.data), () => undefined)
@@ -352,6 +350,7 @@ const DropDownEditor = ({ row, onRowChange, column }) => {
         matchFrom: 'any',
         limit: 500,
     });
+     if(rows[0] != undefined) console.log(rows[0][fkColumn])
     return (
 
             <Autocomplete
