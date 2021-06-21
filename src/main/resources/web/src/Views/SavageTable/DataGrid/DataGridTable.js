@@ -1,5 +1,6 @@
 import DataGrid, { TextEditor, Row as GridRow } from "react-data-grid";
 import React, { useEffect, useState } from 'react';
+import Card from '@material-ui/core/Card';
 import { withStyles, } from '@material-ui/core/styles';
 import { ContextMenu, MenuItem, ContextMenuTrigger } from 'react-contextmenu';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -9,6 +10,8 @@ import AddIcon from '@material-ui/icons/Add';
 import TextField from '@material-ui/core/TextField';
 import InputBase from '@material-ui/core/InputBase';
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+import Popover from '@material-ui/core/Popover';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -25,6 +28,7 @@ import PublishIcon from '@material-ui/icons/Publish';
 import { Delete, Filter } from "@material-ui/icons";
 import { grey } from "@material-ui/core/colors";
 import QueryService from "../../../Service/QueryService/QueryService";
+import ReferencedRowSelection from "./ReferencedRowSelection";
 
 
 const LightTooltip = withStyles((theme) => ({
@@ -120,13 +124,13 @@ const DataGridTable = (props) => {
         nullable: col.nullable,
         fk: col.fk,
         editorOptions: {
-            editOnClick: col.fk == null
+            editOnClick: true
         },
         editor: col.pk && col.fk == null
             ?
             undefined
             :
-            col.fk == null ? col.datatype == "Text" ? TextEditor : NumberEditor : DropDownEditor
+            col.fk == null ? col.datatype == "Text" ? TextEditor : NumberEditor : ReferencedRowSelection
     }));
 
 
@@ -335,53 +339,5 @@ const NumberEditor = ({ row, onRowChange, column }) => {
     )
 }
 
-const DropDownEditor = ({ row, onRowChange, column }) => {
-    const fkTable = column.fk.split(".")[0]
-    const fkColumn = column.fk.split(".")[1]
-    const [rows, setRows] = useState([])
-    
-    useEffect(() => {
-        const queryService = new QueryService(fkTable);
-        queryService.getRowSet(data => setRows(data.data), () => undefined)
 
-    }, [])
-
-    const filterOptions = createFilterOptions({
-        matchFrom: 'any',
-        limit: 500,
-    });
-     if(rows[0] != undefined) console.log(rows[0][fkColumn])
-    return (
-
-            <Autocomplete
-                options={rows}
-                getOptionLabel={(r) => Object.keys(r).filter(k => k != fkColumn && k != "rowid").map(k => r[k]).join(", ")}
-                style={{
-                    appearance: 'none',
-                    boxSizing: 'border-box',
-                    width: '100%',
-                    height: '100%',
-                    padding: '1px 6px 0 6px',
-                    border: '2px solid #ccc',
-                    verticalAlign: 'top',
-                }}
-                filterOptions={filterOptions}
-                disableListWrap
-                groupBy={(option) => option[0]}
-                onChange={(event, value) => {
-                    if (value != null)
-                        onRowChange({ ...row, [column.key]: value[fkColumn] }, false)
-                }}
-                renderOption={(r) => (
-                    <React.Fragment >
-                        <Typography style={{ width: "100%" }}>
-                            <span><strong>{r[fkColumn]} - </strong></span>
-                            {Object.keys(r).filter(k => k != fkColumn && k != "rowid").map(k => r[k]).join(", ")}
-                        </Typography>
-                    </React.Fragment>
-                )}
-                renderInput={(params) => <TextField {...params} />}
-            />
-    );
-}
 export default DataGridTable

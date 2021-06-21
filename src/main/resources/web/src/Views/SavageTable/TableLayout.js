@@ -1,17 +1,19 @@
 import React, { Component, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { Button, Toolbar } from "@material-ui/core";
 import QueryService from '../../Service/QueryService/QueryService';
 import CollapsableAlert from "../../Components/CollapsableAlert/CollapsableAlert";
 import DatabaseSelect from "../../Components/DatabaseSelect/DatabaseSelect";
-import SavageTable from "../../Components/SavageTable/SavageTable";
+import SavageTable from "./SavageTable";
 
 const Tables = (props) => {
   const classes = useStyles();
@@ -32,7 +34,7 @@ const Tables = (props) => {
         setLoading(false)
       },
       () => {
-        setLoading(true)
+        setLoading(false)
         setError(true)
       })
   }, [])
@@ -40,7 +42,7 @@ const Tables = (props) => {
 
 
   if (loading) {
-    return (<></>)
+    return (<><CircularProgress /> </>)
   }
 
   if (database == null) return (

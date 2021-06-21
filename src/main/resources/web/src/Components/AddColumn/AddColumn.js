@@ -1,6 +1,6 @@
-import DefineColumnDialog from "../../DefineColumnDialog/DefineColumnDialog";
+import DefineColumnDialog from "../DefineColumnDialog/DefineColumnDialog";
 import React, { useState } from 'react';
-import DefinitionService from "../../../Service/DefinitionService/DefinitionService";
+import DefinitionService from "../../Service/DefinitionService/DefinitionService";
 
 export default function AddColumn(props) {
     const { onSuccess, table, handleClose, open } = props

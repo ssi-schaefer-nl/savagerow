@@ -1,7 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.model.action;
 
 import nl.ssischaefer.savaragerow.v2.util.StringPlaceholderTransformer;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -20,16 +19,15 @@ public class APICallAction extends Action {
         String transformedJsonBody = StringPlaceholderTransformer.transformPlaceholdersJson(jsonBody, data);
 
         try {
-            CloseableHttpClient client = HttpClients.createDefault();
-            HttpPost httpPost = new HttpPost(transformedUrl);
-            StringEntity entity = new StringEntity(transformedJsonBody);
-            httpPost.setEntity(entity);
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            CloseableHttpResponse response = client.execute(httpPost);
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            System.out.println(response);
-            System.out.println(response.getStatusLine());
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                HttpPost httpPost = new HttpPost(transformedUrl);
+                StringEntity entity = new StringEntity(transformedJsonBody);
+                httpPost.setEntity(entity);
+                httpPost.setHeader("Accept", "application/json");
+                httpPost.setHeader("Content-type", "application/json");
+                client.execute(httpPost);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

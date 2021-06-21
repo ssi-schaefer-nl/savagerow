@@ -17,7 +17,7 @@ public class SavageRow {
     public static void main(String[] args) {
         port(9010);
         WorkflowTaskQueue.getQueue().start();
-
+        staticFiles.location("/public");
         setupBefore();
         setupGetRoutes();
         setupPostRoutes();

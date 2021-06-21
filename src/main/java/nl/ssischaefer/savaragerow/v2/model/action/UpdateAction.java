@@ -33,8 +33,7 @@ public class UpdateAction extends CrudAction {
                     .generate()
                     .execute()
                     .getUpdatedRows();
-            System.out.println("find me");
-            System.out.println(updatedRows);
+
             if(triggerWorkflows) {
                 updatedRows.forEach(r -> WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(r).setTable(table).setType(WorkflowType.UPDATE)));
             }

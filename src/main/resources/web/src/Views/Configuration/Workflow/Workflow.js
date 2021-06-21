@@ -176,7 +176,7 @@ const SimpleWorkflows = (props) => {
                         open={Boolean(anchorEditMenu)}
                         onClose={() => setAnchorEditMenu(null)}
                     >
-                        <MenuItem onClick={() => handleEdit()}>Inspect</MenuItem>
+                        <MenuItem disabled onClick={() => handleEdit()}>Edit</MenuItem>
                         <MenuItem onClick={() => { handleDelete()}}>Delete</MenuItem>
                         <Divider />
                         <MenuItem onClick={() => { handleChangeActive()}}>{selectedWorkflow != null && selectedWorkflow.active ? "Deactivate" : "Activate"}</MenuItem>
