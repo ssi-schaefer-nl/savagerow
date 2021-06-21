@@ -16,6 +16,7 @@ public class SQLiteDataSource {
     }
 
     public static void connect(String url) throws SQLException {
+        if(conn != null && !conn.isClosed()) conn.close();
         conn = DriverManager.getConnection(url);
     }
 

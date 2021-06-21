@@ -1,5 +1,7 @@
 package nl.ssischaefer.savaragerow.v2.util;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,5 +42,11 @@ public class Workspace {
         }
 
         return Arrays.stream(files).filter(File::isDirectory).map(File::getName).collect(Collectors.toList());
+    }
+
+    public static void removeDatabase(String database) throws IOException {
+        String p = getDatabasePath(database);
+        File file = new File(p);
+        FileUtils.deleteDirectory(file);
     }
 }

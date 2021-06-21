@@ -60,6 +60,7 @@ const Tables = (props) => {
 
       <AppBar position="static" color="default" style={{ padding: "0.5em", borderBottom: "1px solid grey" }}>
         <Toolbar >
+          <Button variant="contained" color="primary" style={{marginRight: "4em"}}>Add Table</Button>
           <Tabs
             selectionFollowsFocus
             value={value}

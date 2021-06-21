@@ -2,7 +2,6 @@ package nl.ssischaefer.savaragerow.v2;
 
 import static spark.Spark.*;
 
-import com.fasterxml.jackson.core.JacksonException;
 import nl.ssischaefer.savaragerow.v2.controller.DatabaseController;
 import nl.ssischaefer.savaragerow.v2.controller.TableRowController;
 import nl.ssischaefer.savaragerow.v2.controller.TableSchemaController;
@@ -23,6 +22,7 @@ public class SavageRow {
         setupPostRoutes();
         setupPutRoutes();
         setupDeleteRoutes();
+
         setupExceptions();
     }
 
@@ -56,6 +56,7 @@ public class SavageRow {
     }
 
     private static void setupDeleteRoutes() {
+        delete(API_PREFIX + "/:database", DatabaseController.deleteDatabase);
         delete(API_PREFIX + "/:database/database/:table/:row", TableRowController.deleteRow);
         delete(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.deleteColumn);
         delete(API_PREFIX + "/:database/workflow/:table/:type/:name", WorkflowController.deleteWorkflow);

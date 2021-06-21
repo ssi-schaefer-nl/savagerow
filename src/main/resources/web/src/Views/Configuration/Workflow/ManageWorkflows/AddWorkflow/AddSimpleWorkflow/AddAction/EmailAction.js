@@ -19,7 +19,7 @@ const EmailAction = props => {
     }
 
     return (
-            <NewActionForm open={open} onSubmit={handleSubmit} onClose={onClose}>
+            <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
                 <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required />
 
                 <Divider />
@@ -42,7 +42,7 @@ const EmailAction = props => {
                     ))}
                 </ContextMenu>
 
-            </NewActionForm>
+            </PopupForm>
     )
 }
 

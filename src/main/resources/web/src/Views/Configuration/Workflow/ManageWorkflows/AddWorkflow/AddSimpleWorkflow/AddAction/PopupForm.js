@@ -25,12 +25,12 @@ const useStyles = makeStyles({
 
 
 function PopupForm(props) {
-    const { onClose, open, onSubmit, children, title } = props;
+    const { onClose, open, onSubmit, children, title, wide, hide } = props;
     const classes = useStyles();
 
 
     return (
-        <Dialog aria-labelledby="new-action-dialog" open={open} fullWidth={true}>
+        <Dialog aria-labelledby="new-action-dialog" open={open} fullWidth={true} maxWidth={wide ? "lg" : "sm"}>
             <Toolbar>
                 <IconButton edge="start" onClick={onClose} aria-label="close">
                     <CloseIcon />
@@ -42,7 +42,7 @@ function PopupForm(props) {
             <form onSubmit={onSubmit} className={classes.root} autoComplete="off">
                 <DialogContent >
                     <Grid container direction="column" >
-                        {children.map(child =>
+                        {React.Children.toArray(children).map(child =>
                             <Grid item style={{ margin: "1em 0", width: "100%" }}>
                                 {child}
                             </Grid>
@@ -50,8 +50,12 @@ function PopupForm(props) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" type="submit">Apply</Button>
-                    <Button color="primary" onClick={onClose}>Cancel</Button>
+                    {!hide &&
+                        <>
+                            <Button color="primary" type="submit">Apply</Button>
+                            <Button color="primary" onClick={onClose}>Cancel</Button>
+                        </>
+                    }
                 </DialogActions>
             </form>
         </Dialog>

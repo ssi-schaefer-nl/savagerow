@@ -11,6 +11,22 @@ class DatabaseService {
             .catch(res => { onFailure(res) });
 
     }
+    
+
+    removeDatabase(workspace, onSuccess, onFailure) {
+        this.httpHelper.delete(`/api/v1/${workspace}`)
+            .then(res => { onSuccess(res) })
+            .catch(res => { onFailure(res) });
+
+    }
+
+    
+    addDatabase(workspace, onSuccess, onFailure) {
+        this.httpHelper.post(`/api/v1/${workspace}`)
+            .then(res => { onSuccess(res) })
+            .catch(res => { onFailure(res) });
+
+    }
 }
 
 export default DatabaseService;
