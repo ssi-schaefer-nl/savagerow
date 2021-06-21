@@ -25,7 +25,7 @@ const UpdateAction = props => {
     const [fieldUpdates, setFieldUpdates] = useState(initial == null ? [] : initial.fieldUpdates)
     const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.rowCriteria)
     const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
-    console.log(fieldUpdates)
+    
     useEffect(() => {
         const queryService = new QueryService(workflowTable)
         queryService.getTables(data => setTables(data.data), () => setTables([]))
@@ -44,7 +44,6 @@ const UpdateAction = props => {
         }
     }
 
-    console.log(workflowTable)
 
     return (
         <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>

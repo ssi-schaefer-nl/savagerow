@@ -11,19 +11,13 @@ import TableColumnContextMenu from "../../../../../../../Components/TableColumnC
 
 const ActionFormRow = props => {
     const { onChange, placeholders, table, value } = props
-    const [initialTable, setInitialTable] = useState(table)
     const [columns, setColumns] = useState([])
     const [fields, setFields] = useState((value == undefined ? [] : value))
 
-    console.log(value)
     useEffect(() => {
         if (table != null && table.length > 0) {
             new QueryService(table).getSchema(data => {
-                const tempColumns = data.data.columns
-                const newRow = {}
-                tempColumns.map(c => newRow[c.name] = '')
-                if (value.length == 0 || table != initialTable) onChange(newRow)
-                setColumns(tempColumns)
+                setColumns(data.data.columns.map(c => c.name))
             }, () => setColumns([]))
         }
 
@@ -38,7 +32,6 @@ const ActionFormRow = props => {
     }
 
     if (fields.length == 0) addNewField()
-    if (fields != null && !Array.isArray(fields)) setFields([fields])
 
     if (columns.length > 0) {
         return (
@@ -47,7 +40,7 @@ const ActionFormRow = props => {
                 {Array.isArray(fields) && fields.map((f, i) =>
                     <Columns
                         placeholders={placeholders}
-                        columns={columns.map(c => c.name)}
+                        columns={columns}
                         fields={fields[i]}
                         onDelete={() => removeField(i)}
                         onChange={(cr) => {

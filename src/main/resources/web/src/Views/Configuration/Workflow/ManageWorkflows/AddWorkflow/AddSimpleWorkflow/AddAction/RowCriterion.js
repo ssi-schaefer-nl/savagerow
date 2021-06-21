@@ -18,11 +18,8 @@ const RowCriterion = props => {
     useEffect(() => {
         if (table != null && table.length > 0) {
             new QueryService(table).getSchema(data => {
-                const tempColumns = data.data.columns
-                const newRow = {}
-                tempColumns.map(c => newRow[c.name] = '')
-                if (value.length == 0 || table != initialTable) onChange(newRow)
-                setColumns(tempColumns)
+                setColumns(data.data.columns.map(c => c.name))
+
             }, () => setColumns([]))
         }
 
@@ -37,7 +34,7 @@ const RowCriterion = props => {
     }
 
     console.log(table)
-    if(criteria != null && !Array.isArray(criteria)) setCriteria([criteria])
+    if (criteria != null && !Array.isArray(criteria)) setCriteria([criteria])
     if (columns.length > 0) {
         return (
             <div style={{ maxHeight: "30vh", overflow: "auto" }}>
@@ -45,7 +42,7 @@ const RowCriterion = props => {
                 {criteria != null && criteria.map((criterion, i) =>
                     <Criterion
                         placeholders={placeholders}
-                        columns={columns.map(c => c.name)}
+                        columns={columns}
                         criterion={criteria[i]}
                         onDelete={() => removeCriterion(i)}
                         onChange={(cr) => {
@@ -132,7 +129,7 @@ const Criterion = props => {
                         onChange={(e) => handleChange('required', e.target.value)}
                     />
                 </ContextMenuTrigger>
-                <TableColumnContextMenu id={`contextmenu-${contextMenuId}`} onClick={(f) => appender(`{${f}}`)} placeholders={placeholders}/>
+                <TableColumnContextMenu id={`contextmenu-${contextMenuId}`} onClick={(f) => appender(`{${f}}`)} placeholders={placeholders} />
 
             </Grid>
             <Grid item >
