@@ -3,7 +3,7 @@ FROM node as stage1
 RUN mkdir -p /opt
 WORKDIR /opt
 COPY . .
-WORKDIR /opt/src/main/resources
+WORKDIR /opt/src/main/resources/web
 RUN npm install && npm build
 
 ## build server
@@ -11,7 +11,9 @@ FROM maven as stage2
 RUN mkdir -p /opt
 WORKDIR /opt
 COPY . .
-COPY --from=stage1 /opt/src/main/resources/ /opt/src/main/resources/
+COPY --from=stage1 /opt/src/main/resources/web /opt/src/main/resources/
+COPY --from=stage1 /opt/src/main/resources/web/build/* /opt/src/main/resources/public/
+
 RUN mvn clean install
 
 ## build distribution
