@@ -4,7 +4,8 @@ RUN mkdir -p /opt
 WORKDIR /opt
 COPY . .
 WORKDIR /opt/src/main/resources/web
-RUN npm install && npm build
+RUN npm install
+RUN npm run build
 
 WORKDIR /opt/src/main/resources
 RUN npm install 
