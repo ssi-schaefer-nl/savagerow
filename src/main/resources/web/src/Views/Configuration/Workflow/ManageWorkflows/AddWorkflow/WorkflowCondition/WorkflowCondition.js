@@ -4,6 +4,7 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import RemoveIcon from '@material-ui/icons/Remove';
 
 import { Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Checkbox, Divider, FormControlLabel } from "@material-ui/core"
 
 import { Grid, TextField, Typography } from '@material-ui/core';
 import { InputLabel, Select } from '@material-ui/core';
@@ -22,12 +23,6 @@ const WorkflowConditions = props => {
     const [newCondition, setNewCondition] = useState(false)
     const [initial, setInitial] = React.useState(null)
     const [actionSubmit, setActionSubmit] = React.useState(null);
-    const [placeholders, setPlaceholders] = React.useState([]);
-
-    useEffect(() => {
-        const queryService = new QueryService(table)
-        queryService.getSchema(data => setPlaceholders({table: table, values: data.data.columns.map(c => c.name)}), () => setPlaceholders([]))
-    }, [])
 
     const handleAdd = () => {
         setActionSubmit(() => (x) => addCondition(x))
@@ -53,7 +48,7 @@ const WorkflowConditions = props => {
         <div>
             <Typography variant="h6">Define the conditions for the workflow execution</Typography>
             <Condition placeholders={[]} conditions={conditions} onAdd={handleAdd} onDelete={removeCondition} />
-            <NewWorkflowCondition open={newCondition} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={actionSubmit} />
+            <NewWorkflowCondition open={newCondition} onClose={onClose} initial={initial} workflowTable={table} onSubmit={actionSubmit} />
         </div >
     )
 
@@ -116,65 +111,109 @@ const Condition = props => {
 }
 
 const NewWorkflowCondition = props => {
-    const { onSubmit, placeholders, open, onClose } = props
+    const { onSubmit, workflowTable, open, onClose } = props
+
     const [tables, setTables] = useState([])
+    const [tableColumns, setTableColumns] = React.useState(null);
 
     const [table, setTable] = useState("")
+    const [thisRow, setThisRow] = useState(true)
     const [match, setMatch] = useState(true)
     const [rowCriteria, setRowCriteria] = useState([])
 
     const handleSubmit = e => {
         e.preventDefault()
-        onSubmit({ rowCriteria: rowCriteria, table: table, match: match })
+        if (thisRow) {
+            const crit = [...rowCriteria, ...tableColumns.filter(c => c.pk).map(c => ({ column: c.name, operator: "==", required: `{${c.name}}` }))]
+            onSubmit({ rowCriteria: crit, table: workflowTable, match: match })
+            console.log({ rowCriteria: crit, table: workflowTable, match: match })
+        }
+        else {
+            onSubmit({ rowCriteria: rowCriteria, table: table, match: match })
+        }
+        setThisRow(true)
         setTable("")
         setMatch(true)
         setRowCriteria([])
     }
 
     useEffect(() => {
-        const queryService = new QueryService("")
+        const queryService = new QueryService(workflowTable)
         queryService.getTables(data => setTables(data.data), () => setTables([]))
-    }, [])
+        queryService.getSchema(data => setTableColumns(data.data.columns), () => setTableColumns([]))
 
+    }, [])
+    console.log(table)
     return (
         <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose} title="Create a workflow condition">
-            <Grid container direction="row" alignItems="center" spacing={2}> 
-                <Grid item>
-                    <Typography>A row in table </Typography>
-                </Grid>
-                <Grid item>
-                    <Select
-                        InputLabelProps={{ shrink: true }}
-                        style={{ minWidth: "20%" }}
-                        onChange={(e) => setTable(e.target.value)}
-                        value={table}
-                        required
-                    >
-                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-                    </Select>
-                </Grid>
-                <Grid item>
-                    <Select
-                        InputLabelProps={{ shrink: true }}
-                        style={{ minWidth: "20%" }}
-                        onChange={(e) => setMatch(e.target.value)}
-                        value={match}
-                        required
-                    >
-                        {[{label: "should", value: true}, {label: "should not", value: false}].map(item => (<MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>))}
-                    </Select>
-                </Grid>
-                <Grid item>
-                    <Typography> exist</Typography>
-                </Grid>
-            </Grid>
-            {table.length > 0 && <>
-                <Typography >That matches the following criteria</Typography>
-                <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table}/>
-            </>}
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={thisRow}
+                        onChange={(e) => setThisRow(e.target.checked)}
+                        name="trigger"
+                        color="primary"
+                    />
+                }
+                label="Condition is based on the row that triggered the workflow"
+            />
+            {!thisRow ?
+                <>
+                    <Grid container direction="row" alignItems="center" spacing={2}>
+                        <Grid item>
+                            <Typography>A row in table </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Select
+                                InputLabelProps={{ shrink: true }}
+                                style={{ minWidth: "20%" }}
+                                onChange={(e) => setTable(e.target.value)}
+                                value={table}
+                                required
+                            >
+                                {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
+                            </Select>
+                        </Grid>
+                        <Grid item>
+                            <Select
+                                InputLabelProps={{ shrink: true }}
+                                style={{ minWidth: "20%" }}
+                                onChange={(e) => setMatch(e.target.value)}
+                                value={match}
+                                required
+                            >
+                                {[{ label: "should", value: true }, { label: "should not", value: false }].map(item => (<MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>))}
+                            </Select>
+                        </Grid>
+                        <Grid item>
+                            <Typography> exist</Typography>
+                        </Grid>
+
+                    </Grid>
+                    <Typography style={{ marginTop: "1em" }}>That matches the following criteria</Typography>
+                    <RowCriterion
+                        requireValues={false}
+                        onChange={setRowCriteria}
+                        value={rowCriteria}
+                        placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }}
+                        table={table}
+                    />
+                </>
+                :
+                <>
+                    <Typography>The row should match the following criteria</Typography>
+                    < RowCriterion
+                        requireValues={false}
+                        onChange={setRowCriteria}
+                        value={rowCriteria}
+                        placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }}
+                        table={workflowTable}
+                    />
+                </>
+            }
 
 
-        </PopupForm>
+        </PopupForm >
     )
 }
 

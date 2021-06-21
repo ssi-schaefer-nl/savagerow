@@ -69,7 +69,6 @@ const CreateWorkflowActions = props => {
         setActionSubmit(() => (x) => addActionToList(x))
     }
 
-
     return (
         <div>
             <Typography variant="h6">Create actions for the workflow</Typography>
@@ -81,6 +80,8 @@ const CreateWorkflowActions = props => {
                 onSubmit={actionSubmit}
                 onClose={handleCloseDialog}
                 initial={editAction}
+                table={table}
+                columns={tableColumns}
             />
         </div >
     )
@@ -89,13 +90,12 @@ const CreateWorkflowActions = props => {
 
 
 const ActionDialogSwitch = props => {
-    const { type, placeholders, onSubmit, initial, onClose } = props
-
+    const { type, placeholders, onSubmit, initial, onClose, table, columns } = props
     switch (type) {
         // case "email": return <EmailAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "insert": return <InsertAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
-        case "update": return <UpdateAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
-        case "delete": return <DeleteAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
+        case "update": return <UpdateAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} workflowTable={table} onSubmit={onSubmit} />
+        case "delete": return <DeleteAction open={Boolean(type) && Boolean(onSubmit)} workflowTable={table} onClose={onClose} initial={initial} onSubmit={onSubmit} />
         case "api call": return <APICallAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
 
 

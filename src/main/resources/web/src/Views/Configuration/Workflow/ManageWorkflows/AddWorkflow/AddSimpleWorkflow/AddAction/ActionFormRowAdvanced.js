@@ -38,13 +38,13 @@ const ActionFormRow = props => {
     }
 
     if (fields.length == 0) addNewField()
-
+    if (fields != null && !Array.isArray(fields)) setFields([fields])
 
     if (columns.length > 0) {
         return (
             <div style={{ maxHeight: "20vh", overflow: "auto" }}>
 
-                {fields.map((f, i) =>
+                {Array.isArray(fields) && fields.map((f, i) =>
                     <Columns
                         placeholders={placeholders}
                         columns={columns.map(c => c.name)}
@@ -127,7 +127,7 @@ const Columns = props => {
                         onChange={(e) => handleChange('value', e.target.value)}
                     />
                 </ContextMenuTrigger>
-                <TableColumnContextMenu id={`contextmenu-${contextMenuId}`} onClick={(f) => appender(`{${f}}`) } placeholders={placeholders} />
+                <TableColumnContextMenu id={`contextmenu-${contextMenuId}`} onClick={(f) => appender(`{${f}}`)} placeholders={placeholders} />
             </Grid>
             <Grid item >
                 <Button

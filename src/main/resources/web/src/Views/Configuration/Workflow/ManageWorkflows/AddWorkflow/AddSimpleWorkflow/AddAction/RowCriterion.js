@@ -36,8 +36,8 @@ const RowCriterion = props => {
         setCriteria(copyOfCriteria)
     }
 
-
-
+    console.log(table)
+    if(criteria != null && !Array.isArray(criteria)) setCriteria([criteria])
     if (columns.length > 0) {
         return (
             <div style={{ maxHeight: "30vh", overflow: "auto" }}>

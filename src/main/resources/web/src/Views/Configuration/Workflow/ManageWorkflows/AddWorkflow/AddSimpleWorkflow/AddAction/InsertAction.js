@@ -31,6 +31,7 @@ const InsertAction = props => {
     const handleSubmit = e => {
         e.preventDefault()
         onSubmit({ name: name, row: row, table: table, type: "insert", triggerWorkflows: triggerWorkflows })
+        
     }
 
     return (
@@ -49,6 +50,7 @@ const InsertAction = props => {
                 }
                 label="Trigger other workflows with this action"
             />
+
             <Grid container direction="row" alignItems="center" spacing={2}>
                 <Grid item>
                     <Typography>Insert a new row into table </Typography>

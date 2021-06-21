@@ -1,5 +1,5 @@
-import { Checkbox, Divider, FormControl, Grid } from "@material-ui/core"
-import { useState, useEffect } from "react"
+import { Checkbox, Divider, FormControl, FormControlLabel, Grid } from "@material-ui/core"
+import React, { useEffect, useState } from "react";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import ActionFormTextArea from "./ActionFormTextArea"
 import ActionFormTextField from "./ActionFormTextField"
@@ -7,42 +7,52 @@ import PopupForm from "./PopupForm"
 
 
 import { TextField, Typography } from '@material-ui/core';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
 import { InputLabel, Select } from '@material-ui/core';
 
-import { grey } from '@material-ui/core/colors';
 import QueryService from '../../../../../../../Service/QueryService/QueryService';
-import ActionFormRow from "./ActionFormRow"
 import RowCriterion from "./RowCriterion"
 
 const DeleteAction = props => {
-    const { onSubmit, placeholders, initial, open, onClose } = props
+    const { onSubmit, workflowTable, initial, open, onClose } = props
     const [tables, setTables] = useState([])
+    const [tableColumns, setTableColumns] = React.useState(null);
 
     const [name, setName] = useState(initial == null ? "" : initial.name)
     const [table, setTable] = useState("")
+    const [deleteThis, setDeleteThis] = useState(true)
     const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.rowCriteria)
     const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
 
     useEffect(() => {
-        const queryService = new QueryService("")
+        const queryService = new QueryService(workflowTable)
         queryService.getTables(data => {
             setTables(data.data)
             if (initial != null) setTable(initial.table)
         }, () => { if (initial != null) setTable(initial.table) })
+
+        queryService.getSchema(data => setTableColumns(data.data.columns), () => setTableColumns([]))
     }, [])
+
+
+    console.log(tableColumns)
 
     const handleSubmit = e => {
         e.preventDefault()
-        onSubmit({ name: name, rowCriteria: rowCriteria, table: table, type: "delete", triggerWorkflows: triggerWorkflows })
-    }
+        if (deleteThis) {
+            const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, operator: "==", required: `{${c.name}}` }))
+            onSubmit({ name: name, rowCriteria: crit, table: workflowTable, type: "delete", triggerWorkflows: triggerWorkflows })
+        }
+        else {
+            onSubmit({ name: name, rowCriteria: rowCriteria, table: workflowTable, type: "delete", triggerWorkflows: triggerWorkflows })
+        }
 
+    }
     return (
         <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
 
             <Divider />
-            <FormControl
+            <FormControlLabel
                 control={
                     <Checkbox
                         checked={triggerWorkflows}
@@ -53,26 +63,43 @@ const DeleteAction = props => {
                 }
                 label="Trigger other workflows with this action"
             />
-            <Grid container direction="row" alignItems="center" spacing={2}>
-                <Grid item>
-                    <Typography>Delete one or more rows from table </Typography>
-                </Grid>
-                <Grid item>
-                    <Select
-                        InputLabelProps={{ shrink: true }}
-                        style={{ minWidth: "30%" }}
-                        onChange={(e) => setTable(e.target.value)}
-                        value={table}
-                        required
-                    >
-                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-                    </Select>
-                </Grid>
-            </Grid>
-            {table.length > 0 && <>
-                <Typography >If they match the following criteria</Typography>
-                <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={placeholders} table={table} />
-            </>}
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={deleteThis}
+                        onChange={(e) => setDeleteThis(e.target.checked)}
+                        name="trigger"
+                        color="primary"
+                    />
+                }
+                label="Delete the row that triggered the workflow"
+            />
+            {!deleteThis &&
+                (
+                    <>
+                        <Divider style={{ marginBottom: "2em" }} />
+                        <Grid container direction="row" alignItems="center" spacing={2}>
+                            <Grid item>
+                                <Typography>Delete one or more rows from table </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Select
+                                    InputLabelProps={{ shrink: true }}
+                                    style={{ minWidth: "30%" }}
+                                    onChange={(e) => setTable(e.target.value)}
+                                    value={workflowTable}
+                                    required
+                                >
+                                    {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
+                                </Select>
+                            </Grid>
+                        </Grid>
+                        {workflowTable.length > 0 && <>
+                            <Typography >If they match the following criteria</Typography>
+                            <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={{table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : []}} table={workflowTable} />
+                        </>}
+                    </>
+                )}
 
         </PopupForm>
     )
