@@ -99,17 +99,25 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
         if (rows[0] != undefined)
             setColumns(Object.keys(rows[0]))
     }, [rows])
-
+    console.log(Math.floor(rows.length / rowsPerPage))
+    console.log(rows.length / rowsPerPage)
+    console.log(rows.length % rowsPerPage)
     return (
         <Paper className={classes.root}>
             <TableContainer className={classes.container} style={{ overflowY: "hidden" }}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
                         <TableRow>
-                            {columns.filter(c => c != "rowid").map((column, i) => (
+                            <TableCell
+                                key={fkColumn}
+                                align={"left"}
+                            >
+                                {fkColumn}
+                            </TableCell>
+                            {columns.filter(c => c != "rowid" && c != fkColumn).map((column, i) => (
                                 <TableCell
                                     key={column}
-                                    align={i == 0 ? "left" : "right"}
+                                    align="right"
                                 >
                                     {column}
                                 </TableCell>
@@ -122,12 +130,16 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
                                 <TableRow hover
                                     role="checkbox"
                                     tabIndex={-1}
-                                    key={r}
-                                    onClick={() => onRowChange({ ...row, [column.key]: r[fkColumn] }, true)}>
-                                    {columns.filter(c => c != "rowid").map((column, i) => {
+                                    key={r[fkColumn]}
+                                    onClick={() => onRowChange({ ...row, [column.key]: r[fkColumn] }, true)}
+                                >
+                                    <TableCell key={fkColumn} align="left">
+                                        {r[fkColumn]}
+                                    </TableCell>
+                                    {columns.filter(c => c != "rowid" && c != fkColumn).map((column, i) => {
                                         const value = r[column];
                                         return (
-                                            <TableCell key={column} align={i == 0 ? "left" : "right"}>
+                                            <TableCell key={column} align="right">
                                                 {value}
                                             </TableCell>
                                         );
@@ -139,9 +151,9 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
                 </Table>
             </TableContainer>
             <Toolbar>
-                <Grid direction="row" container justify="space-between" style={{marginRight: "2em"}}>
+                <Grid direction="row" container justify="space-between" style={{ marginRight: "2em" }}>
                     <Grid item>
-                        <Pagination count={Math.floor(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} />
+                        <Pagination count={(rows.length % rowsPerPage) == 0 ? rows.length / rowsPerPage : Math.floor(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} />
                     </Grid>
                     <Grid item xs={3}>
                         {/* <TextField label="Search" fullWidth InputLabelProps={{ shrink: true }}/> */}

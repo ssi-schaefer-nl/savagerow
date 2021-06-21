@@ -1,9 +1,8 @@
 import React, { Component, useEffect, useState } from 'react';
 import DataGridTable from './DataGrid/DataGridTable';
-import NotificationArea from '../NotificationArea/NotificationArea';
-import AddColumn from './AddColumn/AddColumn';
+import NotificationArea from '../../Components/NotificationArea/NotificationArea';
+import AddColumn from '../../Components/AddColumn/AddColumn';
 import QueryService from '../../Service/QueryService/QueryService';
-import AddIcon from '@material-ui/icons/Add';
 
 import DefinitionService from '../../Service/DefinitionService/DefinitionService';
 import ManipulationService from '../../Service/ManipulationService/ManipulationService';

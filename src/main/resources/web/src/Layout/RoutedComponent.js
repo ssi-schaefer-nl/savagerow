@@ -5,7 +5,7 @@ import {
 import Home from "../Views/Home";
 import Configure from "../Views/Configuration/Configure";
 import Workflow from "../Views/Configuration/Workflow/Workflow";
-import Tables from "../Views/DataTables/Tables";
+import Tables from "../Views/SavageTable/TableLayout";
 
 class RoutedComponent extends Component {
     render() {

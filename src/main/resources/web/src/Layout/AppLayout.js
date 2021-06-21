@@ -17,7 +17,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Home from "../Views/Home";
 import Configure from "../Views/Configuration/Configure";
-import Tables from "../Views/DataTables/Tables";
+import Tables from "../Views/SavageTable/TableLayout";
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import {
   Route, Switch,
