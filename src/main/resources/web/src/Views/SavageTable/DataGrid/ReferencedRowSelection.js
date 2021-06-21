@@ -162,7 +162,7 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
                     <Grid item xs={3}>
                         <TextField
                             value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
+                            onChange={(e) => setFilter(e.target.value.toLowerCase())}
                             label="Search"
                             type="search"
                             placeholder="Type here to search through the rows"

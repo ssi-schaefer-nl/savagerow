@@ -39,29 +39,7 @@ export default function AddSimpleWorkflow(props) {
 
     }
 
-    const inspectingSteps = [
-        {
-            "name": "Name",
-            "Component": <WorkflowStepName onChange={setName} value={name} />,
-            "nextAllowed": name != null && name.length > 0
-        },
-        {
-            "name": "Trigger",
-            "Component": <WorkflowStepTrigger onChangeTable={setTable} table={table} onChangeType={setType} type={type} />,
-            "nextAllowed": table.length > 0 && type.length > 0
-        },
-        {
-            "name": "Actions",
-            "Component": <CreateWorkflowActions actions={actions} table={table} onChange={setActions} />,
-            "nextAllowed": actions.length > 0
-        },
-        {
-            "name": "Conditions",
-            "Component": <p>Not Implemented yet</p>,
-            "nextButton": "Close",
-            "onNext": onFinish
-        },
-    ]
+
 
     const editingSteps = [
         {
@@ -97,7 +75,7 @@ export default function AddSimpleWorkflow(props) {
     ]
 
     
-    return <HorizontalLinearStepper steps={Boolean(existing) ? inspectingSteps : editingSteps} onFinish />
+    return <HorizontalLinearStepper steps={editingSteps} onFinish />
 }
 
 
