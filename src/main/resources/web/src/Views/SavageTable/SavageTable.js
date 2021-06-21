@@ -122,7 +122,7 @@ const SavageTable = (props) => {
   }
 
   return (
-    <div style={{ height: "50vh" }}>
+    <div style={{ height: "70vh" }}>
       <DataGridTable
 
         rows={rows}

@@ -66,7 +66,7 @@ const ReferencedRowSelection = ({ row, onRowChange, column }) => {
             <Popover
                 open={Boolean(anchorEl)}
                 anchorReference="anchorPosition"
-                anchorPosition={{ top: 100, left: 200 }}
+                anchorPosition={{ top: 150, left: 200 }}
                 anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'left',
@@ -87,9 +87,11 @@ const ReferencedRowSelection = ({ row, onRowChange, column }) => {
 
 function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
     const classes = useStyles();
-    const [page, setPage] = React.useState(0);
+    const [page, setPage] = React.useState(1);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [columns, setColumns] = useState([])
+    const [filter, setFilter] = useState("")
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -99,9 +101,11 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
         if (rows[0] != undefined)
             setColumns(Object.keys(rows[0]))
     }, [rows])
-    console.log(Math.floor(rows.length / rowsPerPage))
-    console.log(rows.length / rowsPerPage)
-    console.log(rows.length % rowsPerPage)
+
+    let filteredRows = rows
+
+    if (filter.length > 0) filteredRows = rows.filter(r => Object.values(r).join(' ').toLowerCase().includes(filter))
+    console.log(filteredRows.length)
     return (
         <Paper className={classes.root}>
             <TableContainer className={classes.container} style={{ overflowY: "hidden" }}>
@@ -125,7 +129,7 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((r) => {
+                        {filteredRows.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage).map((r) => {
                             return (
                                 <TableRow hover
                                     role="checkbox"
@@ -153,10 +157,20 @@ function StickyHeadTable({ fkColumn, rows, column, onRowChange, row }) {
             <Toolbar>
                 <Grid direction="row" container justify="space-between" style={{ marginRight: "2em" }}>
                     <Grid item>
-                        <Pagination count={(rows.length % rowsPerPage) == 0 ? rows.length / rowsPerPage : Math.floor(rows.length / rowsPerPage)} page={page} onChange={handleChangePage} />
+                        <Pagination count={Math.ceil(filteredRows.length / rowsPerPage)} page={page} onChange={handleChangePage} />
                     </Grid>
                     <Grid item xs={3}>
-                        {/* <TextField label="Search" fullWidth InputLabelProps={{ shrink: true }}/> */}
+                        <TextField
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            label="Search"
+                            type="search"
+                            placeholder="Type here to search through the rows"
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            InputLabelProps={{ shrink: true }}
+                        />
                     </Grid>
                 </Grid>
             </Toolbar>
