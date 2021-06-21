@@ -16,7 +16,7 @@ public class WorkflowsManager {
     public static WorkflowsManager getWorkflowsFromCurrentWorkspace() {
         String currentWorkspace = Workspace.getCurrentWorkspace();
         // Either we did not cache anything, or workspace changed since last time and we need to update
-        if(cachedWorkflows == null || !lastWorkspace.equals(currentWorkspace)) {
+        if (cachedWorkflows == null || !lastWorkspace.equals(currentWorkspace)) {
             try (FileReader reader = new FileReader(Workspace.getCurrentWorkspace() + "workflows.json")) {
                 cachedWorkflows = new ObjectMapper().readValue(reader, WorkflowsManager.class);
                 lastWorkspace = currentWorkspace;
@@ -48,9 +48,10 @@ public class WorkflowsManager {
         return workflows.get(type);
     }
 
-    public List<Workflow> getByTable(WorkflowType type, String table) {
+    public List<Workflow> get(WorkflowType type, String table) {
         return get(type).stream().filter(w -> w.getTable().equals(table)).collect(Collectors.toList());
     }
+
 
     public void set(WorkflowType type, List<Workflow> workflows) {
         this.workflows.put(type, workflows);
@@ -58,7 +59,7 @@ public class WorkflowsManager {
 
     public void setActive(WorkflowType type, String table, String name, boolean active) {
         List<Workflow> updatedWorkflows = get(type).stream().peek(w -> {
-            if(w.getTable().equals(table) && w.getName().equals(name)) w.setActive(active);
+            if (w.getTable().equals(table) && w.getName().equals(name)) w.setActive(active);
         }).collect(Collectors.toList());
 
         set(type, updatedWorkflows);
@@ -73,18 +74,15 @@ public class WorkflowsManager {
         set(type, resultOfDeletion);
     }
 
-    public boolean add(WorkflowType type, Workflow workflow) {
-        List<Workflow> temp = this.workflows.getOrDefault(type, new ArrayList<>());
-        boolean alreadyExists = getByTable(type, workflow.getTable()).stream().anyMatch(w -> w.getName().equals(workflow.getName()));
-        if(!alreadyExists) {
-            temp.add(workflow);
-            set(type, temp);
-        }
-        return !alreadyExists;
+    public void add(WorkflowType type, Workflow workflow) {
+        List<Workflow> temp = this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> !(w.getTable().equals(workflow.getTable()) && w.getName().equals(workflow.getName()))).collect(Collectors.toList());
+        temp.add(workflow);
+        set(type, temp);
     }
 
+
     public static void save(WorkflowsManager workflows) throws Exception {
-        try(FileWriter file = new FileWriter(Workspace.getCurrentWorkspace() + "workflows.json")) {
+        try (FileWriter file = new FileWriter(Workspace.getCurrentWorkspace() + "workflows.json")) {
             file.write(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(workflows));
             file.flush();
             cachedWorkflows = workflows;

@@ -117,7 +117,7 @@ const SimpleWorkflows = (props) => {
         const name = selectedWorkflow.name
 
         workflowService.changeActive(table, type, name, !selectedWorkflow.active,
-            () => workflowService.getTableWorkflows(table, type, (data) => setWorkflows(data), () => undefined),
+            () => workflowService.getAllWorkflows(setWorkflows, () => undefined),
             () => undefined)
     };
 
@@ -126,7 +126,7 @@ const SimpleWorkflows = (props) => {
         setLoading(false);
     }, () => undefined), [])
 
-    if(loading) return null
+    if (loading) return null
 
     return (
         <div>
@@ -176,10 +176,10 @@ const SimpleWorkflows = (props) => {
                         open={Boolean(anchorEditMenu)}
                         onClose={() => setAnchorEditMenu(null)}
                     >
-                        <MenuItem disabled onClick={() => handleEdit()}>Edit</MenuItem>
-                        <MenuItem onClick={() => { handleDelete()}}>Delete</MenuItem>
+                        <MenuItem onClick={() => handleEdit()}>Edit</MenuItem>
+                        <MenuItem onClick={() => { handleDelete() }}>Delete</MenuItem>
                         <Divider />
-                        <MenuItem onClick={() => { handleChangeActive()}}>{selectedWorkflow != null && selectedWorkflow.active ? "Deactivate" : "Activate"}</MenuItem>
+                        <MenuItem onClick={() => { handleChangeActive() }}>{selectedWorkflow != null && selectedWorkflow.active ? "Deactivate" : "Activate"}</MenuItem>
                     </Menu>
                 </>
                 :
@@ -191,8 +191,8 @@ const SimpleWorkflows = (props) => {
             }
             <FullscreenDialog
                 open={openWorkflowDialog}
-                handleClose={() => {setExistingWorkflow(null); setOpenWorkflowDialog(false)}}
-                title={Boolean(selectedWorkflow) ? "Inspect existing workflow" : "Add a new simple workflow"}
+                handleClose={() => { setExistingWorkflow(null); setOpenWorkflowDialog(false) }}
+                title={Boolean(selectedWorkflow) ? "Edit existing workflow" : "Add a new simple workflow"}
             >
                 <AddSimpleWorkflow existing={existingWorkflow} onFinish={handleAddedSimpleWorkflow} />
             </FullscreenDialog>

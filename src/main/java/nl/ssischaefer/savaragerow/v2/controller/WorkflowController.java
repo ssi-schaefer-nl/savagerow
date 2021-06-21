@@ -24,9 +24,9 @@ public class WorkflowController {
         List<String> tables = new GetTablesQuery().execute().getResult();
         WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
         List<WorkflowOverviewDTO> summary = tables.stream().map(table -> {
-            List<Workflow> deleteWorkflows = workflows.getByTable(WorkflowType.DELETE, table);
-            List<Workflow> updateWorkflows = workflows.getByTable(WorkflowType.UPDATE, table);
-            List<Workflow> insertWorkflows = workflows.getByTable(WorkflowType.INSERT, table);
+            List<Workflow> deleteWorkflows = workflows.get(WorkflowType.DELETE, table);
+            List<Workflow> updateWorkflows = workflows.get(WorkflowType.UPDATE, table);
+            List<Workflow> insertWorkflows = workflows.get(WorkflowType.INSERT, table);
 
             return new WorkflowOverviewDTO()
                     .setTable(table)
@@ -46,7 +46,7 @@ public class WorkflowController {
         String table = request.params(RequestParams.Parameter.Table);
         WorkflowType type = WorkflowType.fromString(request.params(RequestParams.Parameter.WorkflowType));
 
-        List<Workflow> tableWorkflows =  WorkflowsManager.getWorkflowsFromCurrentWorkspace().getByTable(type, table);
+        List<Workflow> tableWorkflows =  WorkflowsManager.getWorkflowsFromCurrentWorkspace().get(type, table);
         return new ObjectMapper().writeValueAsString(tableWorkflows);
     };
 

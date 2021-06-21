@@ -44,12 +44,12 @@ export default function AddSimpleWorkflow(props) {
     const editingSteps = [
         {
             "name": "Enter a name",
-            "Component": <WorkflowStepName onChange={setName} value={name} />,
+            "Component": <WorkflowStepName disabled={existing != null} onChange={setName} value={name} />,
             "nextAllowed": name != null && name.length > 0
         },
         {
             "name": "Specify the trigger",
-            "Component": <WorkflowStepTrigger onChangeTable={setTable} table={table} onChangeType={setType} type={type} />,
+            "Component": <WorkflowStepTrigger disabled={existing != null} onChangeTable={setTable} table={table} onChangeType={setType} type={type} />,
             "nextAllowed": table.length > 0 && type.length > 0
         },
         {
@@ -59,7 +59,7 @@ export default function AddSimpleWorkflow(props) {
         },
         {
             "name": "Add conditions",
-            "Component": <WorkflowConditions onChange={(c) => {console.log(c); setConditions(c);}} conditions={conditions} table={table}/> ,
+            "Component": <WorkflowConditions onChange={(c) => { console.log(c); setConditions(c); }} conditions={conditions} table={table} />,
             "nextButton": "Save",
             "onNext": saveWorkflow
         },
@@ -74,25 +74,25 @@ export default function AddSimpleWorkflow(props) {
 
     ]
 
-    
+
     return <HorizontalLinearStepper steps={editingSteps} onFinish />
 }
 
 
 const WorkflowStepName = props => {
-    const { onChange, value } = props
+    const { onChange, value, disabled } = props
 
     return (
         <div>
             <Typography variant="h6">Enter a name for the workflow</Typography>
-            <TextField id="standard-basic" label="Workflow name" value={value} autoComplete='off' onChange={(e) => onChange(e.target.value)} />
+            <TextField id="standard-basic" disabled={disabled} label="Workflow name" value={value} autoComplete='off' onChange={(e) => onChange(e.target.value)} />
         </div>
     )
 }
 
 
 const WorkflowStepTrigger = props => {
-    const { onChangeTable, onChangeType, table, type } = props
+    const { onChangeTable, onChangeType, table, type, disabled } = props
     const [tables, setTables] = useState([])
 
     useEffect(() => {
@@ -104,8 +104,9 @@ const WorkflowStepTrigger = props => {
         <div>
             <Typography variant="h6">Specify the trigger that must initiate the workflow</Typography>
             <div style={{ margin: "2em" }} >
-                Trigger the workflow when we 
-                    <Select
+                Trigger the workflow when we
+                <Select
+                    disabled={disabled}
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "10em", margin: "0 1em" }}
                     onChange={(e) => onChangeType(e.target.value)}
@@ -115,8 +116,9 @@ const WorkflowStepTrigger = props => {
 
                     {["delete", "update", "insert"].map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
                 </Select>
-                    a row in table <nbsp />
+                a row in table <nbsp />
                 <Select
+                    disabled={disabled}
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "10em", margin: "0 1em" }}
                     onChange={(e) => onChangeTable(e.target.value)}
