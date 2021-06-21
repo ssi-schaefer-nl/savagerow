@@ -52,7 +52,7 @@ export default function DatabaseSelect(props) {
     return (
 
         <FormControl style={{ margin: 1, minWidth: 120 }}>
-            <InputLabel htmlFor="demo-customized-select-native">Database</InputLabel>
+            <InputLabel htmlFor="demo-customized-select-native">Workspace</InputLabel>
             <NativeSelect
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"

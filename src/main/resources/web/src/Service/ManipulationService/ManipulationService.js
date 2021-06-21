@@ -2,7 +2,9 @@ import HttpHelper from "../HttpHelper";
 
 class ManipulationService {
     constructor(table) {
-        this.prefix = `/api/v1/${localStorage.getItem('database').toLowerCase()}/database/${table}`
+        let database = localStorage.getItem('database');
+        if(database == null) database = "unknown"
+        this.prefix = `/api/v1/${database.toLowerCase()}/database/${table}`
         this.httpHelper = new HttpHelper();
     }
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Typography from '@material-ui/core/Typography';
 
-import { Divider } from "@material-ui/core";
+import { Divider, Grid } from "@material-ui/core";
 import DatabaseSelect from "../../Components/DatabaseSelect/DatabaseSelect";
 import Workflow from "./Workflow/Workflow";
 
@@ -11,21 +11,29 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import AppBar from '@material-ui/core/AppBar';
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { TextField } from '@material-ui/core';
 
 function createConfigSection(name, PanelComponent) {
     return { "name": name, "component": PanelComponent }
 }
 
 const ConfigurationSections = [
-    createConfigSection("Overview", <>
-        <Typography>Nothing here yet.</Typography>
-        <Divider style={{ margin: "1em 0em 2em 0em" }} />
+    createConfigSection("General", <>
+        <Typography variant="h6" color="primary">General</Typography>
+        <Divider style={{ margin: "2em 0" }} />
 
     </>),
-    createConfigSection("Database", <>
-        <Typography>This section allows configuration related to the databases.</Typography>
-        <Divider style={{ margin: "1em 0em 2em 0em" }} />
-        <DatabaseSelect />
+    createConfigSection("Workspace", <>
+        <Grid container direction="column" spacing={4}>
+            <Grid item>
+                <Typography variant="h6" color="primary">Current Workspace</Typography>
+            </Grid>
+            <Grid item>
+                <DatabaseSelect onSelect={() => window.location.reload(false)}/>
+            </Grid>
+        </Grid>
+        <Divider style={{ margin: "2em 0" }} />
+
     </>),
     createConfigSection("Workflows", <Workflow />)
 ]

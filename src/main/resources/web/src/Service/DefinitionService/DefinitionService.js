@@ -3,7 +3,9 @@ import HttpHelper from "../HttpHelper";
 class DefinitionService {
     constructor(table) {
         this.table = table
-        this.prefix = `/api/v1/${localStorage.getItem('database').toLowerCase()}/database/${table}/column`
+        let database = localStorage.getItem('database');
+        if(database == null) database = "unknown"
+        this.prefix = `/api/v1/${database.toLowerCase()}/database/${table}/column`
         this.httpHelper = new HttpHelper();
     }
 

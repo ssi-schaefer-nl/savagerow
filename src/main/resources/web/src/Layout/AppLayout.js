@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import clsx from 'clsx';
 import { makeStyles, rgbToHex, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -112,7 +112,7 @@ export default function OverviewFlow() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-
+  const workspace = localStorage.getItem("database")
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -144,7 +144,7 @@ export default function OverviewFlow() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            SavageRow
+            {workspace != null ? workspace : "SavageRow"}
           </Typography>
         </Toolbar>
       </AppBar>

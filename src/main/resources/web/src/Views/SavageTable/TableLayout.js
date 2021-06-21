@@ -46,8 +46,8 @@ const Tables = (props) => {
   }
 
   if (database == null) return (
-    <div>
-      <Typography style={{ marginBottom: "2em" }}>No database is selected. Please select a database</Typography>
+    <div style={{margin: "3em"}}>
+      <Typography style={{ marginBottom: "2em" }}>No workspace is selected. Please select a workspace</Typography>
       <DatabaseSelect onSelect={() => window.location.reload(false)} />
     </div>
   )
@@ -60,9 +60,6 @@ const Tables = (props) => {
 
       <AppBar position="static" color="default" style={{ padding: "0.5em", borderBottom: "1px solid grey" }}>
         <Toolbar >
-          <Typography variant="h6" color="primary" style={{ marginRight: "1em", fontWeight: "bold" }}>
-            {database}
-          </Typography>
           <Tabs
             selectionFollowsFocus
             value={value}

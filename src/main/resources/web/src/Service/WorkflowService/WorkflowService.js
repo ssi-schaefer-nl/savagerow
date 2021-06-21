@@ -2,7 +2,9 @@ import HttpHelper from "../HttpHelper";
 
 class WorkflowService {
     constructor() {
-        this.prefix = `/api/v1/${localStorage.getItem('database')}/workflow`
+        let database = localStorage.getItem('database');
+        if (database == null) database = "unknown"
+        this.prefix = `/api/v1/${database.toLowerCase()}/workflow`
         this.httpHelper = new HttpHelper();
     }
 

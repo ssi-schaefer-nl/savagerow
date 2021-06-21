@@ -3,7 +3,9 @@ import HttpHelper from "../HttpHelper";
 class QueryService {
     constructor(table) {
         this.table = table
-        this.prefix = `/api/v1/${localStorage.getItem('database').toLowerCase()}/database`
+        let database = localStorage.getItem('database');
+        if(database == null) database = "unknown"
+        this.prefix = `/api/v1/${database.toLowerCase()}/database`
         this.httpHelper = new HttpHelper();
     }
 
