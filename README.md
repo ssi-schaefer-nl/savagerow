@@ -27,7 +27,7 @@ The actions of Simple Workflows are basic: they perform a simple task and will n
 
 ### Contributor
 
-- Vincent Beck 
+- Vincent Beck (core contributor)
 - Debarshi Basak
 
 ### Architecture
