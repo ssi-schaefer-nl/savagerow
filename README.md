@@ -36,6 +36,3 @@ The actions of Simple Workflows are basic: they perform a simple task and will n
 
 This is not an official project from SSI Schaefer gmbh. This is an initiative from the team based out of the netherlands.
 
-### Roadmap
-
-
