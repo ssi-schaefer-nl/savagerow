@@ -11,7 +11,7 @@ import { InputLabel, Select } from '@material-ui/core';
 
 import Button from '@material-ui/core/Button';
 import RowCriterion from "../AddSimpleWorkflow/AddAction/RowCriterion";
-import PopupForm from "../AddSimpleWorkflow/AddAction/PopupForm";
+import PopupForm from "../../../../../../Components/PopupForm/PopupForm";
 import QueryService from "../../../../../../Service/QueryService/QueryService";
 
 

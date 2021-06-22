@@ -23,11 +23,12 @@ public class DeleteRowQuery {
 
     public DeleteRowQuery generate() throws SQLException {
         String sql = String.format("DELETE FROM %s WHERE rowid = %s", this.table, this.row);
-        this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+        this.preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
         return this;
     }
 
     public void execute() throws SQLException {
         preparedStatement.executeUpdate();
+        preparedStatement.close();
     }
 }

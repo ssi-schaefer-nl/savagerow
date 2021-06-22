@@ -64,4 +64,16 @@ public class ColumnSchemaDTO {
         this.datatype = datatype;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "ColumnSchemaDTO{" +
+                "name='" + name + '\'' +
+                ", nullable=" + nullable +
+                ", fk='" + fk + '\'' +
+                ", pk=" + pk +
+                ", datatype=" + datatype +
+                ", defaultValue='" + defaultValue + '\'' +
+                '}';
+    }
 }

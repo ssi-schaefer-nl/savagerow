@@ -4,6 +4,7 @@ import nl.ssischaefer.savaragerow.v2.dto.ColumnSchemaDTO;
 import nl.ssischaefer.savaragerow.v2.util.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.v2.util.SQLiteDatatype;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.StringJoiner;
@@ -33,7 +34,13 @@ public class CreateTableQuery {
     }
 
     public void execute() throws SQLException {
-        SQLiteDataSource.getConnection().createStatement().executeUpdate(sql);
+        PreparedStatement preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
+        try {
+            preparedStatement.executeUpdate();
+        } finally {
+            preparedStatement.close();
+
+        }
     }
 
     public CreateTableQuery generate() throws SQLException {
@@ -46,6 +53,10 @@ public class CreateTableQuery {
         List<String> primaryKeyColumns = columns.stream().filter(ColumnSchemaDTO::isPk).map(ColumnSchemaDTO::getName).collect(Collectors.toList());
         if (!primaryKeyColumns.isEmpty())
             definition = definition.concat(String.format(", PRIMARY KEY(%s)", String.join(",", primaryKeyColumns)));
+
+        for (ColumnSchemaDTO col : columns.stream().filter(c -> c.getFk() != null).collect(Collectors.toList())) {
+            definition = definition.concat(String.format(", FOREIGN KEY(%s) REFERENCES %s(%s)", col.getName(), col.getFk().split("\\.")[0], col.getFk().split("\\.")[1]));
+        }
 
         sql = String.format("CREATE TABLE %s ( %s )", this.tableName, definition);
         return this;

@@ -13,7 +13,8 @@ import DatabaseService from "../../Service/ConfigureService";
 
 export default function DatabaseSelect(props) {
     const configureService = new DatabaseService()
-    const onSelect = props.onSelect
+    const { reloadSwitch, onSelect } = props
+
     const [databases, setDatabases] = useState([])
     const [database, setDatabase] = useState(undefined)
     const [anchorEl, setAnchorEl] = useState(null)
@@ -33,13 +34,15 @@ export default function DatabaseSelect(props) {
                 setLoadingAvailableDatabases(false)
                 setLoadingError(true)
             });
-    }, [])
+    }, [reloadSwitch])
 
     const handleChange = (e) => {
         var db = e.target.value
-        localStorage.setItem('database', db);
-        setDatabase(db)
-        if (onSelect) onSelect()
+        if (db != null) {
+            localStorage.setItem('database', db);
+            setDatabase(db)
+            if (onSelect) onSelect()
+        }
     }
 
     if (loadingAvailableDatabases) {
@@ -52,14 +55,14 @@ export default function DatabaseSelect(props) {
     return (
 
         <FormControl style={{ margin: 1, minWidth: 120 }}>
-            <InputLabel htmlFor="demo-customized-select-native">Workspace</InputLabel>
+            <InputLabel htmlFor="demo-customized-select-native">Database</InputLabel>
             <NativeSelect
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={val}
                 onChange={handleChange}
             >
-                <option aria-label="None" value="" />
+                <option aria-label="None" value={null} />
 
                 {databases.map(d => (
                     <option value={d}>{d}</option>

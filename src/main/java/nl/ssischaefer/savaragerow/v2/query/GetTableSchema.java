@@ -5,6 +5,7 @@ import nl.ssischaefer.savaragerow.v2.dto.TableSchemaDTO;
 import nl.ssischaefer.savaragerow.v2.util.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.v2.util.SQLiteDatatype;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,13 +39,13 @@ public class GetTableSchema {
     }
 
     private List<ColumnSchemaDTO> getColumnSchema() throws SQLException {
+        List<ColumnSchemaDTO> columnSchemaList = new ArrayList<>();
+
+
         Map<String, String> foreignkeys = getForeignKeys();
         List<String> primarykeys = getPrimaryKeys();
 
-        List<ColumnSchemaDTO> columnSchemaList = new ArrayList<>();
-        DatabaseMetaData metaData = SQLiteDataSource.getConnection().getMetaData();
-        ResultSet columns = metaData.getColumns(null, null, table, null);
-
+        ResultSet columns = SQLiteDataSource.get().getMetaData().getColumns(null, null, table, null);
         while (columns.next()) {
             String name = columns.getString("COLUMN_NAME");
 
@@ -55,23 +56,29 @@ public class GetTableSchema {
                     .setDatatype(SQLiteDatatype.fromString(columns.getString("TYPE_NAME")))
                     .setPk(primarykeys.contains(name));
             columnSchemaList.add(columnSchema);
+
         }
+        columns.close();
         return columnSchemaList;
     }
 
     private List<String> getPrimaryKeys() throws SQLException {
-        DatabaseMetaData metaData = SQLiteDataSource.getConnection().getMetaData();
+        DatabaseMetaData metaData = SQLiteDataSource.get().getMetaData();
+
         ResultSet pkResultSet = metaData.getPrimaryKeys(null, null, table);
         List<String> pkColumns = new ArrayList<>();
         while(pkResultSet.next()) {
             pkColumns.add(pkResultSet.getString(4));
         }
+        pkResultSet.close();
         return pkColumns;
     }
 
     private Map<String, String> getForeignKeys() throws SQLException {
-        DatabaseMetaData metaData = SQLiteDataSource.getConnection().getMetaData();
-        ResultSet foreignKeys = metaData.getImportedKeys(SQLiteDataSource.getConnection().getCatalog(), null, table);
+        Connection connection = SQLiteDataSource.get();
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet foreignKeys = metaData.getImportedKeys(connection.getCatalog(), null, table);
+
         Map<String, String> fkColumns = new HashMap<>();
         while (foreignKeys.next()) {
             String fkColumnName = foreignKeys.getString("FKCOLUMN_NAME");
@@ -79,6 +86,7 @@ public class GetTableSchema {
             String pkColumnName = foreignKeys.getString("PKCOLUMN_NAME");
             fkColumns.put(fkColumnName, String.format("%s.%s", pkTableName, pkColumnName));
         }
+        foreignKeys.close();
         return fkColumns;
     }
 

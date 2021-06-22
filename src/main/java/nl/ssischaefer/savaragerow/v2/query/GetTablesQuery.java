@@ -12,7 +12,7 @@ public class GetTablesQuery {
     private List<String> result;
 
     public GetTablesQuery execute() throws SQLException {
-        DatabaseMetaData md = SQLiteDataSource.getConnection().getMetaData();
+        DatabaseMetaData md = SQLiteDataSource.get().getMetaData();
         ResultSet rs = md.getTables(null, null, "%", null);
 
         List<String> tables = new ArrayList<>();
@@ -21,6 +21,8 @@ public class GetTablesQuery {
             tables.add(tableName);
         }
         this.result = tables;
+        rs.close();
+
         return this;
     }
 

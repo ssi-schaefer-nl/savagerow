@@ -39,7 +39,7 @@ public class DeleteRowByCriteriaQuery {
             deletedRows = new GetRowQuery().setTable(table).setCriteria(criteria).generate().execute().getResult();
 
         String sql = String.format("DELETE FROM %s WHERE %s", this.table, whereClause);
-        this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+        this.preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
         int nextParamIndex = 0;
 
         for (RowCriteria c : criteria) {
@@ -53,6 +53,7 @@ public class DeleteRowByCriteriaQuery {
 
     public DeleteRowByCriteriaQuery execute() throws SQLException {
         preparedStatement.executeUpdate();
+        preparedStatement.close();
         return this;
     }
 

@@ -7,6 +7,7 @@ import nl.ssischaefer.savaragerow.v2.controller.TableRowController;
 import nl.ssischaefer.savaragerow.v2.controller.TableSchemaController;
 import nl.ssischaefer.savaragerow.v2.controller.WorkflowController;
 import nl.ssischaefer.savaragerow.v2.util.RequestParams;
+import nl.ssischaefer.savaragerow.v2.util.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.v2.util.Workspace;
 import nl.ssischaefer.savaragerow.v2.workflowqueue.WorkflowTaskQueue;
 
@@ -33,7 +34,7 @@ public class SavageRow {
 
     private static void setupGetRoutes() {
         get(API_PREFIX + "/:database", DatabaseController.getAllDatabases);
-        get(API_PREFIX + "/:database/database/:table", TableRowController.getRows);
+        get(API_PREFIX + "/:database/database/:table/rows", TableRowController.getRows);
         get(API_PREFIX + "/:database/database/:table/schema", TableSchemaController.getSchema);
         get(API_PREFIX + "/:database/database", DatabaseController.getTables);
         get(API_PREFIX + "/:database/workflow", WorkflowController.getSummary);
@@ -43,24 +44,30 @@ public class SavageRow {
 
     private static void setupPostRoutes() {
         post(API_PREFIX + "/:database", DatabaseController.createDatabase);
+        post(API_PREFIX + "/:database/database/:table", TableSchemaController.addTable);
         post(API_PREFIX + "/:database/database/:table/column", TableSchemaController.addColumn);
-        post(API_PREFIX + "/:database/database/:table", TableRowController.addRows);
+        post(API_PREFIX + "/:database/database/:table/rows", TableRowController.addRows);
         post(API_PREFIX + "/:database/workflow/:type", WorkflowController.addWorkflow);
         post(API_PREFIX + "/:database/workflow/:table/:type/:name/active/:active", WorkflowController.setActive);
 
     }
 
     private static void setupPutRoutes() {
-        put(API_PREFIX + "/:database/database/:table/:row", TableRowController.updateRow);
+        put(API_PREFIX + "/:database/database/:table/rows/:row", TableRowController.updateRow);
         put(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.renameColumn);
     }
 
     private static void setupDeleteRoutes() {
         delete(API_PREFIX + "/:database", DatabaseController.deleteDatabase);
-        delete(API_PREFIX + "/:database/database/:table/:row", TableRowController.deleteRow);
+        delete(API_PREFIX + "/:database/database/:table", TableSchemaController.deleteTable);
+        delete(API_PREFIX + "/:database/database/:table/rows/:row", TableRowController.deleteRow);
         delete(API_PREFIX + "/:database/database/:table/column/:column", TableSchemaController.deleteColumn);
         delete(API_PREFIX + "/:database/workflow/:table/:type/:name", WorkflowController.deleteWorkflow);
 
+    }
+
+    private static void setupAfterRoutes() {
+        after(API_PREFIX + "/:database/*", (request, response) -> SQLiteDataSource.disconnect());
     }
 
     private static void setupExceptions() {

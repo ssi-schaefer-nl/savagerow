@@ -42,7 +42,7 @@ public class GetRowQuery {
         String sql = String.format("select rowid as rowid, * from %s", table);
         if (rowId != null) {
             sql = sql.concat(" where rowid=?");
-            preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+            preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
             preparedStatement.setLong(1, rowId);
         } else if (criteria != null) {
             String whereClause = criteria.stream()
@@ -50,7 +50,7 @@ public class GetRowQuery {
                     .collect(Collectors.joining(" AND "));
             sql = sql.concat(String.format(" WHERE %s", whereClause));
             int nextParamIndex = 0;
-            preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+            preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
             for (RowCriteria c : criteria) {
                 nextParamIndex++;
                 String op = c.getOperator();
@@ -60,7 +60,7 @@ public class GetRowQuery {
                     preparedStatement.setString(nextParamIndex, c.getRequired());
             }
         } else {
-            preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+            preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
         }
 
         return this;
@@ -76,8 +76,9 @@ public class GetRowQuery {
             }
             rows.add(cols);
         }
-
         this.result = rows;
+        preparedStatement.close();
+        rs.close();
         return this;
     }
 

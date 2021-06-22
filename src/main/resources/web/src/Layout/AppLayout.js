@@ -112,7 +112,7 @@ export default function OverviewFlow() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const workspace = localStorage.getItem("database")
+  const database = localStorage.getItem("database")
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -144,7 +144,7 @@ export default function OverviewFlow() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            {workspace != null ? workspace : "SavageRow"}
+            {database != null ? database.charAt(0).toUpperCase() + database.slice(1) : "SavageRow"}
           </Typography>
         </Toolbar>
       </AppBar>

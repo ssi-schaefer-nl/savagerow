@@ -7,17 +7,20 @@ import java.sql.SQLException;
 public class SQLiteDataSource {
     private static Connection conn = null;
 
-    public static Connection getConnection() throws SQLException {
-        if(conn == null) {
-            throw new SQLException("No connection is setup");
+    public static Connection get() throws SQLException {
+        if(conn != null) {
+            conn.close();
         }
 
+        conn = DriverManager.getConnection(Workspace.getCurrentDatabaseUrl());
         return conn;
     }
 
-    public static void connect(String url) throws SQLException {
-        if(conn != null && !conn.isClosed()) conn.close();
-        conn = DriverManager.getConnection(url);
+    public static void disconnect() throws SQLException {
+        if(conn != null) {
+            conn.close();
+            conn = null;
+        }
     }
 
     private SQLiteDataSource(){}

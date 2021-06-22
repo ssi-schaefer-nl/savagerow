@@ -37,7 +37,7 @@ public class InsertRowQuery {
         return this;
     }
 
-    public InsertRowQuery generate() throws SQLException {
+    public InsertRowQuery generate() throws Exception {
         List<String> columns = new ArrayList<>(
                 data.getRow().keySet())
                 .stream()
@@ -45,8 +45,11 @@ public class InsertRowQuery {
                 .filter(c -> !data.getRow().get(c).isEmpty())
                 .collect(Collectors.toList()
                 );
+        if(columns.isEmpty()) throw new Exception("The row must have at least one field with data to insert a row");
         String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", table, String.join(",", columns), String.join(",", Collections.nCopies(columns.size(), "?")));
-        this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+
+        this.preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
+
         for (int i = 0; i < columns.size(); i++) {
             String fieldValue = data.getRow().get(columns.get(i));
             preparedStatement.setString(i + 1, fieldValue.isEmpty() ? null : fieldValue);
@@ -58,6 +61,7 @@ public class InsertRowQuery {
         preparedStatement.executeUpdate();
         ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
         if (generatedKeys.next()) this.generatedKey = generatedKeys.getLong(1);
+        preparedStatement.close();
         return this;
     }
 

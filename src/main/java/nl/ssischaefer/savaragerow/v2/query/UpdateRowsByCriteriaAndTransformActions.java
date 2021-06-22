@@ -33,7 +33,7 @@ public class UpdateRowsByCriteriaAndTransformActions {
         String whereClause = generateWhereClause();
 
         String sql = String.format("UPDATE %s SET %s WHERE %s", this.table, setClause, whereClause);
-        this.preparedStatement = SQLiteDataSource.getConnection().prepareStatement(sql);
+        this.preparedStatement = SQLiteDataSource.get().prepareStatement(sql);
 
         int nextParamIndex = 0;
         for (FieldUpdate update : fieldUpdates) {
@@ -83,6 +83,8 @@ public class UpdateRowsByCriteriaAndTransformActions {
         preparedStatement.executeUpdate();
         if (storeUpdatedRows)
             updatedRows = new GetRowQuery().setTable(table).setCriteria(criteria).generate().execute().getResult();
+
+        preparedStatement.close();
         return this;
     }
 

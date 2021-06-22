@@ -21,7 +21,7 @@ public class InsertAction extends CrudAction {
         try {
             new InsertRowQuery().setTable(table).setData(new RowDTO().setRow(transformedRow)).generate().execute();
             if(triggerWorkflows) WorkflowTaskQueue.getQueue().feed(new WorkflowTask().setData(transformedRow).setTable(table).setType(WorkflowType.INSERT));
-        } catch (SQLException throwables) {
+        } catch (Exception throwables) {
             throwables.printStackTrace();
         }
     }

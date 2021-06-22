@@ -3,6 +3,7 @@ package nl.ssischaefer.savaragerow.v2.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.v2.query.GetTablesQuery;
 import nl.ssischaefer.savaragerow.v2.util.RequestParams;
+import nl.ssischaefer.savaragerow.v2.util.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.v2.util.Workspace;
 import spark.Request;
 import spark.Response;
@@ -23,6 +24,7 @@ public class DatabaseController {
 
 
     public static final Route deleteDatabase = (Request request, Response response) -> {
+        SQLiteDataSource.disconnect();
         Workspace.removeDatabase(request.params(RequestParams.Parameter.Database));
         return "";
     };

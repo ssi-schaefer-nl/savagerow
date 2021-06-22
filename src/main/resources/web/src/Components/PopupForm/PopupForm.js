@@ -9,9 +9,6 @@ import { InputLabel, Select } from '@material-ui/core';
 
 import { blue } from '@material-ui/core/colors';
 import CloseIcon from '@material-ui/icons/Close';
-import { MenuItem } from 'react-contextmenu';
-import Row from './ActionOnRowForm';
-import ActionOnRowForm from './ActionOnRowForm';
 
 
 const useStyles = makeStyles({

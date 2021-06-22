@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 
 public class Workspace {
     private static String currentWorkspace;
+    private static String currentDatabaseUrl;
 
     public static void setCurrentDatabase(String databaseName) throws IOException, SQLException {
         String workSpace = getDatabasePath(databaseName);
-        String connUrl = workSpace + databaseName + ".db";
+        currentDatabaseUrl = "jdbc:sqlite:" + workSpace + databaseName + ".db";
         currentWorkspace = workSpace;
-        SQLiteDataSource.connect("jdbc:sqlite:"+connUrl);
     }
 
     public static String getCurrentWorkspace() {
@@ -44,9 +44,14 @@ public class Workspace {
         return Arrays.stream(files).filter(File::isDirectory).map(File::getName).collect(Collectors.toList());
     }
 
-    public static void removeDatabase(String database) throws IOException {
+    public static void removeDatabase(String database) throws IOException, SQLException {
+        SQLiteDataSource.disconnect();
         String p = getDatabasePath(database);
         File file = new File(p);
         FileUtils.deleteDirectory(file);
+    }
+
+    public static String getCurrentDatabaseUrl() {
+        return currentDatabaseUrl;
     }
 }

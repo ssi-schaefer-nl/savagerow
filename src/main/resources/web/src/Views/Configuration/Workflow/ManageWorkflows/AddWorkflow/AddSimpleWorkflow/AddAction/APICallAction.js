@@ -4,7 +4,7 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import TableColumnContextMenu from "../../../../../../../Components/TableColumnContextMenu/TableColumnContextMenu"
 import ActionFormTextArea from "./ActionFormTextArea"
 import ActionFormTextField from "./ActionFormTextField"
-import PopupForm from "./PopupForm"
+import PopupForm from "../../../../../../../Components/PopupForm/PopupForm"
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/mode-java";

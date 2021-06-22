@@ -6,6 +6,7 @@ import nl.ssischaefer.savaragerow.v2.util.SQLiteDataSource;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 public class AddColumnQuery {
     private PreparedStatement statement;
@@ -33,11 +34,19 @@ public class AddColumnQuery {
     public AddColumnQuery generate() throws SQLException {
         String constraints = column.isNullable() ? "" : String.format("NOT NULL DEFAULT [%s]", column.getDefaultValue());
         String sql = String.format("ALTER TABLE %s ADD COLUMN %s %s %s", table, column.getName(), column.getDatatype().datatype, constraints);
-        statement = SQLiteDataSource.getConnection().prepareStatement(sql);
+        statement = SQLiteDataSource.get().prepareStatement(sql);
         return this;
     }
 
     public void execute() throws SQLException {
-        statement.executeUpdate();
+        if(column.isPk() || column.getFk() != null) {
+            List<ColumnSchemaDTO> columns = new GetTableSchema().setTable(table).execute().getResult().getColumns();
+            columns.add(column);
+            new RecreateTableQuery().setTable(table).setColumns(columns).generate().execute();
+        }
+        else {
+            statement.executeUpdate();
+        }
+        statement.close();
     }
 }
