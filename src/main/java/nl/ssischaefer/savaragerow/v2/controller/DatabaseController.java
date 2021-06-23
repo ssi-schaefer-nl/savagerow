@@ -11,6 +11,7 @@ import spark.Route;
 
 public class DatabaseController {
     private DatabaseController() {
+        //ignore
     }
 
     public static final Route getAllDatabases = (Request request, Response response) -> new ObjectMapper().writeValueAsString(Workspace.listDatabases());
@@ -20,7 +21,6 @@ public class DatabaseController {
         Workspace.setCurrentDatabase(request.params(RequestParams.Parameter.Database));
         return "";
     };
-
 
     public static final Route deleteDatabase = (Request request, Response response) -> {
         Workspace.removeDatabase(request.params(RequestParams.Parameter.Database));

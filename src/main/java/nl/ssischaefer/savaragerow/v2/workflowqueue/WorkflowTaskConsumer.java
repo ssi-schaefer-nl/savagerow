@@ -1,6 +1,7 @@
 package nl.ssischaefer.savaragerow.v2.workflowqueue;
 
 import nl.ssischaefer.savaragerow.v2.model.WorkflowsManager;
+import nl.ssischaefer.savaragerow.v2.util.WorkspaceNotSetException;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -29,7 +30,11 @@ public class WorkflowTaskConsumer implements Runnable {
     }
 
     private void handle(WorkflowTask task) {
-        WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        workflows.execute(task.getType(), task.getTable(), task.getData());
+        try {
+            WorkflowsManager  workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+            workflows.execute(task.getType(), task.getTable(), task.getData());
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
     }
 }

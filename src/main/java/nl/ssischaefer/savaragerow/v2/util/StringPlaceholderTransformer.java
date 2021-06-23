@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 
 public class StringPlaceholderTransformer {
 
+    public static final String TEMPLATE_PATTERN = "\\$(.*?)\\$";
+    public static final String DATE_FORMAT = "dd/MM/yyy HH:mm:ss";
+
     public static String transformPlaceholders(String source, Map<String, String> lookup) {
         Map<String, String> replacementMap = generateReplacementMap(source, lookup);
         String transformedString = source;
@@ -29,9 +32,9 @@ public class StringPlaceholderTransformer {
 
     private static Map<String, String> generateReplacementMap(String source, Map<String, String> lookup) {
         Map<String, String> toReplace = new HashMap<>();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDateTime now = LocalDateTime.now();
-        Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(source);
+        Matcher m = Pattern.compile(TEMPLATE_PATTERN).matcher(source);
         while (m.find()) {
             String placeholder = m.group(1);
             if (lookup.get(placeholder) != null)
@@ -45,9 +48,9 @@ public class StringPlaceholderTransformer {
 
     private static Map<String, String> generateReplacementMapForJson(String source, Map<String, String> lookup) {
         Map<String, String> toReplace = new HashMap<>();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm:ss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDateTime now = LocalDateTime.now();
-        Matcher m = Pattern.compile("\\$(.*?)\\$").matcher(source);
+        Matcher m = Pattern.compile(TEMPLATE_PATTERN).matcher(source);
         while (m.find()) {
             String placeholder = m.group(1);
             if (lookup.get(placeholder) != null)
