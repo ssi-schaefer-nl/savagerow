@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 
 public class StringPlaceholderTransformer {
 
-    public static final String TEMPLATE_PATTERN = "\\$(.*?)\\$";
+    public static final String TEMPLATE_PATTERN = "\\{(.*?)\\}";
+    public static final String TEMPLATE_PATTERN_JSON = "\\$(.*?)\\$";
     public static final String DATE_FORMAT = "dd/MM/yyy HH:mm:ss";
 
     public static String transformPlaceholders(String source, Map<String, String> lookup) {
@@ -50,7 +51,7 @@ public class StringPlaceholderTransformer {
         Map<String, String> toReplace = new HashMap<>();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDateTime now = LocalDateTime.now();
-        Matcher m = Pattern.compile(TEMPLATE_PATTERN).matcher(source);
+        Matcher m = Pattern.compile(TEMPLATE_PATTERN_JSON).matcher(source);
         while (m.find()) {
             String placeholder = m.group(1);
             if (lookup.get(placeholder) != null)
