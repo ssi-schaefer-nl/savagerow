@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 import ActionFormTextArea from "./ActionFormTextArea"
 import ActionFormTextField from "./ActionFormTextField"
-import PopupForm from "./PopupForm"
+import PopupForm from "../../../../../../../Components/PopupForm/PopupForm"
 
 
 import { TextField, Typography } from '@material-ui/core';

@@ -22,12 +22,12 @@ public class Workspace {
     private static final String JDBC_SQLITE_PREFIX = "jdbc:sqlite:";
 
     private static String currentWorkspace;
+    private static String currentDatabaseUrl;
 
-    public static void setCurrentDatabase(String databaseName) throws IOException, SQLException {
+    public static void setCurrentWorkspace(String databaseName) throws IOException, SQLException {
         String workSpace = getDatabasePath(databaseName);
-        String connUrl = Paths.get(workSpace, databaseName+ DB_EXT).toString();
+        String currentDatabaseUrl = Paths.get(workSpace, databaseName+ DB_EXT).toString();
         currentWorkspace = workSpace;
-        SQLiteDataSource.connect(JDBC_SQLITE_PREFIX + connUrl);
     }
 
     public static String getCurrentWorkspace() throws WorkspaceNotSetException {
@@ -58,5 +58,9 @@ public class Workspace {
         String p = getDatabasePath(database);
         File file = new File(p);
         FileUtils.deleteDirectory(file);
+    }
+
+    public static String getCurrentDatabaseUrl() {
+        return currentDatabaseUrl;
     }
 }

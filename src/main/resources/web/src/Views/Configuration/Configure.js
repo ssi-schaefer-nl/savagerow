@@ -16,7 +16,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { TextField } from '@material-ui/core';
 import DatabaseService from "../../Service/ConfigureService";
-import PopupForm from "./Workflow/ManageWorkflows/AddWorkflow/AddSimpleWorkflow/AddAction/PopupForm";
+import PopupForm from "../../Components/PopupForm/PopupForm";
 
 function createConfigSection(name, PanelComponent) {
     return { "name": name, "component": PanelComponent }
@@ -121,12 +121,17 @@ const WorkspaceOverview = props => {
 
     }, [])
 
-    const removeWorkspace = (workspace) => {
+    const removeWorkspace = (database) => {
         const databaseService = new DatabaseService()
-        databaseService.removeDatabase(workspace.toLowerCase(), () =>
+        databaseService.removeDatabase(database.toLowerCase(), () =>
             databaseService.listAllDatabases((res) => setWorkspaces(res.data), () => undefined)
             , () => undefined)
         setAreYouSure(false)
+        if (localStorage.getItem("database") === database) {
+            localStorage.removeItem("database")
+            window.location.reload(false)
+        }
+        props.onChange()
     }
 
     const handleAddWorkspace = (workspace) => {
@@ -136,7 +141,7 @@ const WorkspaceOverview = props => {
             , () => undefined)
         setAddWorkspace(false)
         setNewWorkspaceName("")
-        props.onAdd()
+        props.onChange()
     }
 
     return (
@@ -147,7 +152,7 @@ const WorkspaceOverview = props => {
                     <TableHead >
                         <TableRow>
                             <TableCell size="small" >
-                                Workspace name
+                                Database name
                             </TableCell>
                             <TableCell size="small" align="right">
                                 <Button onClick={(e) => setAddWorkspace(true)} >
@@ -173,7 +178,7 @@ const WorkspaceOverview = props => {
                     </TableBody>
                 </Table>
             </TableContainer >
-            <PopupForm open={addWorkspace} title="Add workspace" onSubmit={handleAddWorkspace} onClose={() => { setAddWorkspace(false); setNewWorkspaceName("")}}>
+            <PopupForm open={addWorkspace} title="Add workspace" onSubmit={handleAddWorkspace} onClose={() => { setAddWorkspace(false); setNewWorkspaceName("") }}>
                 <TextField label="Workspace name" value={newWorkspaceName} onChange={(e) => setNewWorkspaceName(e.target.value)} />
             </PopupForm>
             <PopupForm open={areYouSure} hide title="Confirm deletion" onSubmit={() => undefined} onClose={() => setAreYouSure(false)}>
@@ -190,27 +195,31 @@ const WorkspaceOverview = props => {
     )
 }
 
+const DatabaseConfigSection = props => {
+    const [rerender, setRerender] = useState(false)
 
+
+    return (
+        <>
+            <Typography variant="h6" color="primary" style={{ margin: "1em 0" }}>Database</Typography>
+            <Divider style={{ margin: "2em 0" }} />
+            <Grid container direction="row" spacing={10} style={{ paddingLeft: "2em" }}>
+                <Grid item>
+                    <Typography variant="subtitle2" color="primary" style={{ paddingBottom: "1em" }}>Current Database</Typography>
+                    <DatabaseSelect reloadSwitch={rerender} onSelect={() => window.location.reload(false)} />
+                </Grid>
+                <Grid item style={{ paddingLeft: "10em" }}>
+                    <Typography variant="subtitle2" color="primary">Manage Database</Typography>
+                    <WorkspaceOverview onChange={() => setRerender(r => !r)} />
+                </Grid>
+
+
+            </Grid>
+        </>
+    )
+}
 
 const ConfigurationSections = [
-    createConfigSection("General", <>
-        <Typography variant="h6" color="primary">General</Typography>
-        <Divider style={{ margin: "2em 0" }} />
-
-    </>),
-    createConfigSection("Workspace", <>
-        <Grid container direction="column" spacing={3}>
-            <Grid item>
-                <Typography variant="h6" color="primary">Current Workspace</Typography>
-            </Grid>
-            <Grid item>
-                <DatabaseSelect onSelect={() => window.location.reload(false)} />
-            </Grid>
-        </Grid>
-        <Divider style={{ margin: "2em 0" }} />
-        <Typography variant="h6" color="primary">Manage Workspaces</Typography>
-        <WorkspaceOverview onAdd={() => window.location.reload(false)}/>
-
-    </>),
+    createConfigSection("Database", <DatabaseConfigSection />),
     createConfigSection("Workflows", <Workflow />)
 ]
