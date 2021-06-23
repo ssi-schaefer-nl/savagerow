@@ -11,6 +11,7 @@ import spark.Route;
 
 public class DatabaseController {
     private DatabaseController() {
+        //ignore
     }
 
     public static final Route getAllDatabases = (Request request, Response response) -> new ObjectMapper().writeValueAsString(Workspace.listDatabases());

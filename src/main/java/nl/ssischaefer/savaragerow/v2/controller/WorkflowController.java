@@ -8,6 +8,7 @@ import nl.ssischaefer.savaragerow.v2.workflow.WorkflowType;
 import nl.ssischaefer.savaragerow.v2.workflow.WorkflowsManager;
 import nl.ssischaefer.savaragerow.v2.query.metadata.GetTablesQuery;
 import nl.ssischaefer.savaragerow.v2.util.RequestParams;
+import nl.ssischaefer.savaragerow.v2.util.WorkspaceNotSetException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -22,31 +23,51 @@ public class WorkflowController {
 
     public static final Route getSummary = (Request request, Response response) -> {
         List<String> tables = new GetTablesQuery().execute().getResult();
-        WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        List<WorkflowOverviewDTO> summary = tables.stream().map(table -> {
-            List<Workflow> deleteWorkflows = workflows.get(WorkflowType.DELETE, table);
-            List<Workflow> updateWorkflows = workflows.get(WorkflowType.UPDATE, table);
-            List<Workflow> insertWorkflows = workflows.get(WorkflowType.INSERT, table);
+        try {
 
-            return new WorkflowOverviewDTO()
-                    .setTable(table)
-                    .setDelete((int) deleteWorkflows.stream().filter(Workflow::isActive).count(), deleteWorkflows.size())
-                    .setUpdate((int) updateWorkflows.stream().filter(Workflow::isActive).count(), updateWorkflows.size())
-                    .setInsert((int) insertWorkflows.stream().filter(Workflow::isActive).count(), insertWorkflows.size());
-        }).collect(Collectors.toList());
-        return new ObjectMapper().writeValueAsString(summary);
+            WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+
+            List<WorkflowOverviewDTO> summary = tables.stream().map(table -> {
+                List<Workflow> deleteWorkflows = workflows.get(WorkflowType.DELETE, table);
+                List<Workflow> updateWorkflows = workflows.get(WorkflowType.UPDATE, table);
+                List<Workflow> insertWorkflows = workflows.get(WorkflowType.INSERT, table);
+
+                return new WorkflowOverviewDTO()
+                        .setTable(table)
+                        .setDelete((int) deleteWorkflows.stream().filter(Workflow::isActive).count(), deleteWorkflows.size())
+                        .setUpdate((int) updateWorkflows.stream().filter(Workflow::isActive).count(), updateWorkflows.size())
+                        .setInsert((int) insertWorkflows.stream().filter(Workflow::isActive).count(), insertWorkflows.size());
+            }).collect(Collectors.toList());
+
+            return new ObjectMapper().writeValueAsString(summary);
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     };
 
     public static final Route getAllWorkflows = (Request request, Response response) -> {
-        WorkflowsManager workflowManager = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        return new ObjectMapper().writeValueAsString(workflowManager.get());
+        try {
+            WorkflowsManager workflowManager = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+            return new ObjectMapper().writeValueAsString(workflowManager.get());
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     };
 
     public static final Route getTableWorkflows = (Request request, Response response) -> {
         String table = request.params(RequestParams.Parameter.Table);
         WorkflowType type = WorkflowType.fromString(request.params(RequestParams.Parameter.WorkflowType));
 
-        List<Workflow> tableWorkflows =  WorkflowsManager.getWorkflowsFromCurrentWorkspace().get(type, table);
+        List<Workflow> tableWorkflows = null;
+        try {
+            tableWorkflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace().get(type, table);
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
         return new ObjectMapper().writeValueAsString(tableWorkflows);
     };
 
@@ -54,10 +75,14 @@ public class WorkflowController {
         WorkflowType type = WorkflowType.fromString(request.params(RequestParams.Parameter.WorkflowType));
         ObjectMapper objectMapper = new ObjectMapper().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         Workflow workflow = objectMapper.readValue(request.body(), Workflow.class);
+        try {
+            WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+            workflows.add(type, workflow);
+            WorkflowsManager.save(workflows);
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
 
-        WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        workflows.add(type, workflow);
-        WorkflowsManager.save(workflows);
         return "";
     };
 
@@ -65,11 +90,14 @@ public class WorkflowController {
         WorkflowType type = WorkflowType.fromString(request.params(RequestParams.Parameter.WorkflowType));
         String name = request.params(RequestParams.Parameter.WorklfowName);
         String table = request.params(RequestParams.Parameter.Table);
+        try {
+            WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+            workflows.delete(type, table, name);
+            WorkflowsManager.save(workflows);
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
 
-        WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        workflows.delete(type, table, name);
-
-        WorkflowsManager.save(workflows);
         return "";
     };
 
@@ -79,10 +107,14 @@ public class WorkflowController {
         String table = request.params(RequestParams.Parameter.Table);
         boolean active = Boolean.parseBoolean(request.params(RequestParams.Parameter.WorkflowActive));
 
-        WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-        workflows.setActive(type, table, name, active);
+        try {
+            WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
+            workflows.setActive(type, table, name, active);
+            WorkflowsManager.save(workflows);
+        } catch (WorkspaceNotSetException e) {
+            e.printStackTrace();
+        }
 
-        WorkflowsManager.save(workflows);
         return "";
     };
 
