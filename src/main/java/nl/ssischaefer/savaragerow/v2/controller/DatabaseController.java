@@ -17,7 +17,7 @@ public class DatabaseController {
     public static final Route getTables = (Request request, Response response) -> new ObjectMapper().writeValueAsString(new GetTablesQuery().execute().getResult());
 
     public static final Route createDatabase = (Request request, Response response) -> {
-        Workspace.setCurrentDatabase(request.params(RequestParams.Parameter.Database));
+        Workspace.setCurrentWorkspace(request.params(RequestParams.Parameter.Database));
         return "";
     };
 

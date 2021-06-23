@@ -17,7 +17,7 @@ public class Workspace {
     private static String currentWorkspace;
     private static String currentDatabaseUrl;
 
-    public static void setCurrentDatabase(String databaseName) throws IOException, SQLException {
+    public static void setCurrentWorkspace(String databaseName) throws IOException, SQLException {
         String workSpace = getDatabasePath(databaseName);
         currentDatabaseUrl = "jdbc:sqlite:" + workSpace + databaseName + ".db";
         currentWorkspace = workSpace;
