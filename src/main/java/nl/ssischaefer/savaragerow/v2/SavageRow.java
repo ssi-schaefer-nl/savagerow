@@ -1,5 +1,6 @@
 package nl.ssischaefer.savaragerow.v2;
 
+import static nl.ssischaefer.savaragerow.v2.util.Configuration.parseOrDefaultInteger;
 import static spark.Spark.*;
 
 import nl.ssischaefer.savaragerow.v2.controller.DatabaseController;
@@ -11,10 +12,12 @@ import nl.ssischaefer.savaragerow.v2.util.Workspace;
 import nl.ssischaefer.savaragerow.v2.workflowqueue.WorkflowTaskQueue;
 
 public class SavageRow {
-    private static String API_PREFIX = "/api/v1";
+    private static final String API_PREFIX = "/api/v1";
 
     public static void main(String[] args) {
-        port(9010);
+
+        port(parseOrDefaultInteger("PORT", 9010));
+
         WorkflowTaskQueue.getQueue().start();
         staticFiles.location("/public");
         setupBefore();
@@ -64,11 +67,6 @@ public class SavageRow {
     }
 
     private static void setupExceptions() {
-//        exception(JacksonException.class, (e, request, response) -> {
-//            response.status(400);
-//            response.body("Error parsing JSON");
-//        });
-
         exception(Exception.class, (e, request, response) -> {
             response.status(500);
             response.body(e.getMessage());

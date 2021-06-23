@@ -13,29 +13,39 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static nl.ssischaefer.savaragerow.v2.util.Configuration.parseOrDefault;
+
 public class Workspace {
+    private static final String WORKSPACE = "WORKSPACE";
+    private static final String DEFAULT_VALUE = "/tmp";
+    private static final String DB_EXT = ".db";
+    private static final String JDBC_SQLITE_PREFIX = "jdbc:sqlite:";
+
     private static String currentWorkspace;
 
     public static void setCurrentDatabase(String databaseName) throws IOException, SQLException {
         String workSpace = getDatabasePath(databaseName);
-        String connUrl = workSpace + databaseName + ".db";
+        String connUrl = Paths.get(workSpace, databaseName+ DB_EXT).toString();
         currentWorkspace = workSpace;
-        SQLiteDataSource.connect("jdbc:sqlite:"+connUrl);
+        SQLiteDataSource.connect(JDBC_SQLITE_PREFIX + connUrl);
     }
 
-    public static String getCurrentWorkspace() {
+    public static String getCurrentWorkspace() throws WorkspaceNotSetException {
+        if(currentWorkspace == null) {
+            throw new WorkspaceNotSetException();
+        }
         return currentWorkspace;
     }
 
     private static String getDatabasePath(String databaseName) throws IOException {
-        String url = Configuration.workspace+"\\\\"+databaseName;
-        Path path = Paths.get(url);
+        String workspace = parseOrDefault(WORKSPACE, DEFAULT_VALUE);
+        Path path = Paths.get(workspace, databaseName);
         Files.createDirectories(path);
-        return url+"\\\\";
+        return path.toString();
     }
 
     public static List<String> listDatabases() {
-        File workspaceDirectory = new File(Configuration.workspace);
+        File workspaceDirectory = new File(parseOrDefault(WORKSPACE, DEFAULT_VALUE));
         File[] files = workspaceDirectory.listFiles();
         if (files == null) {
             return Collections.emptyList();

@@ -2,9 +2,12 @@ package nl.ssischaefer.savaragerow.v2.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.v2.util.Workspace;
+import nl.ssischaefer.savaragerow.v2.util.WorkspaceNotSetException;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,11 +16,12 @@ public class WorkflowsManager {
     private static String lastWorkspace = "";
     private final EnumMap<WorkflowType, List<Workflow>> workflows;
 
-    public static WorkflowsManager getWorkflowsFromCurrentWorkspace() {
+    public static WorkflowsManager getWorkflowsFromCurrentWorkspace() throws WorkspaceNotSetException {
         String currentWorkspace = Workspace.getCurrentWorkspace();
         // Either we did not cache anything, or workspace changed since last time and we need to update
         if (cachedWorkflows == null || !lastWorkspace.equals(currentWorkspace)) {
-            try (FileReader reader = new FileReader(Workspace.getCurrentWorkspace() + "workflows.json")) {
+            Path path = Paths.get(Workspace.getCurrentWorkspace() , "workflows.json");
+            try (FileReader reader = new FileReader(path.toString())) {
                 cachedWorkflows = new ObjectMapper().readValue(reader, WorkflowsManager.class);
                 lastWorkspace = currentWorkspace;
             } catch (Exception e) {
@@ -81,8 +85,9 @@ public class WorkflowsManager {
     }
 
 
-    public static void save(WorkflowsManager workflows) throws Exception {
-        try (FileWriter file = new FileWriter(Workspace.getCurrentWorkspace() + "workflows.json")) {
+    public static void save(WorkflowsManager workflows) throws Exception, WorkspaceNotSetException {
+        Path path = Paths.get(Workspace.getCurrentWorkspace(), "workflows.json");
+        try (FileWriter file = new FileWriter(path.toString())) {
             file.write(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(workflows));
             file.flush();
             cachedWorkflows = workflows;
