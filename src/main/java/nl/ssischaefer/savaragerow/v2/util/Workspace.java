@@ -26,7 +26,7 @@ public class Workspace {
 
     public static void setCurrentWorkspace(String databaseName) throws IOException, SQLException {
         String workSpace = getDatabasePath(databaseName);
-        currentDatabaseUrl = Paths.get(workSpace, databaseName+ DB_EXT).toString();
+        currentDatabaseUrl = JDBC_SQLITE_PREFIX + Paths.get(workSpace, databaseName+ DB_EXT).toString();
         currentWorkspace = workSpace;
     }
 
