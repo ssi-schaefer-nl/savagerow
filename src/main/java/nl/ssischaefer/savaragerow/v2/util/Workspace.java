@@ -1,5 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.util;
 
+import nl.ssischaefer.savaragerow.v2.util.sql.SQLiteDataSource;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -45,7 +46,6 @@ public class Workspace {
     }
 
     public static void removeDatabase(String database) throws IOException, SQLException {
-        SQLiteDataSource.disconnect();
         String p = getDatabasePath(database);
         File file = new File(p);
         FileUtils.deleteDirectory(file);

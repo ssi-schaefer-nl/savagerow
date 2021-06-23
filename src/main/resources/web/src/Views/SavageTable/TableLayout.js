@@ -61,7 +61,10 @@ const Tables = (props) => {
 
   const handleDeleteTable = () => {
     const defService = new DefinitionService(selectedTable)
-    defService.deleteTable(triggerReload, () => undefined)
+    defService.deleteTable(() => {
+      triggerReload()
+      setValue(0)
+    }, () => undefined)
   }
 
   if (database == undefined) return (

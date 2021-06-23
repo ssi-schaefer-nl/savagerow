@@ -4,7 +4,7 @@ import java.util.List;
 
 public class CreateTableDTO {
     private String tableName;
-    private List<ColumnSchemaDTO> columns;
+    private List<SQLColumn> columns;
 
     public String getTableName() {
         return tableName;
@@ -14,11 +14,11 @@ public class CreateTableDTO {
         this.tableName = tableName;
     }
 
-    public List<ColumnSchemaDTO> getColumns() {
+    public List<SQLColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<ColumnSchemaDTO> columns) {
+    public void setColumns(List<SQLColumn> columns) {
         this.columns = columns;
     }
 }
