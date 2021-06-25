@@ -1,18 +1,13 @@
-import { Checkbox, Divider, FormControlLabel, Grid } from "@material-ui/core"
-import { useState, useEffect } from "react"
-import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
-import ActionFormTextArea from "./ActionFormTextArea"
-import ActionFormTextField from "./ActionFormTextField"
-import PopupForm from "../../../../../../../Components/PopupForm/PopupForm"
+import { Checkbox, Divider, FormControlLabel, Grid, Select, Typography } from "@material-ui/core"
+import { useEffect, useState } from "react"
+import { MenuItem } from "react-contextmenu"
+import PopupForm from "../../../../../../Components/PopupForm/PopupForm"
+import QueryService from '../../../../../../Service/QueryService/QueryService'
+import ActionFormRow from "../../../../../../Components/ActionFormRow/ActionFormRow"
+import ActionFormTextField from "../ActionFormTextField"
 
 
-import { TextField, Typography } from '@material-ui/core';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
-import { InputLabel, Select } from '@material-ui/core';
 
-import { grey } from '@material-ui/core/colors';
-import QueryService from '../../../../../../../Service/QueryService/QueryService';
-import ActionFormRow from "./ActionFormRow"
 
 const InsertAction = props => {
     const { onSubmit, placeholders, initial, open, onClose } = props

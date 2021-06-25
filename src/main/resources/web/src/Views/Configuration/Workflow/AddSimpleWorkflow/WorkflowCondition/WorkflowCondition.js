@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
-import AddIcon from '@material-ui/icons/Add';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
-import RemoveIcon from '@material-ui/icons/Remove';
-
-import { Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
-import { Checkbox, Divider, FormControlLabel } from "@material-ui/core"
-
-import { Grid, TextField, Typography } from '@material-ui/core';
-import { InputLabel, Select } from '@material-ui/core';
-
+import { Checkbox, FormControlLabel, Grid, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import Button from '@material-ui/core/Button';
-import RowCriterion from "../AddSimpleWorkflow/AddAction/RowCriterion";
-import PopupForm from "../../../../../../Components/PopupForm/PopupForm";
-import QueryService from "../../../../../../Service/QueryService/QueryService";
-
-
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
+import React, { useEffect, useState } from "react";
+import { MenuItem } from "react-contextmenu";
+import PopupForm from "../../../../../Components/PopupForm/PopupForm";
+import QueryService from "../../../../../Service/QueryService/QueryService";
+import RowCriterion from "../../../../../Components/RowCriterion/RowCriterion";
 
 const WorkflowConditions = props => {
     // const [conditions, setConditions] = useState([])
@@ -202,7 +194,7 @@ const NewWorkflowCondition = props => {
                 :
                 <>
                     <Typography>The row should match the following criteria</Typography>
-                    < RowCriterion
+                    <RowCriterion
                         requireValues={false}
                         onChange={setRowCriteria}
                         value={rowCriteria}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Typography from '@material-ui/core/Typography';
 
-import { Divider, Grid, makeStyles, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { CircularProgress, Divider, Grid, makeStyles, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -10,10 +10,12 @@ import { grey } from "@material-ui/core/colors";
 import Button from '@material-ui/core/Button';
 import WorkflowService from "../../../Service/WorkflowService/WorkflowService";
 import AddIcon from '@material-ui/icons/Add';
-import AddSimpleWorkflow from "./ManageWorkflows/AddWorkflow/AddSimpleWorkflow/AddSimpleWorkflow";
+import AddSimpleWorkflow from "./AddSimpleWorkflow/AddSimpleWorkflow";
 import FullscreenDialog from "../../../Components/FullscreenDialog/FullscreenDialog";
 import EditIcon from '@material-ui/icons/MoreVert';
 import { MenuItem } from "react-contextmenu";
+import ErrorMessage from "../../../Service/ErrorMessages/ErrorMessages";
+import CollapsableAlert from "../../../Components/CollapsableAlert/CollapsableAlert";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -73,15 +75,28 @@ const SimpleWorkflows = (props) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState(null);
     const [existingWorkflow, setExistingWorkflow] = useState(null);
     const [openWorkflowDialog, setOpenWorkflowDialog] = useState(false)
+    const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [reloadTrigger, setReloadTrigger] = useState(false)
     const workflowService = new WorkflowService()
+
+    const triggerReload = () => setReloadTrigger(t => !t)
+
+    useEffect(() => workflowService.getAllWorkflows((data) => {
+        setWorkflows(data);
+        setLoading(false);
+        setError(false)
+    }, () => {
+        setError(true)
+        setLoading(false)
+    }), [reloadTrigger])
+
 
     const handleAddedSimpleWorkflow = () => {
         setOpenWorkflowDialog(false)
-        workflowService.getAllWorkflows(setWorkflows, () => undefined)
         setSelectedWorkflow(null)
+        triggerReload()
         setExistingWorkflow(null)
-
     }
 
 
@@ -98,9 +113,7 @@ const SimpleWorkflows = (props) => {
         const type = selectedWorkflow.type
         const name = selectedWorkflow.name
 
-        workflowService.deleteWorkflow(table, type, name,
-            () => setWorkflows(s => s.filter(w => JSON.stringify(w) !== JSON.stringify(selectedWorkflow))),
-            () => undefined)
+        workflowService.deleteWorkflow(table, type, name, triggerReload, () => undefined)
     };
 
     const handleEdit = () => {
@@ -116,17 +129,13 @@ const SimpleWorkflows = (props) => {
         const type = selectedWorkflow.type
         const name = selectedWorkflow.name
 
-        workflowService.changeActive(table, type, name, !selectedWorkflow.active,
-            () => workflowService.getAllWorkflows(setWorkflows, () => undefined),
-            () => undefined)
+        workflowService.changeActive(table, type, name, !selectedWorkflow.active, triggerReload, () => undefined)
     };
 
-    useEffect(() => workflowService.getAllWorkflows((data) => {
-        setWorkflows(data);
-        setLoading(false);
-    }, () => undefined), [])
 
-    if (loading) return null
+    if (loading) return <CircularProgress />
+    if (error) return <CollapsableAlert severity="error" message={ErrorMessage.Workflow.Loading()} />
+
 
     return (
         <div>

@@ -6,50 +6,48 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import { TextField } from '@material-ui/core';
 import { InputLabel, Select } from '@material-ui/core';
 
-import QueryService from '../../../../../../../Service/QueryService/QueryService';
-import TableColumnContextMenu from "../../../../../../../Components/TableColumnContextMenu/TableColumnContextMenu";
+import QueryService from '../../Service/QueryService/QueryService';
+import TableColumnContextMenu from "../TableColumnContextMenu/TableColumnContextMenu";
 
-const RowCriterion = props => {
+const ActionFormRow = props => {
     const { onChange, placeholders, table, value } = props
-    const [initialTable, setInitialTable] = useState(table)
     const [columns, setColumns] = useState([])
-    const [criteria, setCriteria] = useState((value == undefined || value.length == 0 ? [{ column: "", operator: "", required: "" }] : value))
+    const [fields, setFields] = useState((value == undefined ? [] : value))
 
     useEffect(() => {
         if (table != null && table.length > 0) {
             new QueryService(table).getSchema(data => {
                 setColumns(data.data.columns.map(c => c.name))
-
             }, () => setColumns([]))
         }
 
     }, [table])
 
-    const addNewCriterion = () => setCriteria(c => [...c, { column: "", operator: "", required: "" }])
-    const removeCriterion = (i) => {
-        const copyOfCriteria = [...criteria];
-        copyOfCriteria.splice(i, 1)
-        onChange(copyOfCriteria);
-        setCriteria(copyOfCriteria)
+    const addNewField = () => setFields([...fields, { column: "", action: "", value: "" }])
+    const removeField = (i) => {
+        const copyOfFields = [...fields];
+        copyOfFields.splice(i, 1)
+        onChange(copyOfFields);
+        setFields(copyOfFields)
     }
 
-    console.log(table)
-    if (criteria != null && !Array.isArray(criteria)) setCriteria([criteria])
+    if (fields.length == 0) addNewField()
+
     if (columns.length > 0) {
         return (
-            <div style={{ maxHeight: "30vh", overflow: "auto" }}>
+            <div style={{ maxHeight: "20vh", overflow: "auto" }}>
 
-                {criteria != null && criteria.map((criterion, i) =>
-                    <Criterion
+                {Array.isArray(fields) && fields.map((f, i) =>
+                    <Columns
                         placeholders={placeholders}
                         columns={columns}
-                        criterion={criteria[i]}
-                        onDelete={() => removeCriterion(i)}
+                        fields={fields[i]}
+                        onDelete={() => removeField(i)}
                         onChange={(cr) => {
-                            const copyOfCriteria = [...criteria];
-                            copyOfCriteria[i] = cr;
-                            onChange(copyOfCriteria);
-                            setCriteria(copyOfCriteria)
+                            const copyOfFields = [...fields];
+                            copyOfFields[i] = cr;
+                            onChange(copyOfFields);
+                            setFields(copyOfFields)
                         }}
                     />
                 )}
@@ -58,7 +56,7 @@ const RowCriterion = props => {
                     aria-haspopup="true"
                     color="primary"
                     style={{ justifyContent: "flex-start" }}
-                    onClick={(e) => addNewCriterion()}
+                    onClick={(e) => addNewField()}
                 >
                     <AddIcon />
                 </Button>
@@ -69,24 +67,18 @@ const RowCriterion = props => {
     else return null;
 }
 
-const operators = {
-    "==": "Equals",
-    "!=": "Not equals",
-    "~=": "Contains",
-    "<": "Smaller than",
-    ">": "Greater than"
-}
+const actions = ["set", "subtract", "add"]
 
-const Criterion = props => {
-    const { onChange, placeholders, criterion, onDelete, columns } = props
+
+const Columns = props => {
+    const { onChange, placeholders, fields, onDelete, columns } = props
 
     const [appender, setAppender] = useState(() => () => undefined)
     const [contextMenuId, setContextMenuId] = useState(Math.floor(Math.random() * 100))
-    // const [criterion, setCriterion] = useState({ column: "", operator: "", required: "" })
 
     const handleChange = (field, value) => {
-        const newCriterion = { ...criterion, [field]: value }
-        onChange(newCriterion)
+        const newField = { ...fields, [field]: value }
+        onChange(newField)
     }
 
 
@@ -98,39 +90,37 @@ const Criterion = props => {
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "100%" }}
                     onChange={(e) => handleChange('column', e.target.value)}
-                    value={criterion["column"]}
+                    value={fields["column"]}
                     required
                 >
                     {Object.keys(columns).map(key => (<MenuItem key={key} value={columns[key]}>{columns[key]}</MenuItem>))}
                 </Select>
             </Grid>
             <Grid item xs={3}>
-                <InputLabel shrink required id="table">Operator</InputLabel>
+                <InputLabel shrink required id="table">Action</InputLabel>
                 <Select
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "100%" }}
-                    onChange={(e) => handleChange('operator', e.target.value)}
-                    value={criterion["operator"]}
+                    onChange={(e) => handleChange('action', e.target.value)}
+                    value={fields["action"]}
                     required
                 >
-                    {Object.keys(operators).map(key => (<MenuItem key={key} value={key}>{operators[key]}</MenuItem>))}
+                    {actions.map(key => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
                 </Select>
             </Grid>
             <Grid item xs={4}>
-                <ContextMenuTrigger id={`contextmenu-${contextMenuId}`} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
+                <ContextMenuTrigger id={`contextmenu-${contextMenuId}`} collect={() => setAppender(() => (x) => handleChange('value', (fields["value"] == undefined ? x : fields["value"] + x)))}>
                     <TextField
-                        id="required"
-                        value={criterion["required"]}
+                        id="value"
+                        value={fields["value"]}
                         required={true}
                         InputLabelProps={{ shrink: true }}
-                        label="Required value"
-
+                        label="Value"
                         autoComplete='off'
-                        onChange={(e) => handleChange('required', e.target.value)}
+                        onChange={(e) => handleChange('value', e.target.value)}
                     />
                 </ContextMenuTrigger>
                 <TableColumnContextMenu id={`contextmenu-${contextMenuId}`} onClick={(f) => appender(`{${f}}`)} placeholders={placeholders} />
-
             </Grid>
             <Grid item >
                 <Button
@@ -146,4 +136,4 @@ const Criterion = props => {
     )
 }
 
-export default RowCriterion
+export default ActionFormRow

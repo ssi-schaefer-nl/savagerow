@@ -1,16 +1,13 @@
-import { Checkbox, Divider, FormControl, FormControlLabel, Grid } from "@material-ui/core"
+import { Checkbox, Divider, FormControlLabel, Grid, Select, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
-import ActionFormTextArea from "./ActionFormTextArea"
-import ActionFormTextField from "./ActionFormTextField"
-import PopupForm from "../../../../../../../Components/PopupForm/PopupForm"
+import { MenuItem } from "react-contextmenu";
+import PopupForm from "../../../../../../Components/PopupForm/PopupForm";
+import QueryService from '../../../../../../Service/QueryService/QueryService';
+import RowCriterion from "../../../../../../Components/RowCriterion/RowCriterion";
+import ActionFormTextField from "../ActionFormTextField";
 
 
-import { TextField, Typography } from '@material-ui/core';
-import { InputLabel, Select } from '@material-ui/core';
 
-import QueryService from '../../../../../../../Service/QueryService/QueryService';
-import RowCriterion from "./RowCriterion"
 
 const DeleteAction = props => {
     const { onSubmit, workflowTable, initial, open, onClose } = props
