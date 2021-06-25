@@ -21,7 +21,7 @@ public class GetPrimaryKeyColumnsQuery {
     public List<String> execute() throws SQLException {
         List<String> pkColumns = new ArrayList<>();
 
-        Connection connection = SQLiteDataSource.get();
+        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
         DatabaseMetaData metaData = connection.getMetaData();
 
         ResultSet pkResultSet = metaData.getPrimaryKeys(null, null, table);

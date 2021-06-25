@@ -9,12 +9,13 @@ import { CircularProgress, Divider } from "@material-ui/core";
 import NativeSelect from '@material-ui/core/NativeSelect';
 import CollapsableAlert from "../CollapsableAlert/CollapsableAlert";
 import DatabaseService from "../../Service/ConfigureService";
+import ErrorMessage from '../../Service/ErrorMessages/ErrorMessages';
 
 
 export default function DatabaseSelect(props) {
     const configureService = new DatabaseService()
-    const { reloadSwitch, onSelect } = props
-
+    const {reloadSwitch, onSelect} = props
+    
     const [databases, setDatabases] = useState([])
     const [database, setDatabase] = useState(undefined)
     const [anchorEl, setAnchorEl] = useState(null)
@@ -38,17 +39,17 @@ export default function DatabaseSelect(props) {
 
     const handleChange = (e) => {
         var db = e.target.value
-        if (db != null) {
-            localStorage.setItem('database', db);
-            setDatabase(db)
-            if (onSelect) onSelect()
-        }
+        if(db != null) {
+        localStorage.setItem('database', db);
+        setDatabase(db)
+        if (onSelect) onSelect()
+    }
     }
 
     if (loadingAvailableDatabases) {
         return (<CircularProgress />)
     } else if (loadingError) {
-        return (<CollapsableAlert severity="warning" message="Unable to fetch available databases. Check database connection." />)
+        return (<CollapsableAlert severity="error" message={ErrorMessage.Database.Loading()} />)
     }
 
     var val = database ? database : value ? value : ""

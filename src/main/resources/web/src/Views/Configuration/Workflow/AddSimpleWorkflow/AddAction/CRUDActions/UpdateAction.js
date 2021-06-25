@@ -1,18 +1,15 @@
-import { Checkbox, Divider, FormControlLabel, Grid } from "@material-ui/core"
+import { Checkbox, Divider, FormControlLabel, Grid, Select, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
-import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
-import ActionFormTextArea from "./ActionFormTextArea"
-import ActionFormTextField from "./ActionFormTextField"
-import PopupForm from "../../../../../../../Components/PopupForm/PopupForm"
+import { MenuItem } from "react-contextmenu";
+import PopupForm from "../../../../../../Components/PopupForm/PopupForm";
+import QueryService from '../../../../../../Service/QueryService/QueryService';
+import RowCriterion from "../../../../../../Components/RowCriterion/RowCriterion";
+import ActionFormRow from "../../../../../../Components/ActionFormRowAdvanced/ActionFormRowAdvanced";
+import ActionFormTextField from "../ActionFormTextField";
+import ActionTooltips from "../../ActionTooltips"
+import Tooltip from '@material-ui/core/Tooltip';
+import InfoIcon from '@material-ui/icons/Info';
 
-
-import { TextField, Typography } from '@material-ui/core';
-import { InputLabel, Select } from '@material-ui/core';
-
-import { grey } from '@material-ui/core/colors';
-import QueryService from '../../../../../../../Service/QueryService/QueryService';
-import ActionFormRow from "./ActionFormRowAdvanced"
-import RowCriterion from "./RowCriterion"
 
 const UpdateAction = props => {
     const { onSubmit, workflowTable, initial, open, onClose } = props
@@ -25,7 +22,7 @@ const UpdateAction = props => {
     const [fieldUpdates, setFieldUpdates] = useState(initial == null ? [] : initial.fieldUpdates)
     const [rowCriteria, setRowCriteria] = useState(initial == null ? [] : initial.rowCriteria)
     const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
-    
+
     useEffect(() => {
         const queryService = new QueryService(workflowTable)
         queryService.getTables(data => setTables(data.data), () => setTables([]))
@@ -50,35 +47,42 @@ const UpdateAction = props => {
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
 
             <Divider />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={triggerWorkflows}
-                        onChange={(e) => setTriggerWorkflows(e.target.checked)}
-                        name="trigger"
-                        color="primary"
-                    />
-                }
-                label="Trigger other workflows with this action"
-            />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={updateThis}
-                        onChange={(e) => setUpdateThis(e.target.checked)}
-                        name="trigger"
-                        color="primary"
-                    />
-                }
-                label="Update the row that triggered the workflow"
-            />
+            <Tooltip title={ActionTooltips.Trigger_Other_Workflows()}>
+
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={triggerWorkflows}
+                            onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                            name="trigger"
+                            color="primary"
+                        />
+                    }
+                    label="Trigger other workflows with this action"
+                />
+            </Tooltip>
+            <Tooltip title={ActionTooltips.TriggeredRow("update")}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={updateThis}
+                            onChange={(e) => setUpdateThis(e.target.checked)}
+                            name="trigger"
+                            color="primary"
+                        />
+                    }
+                    label="Update the row that triggered the workflow"
+                />
+            </Tooltip>
             {!updateThis
                 ?
                 <>
                     <Grid container direction="row" alignItems="center" spacing={2}>
-                        <Grid item>
-                            <Typography>Update one or more rows in table </Typography>
-                        </Grid>
+                        <Tooltip title={ActionTooltips.Row("update")}>
+                            <Grid item>
+                                <Typography>Update one or more rows in table </Typography>
+                            </Grid>
+                        </Tooltip>
                         <Grid item>
                             <Select
                                 InputLabelProps={{ shrink: true }}
@@ -93,9 +97,29 @@ const UpdateAction = props => {
                     </Grid>
                     {table.length > 0 && <>
 
-                        <Typography style={{ marginTop: "2em" }}>If the rows satisfy the following criteria</Typography>
+                        <Grid style={{marginTop: "2em"}} container direction="row" alignItems="center" spacing={1}>
+                            <Grid item>
+                                <Typography>If the rows satisfy the following criteria</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip title={ActionTooltips.RightClick("value")}>
+                                    <InfoIcon fontSize="small" />
+                                </Tooltip>
+                            </Grid>
+
+                        </Grid>
                         <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }} table={table} />
-                        <Typography >By changing its fields in the following way</Typography>
+                        <Grid style={{marginTop: "2em"}} container direction="row" alignItems="center" spacing={1}>
+                            <Grid item>
+                                <Typography>By changing its fields in the following way</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Tooltip title={ActionTooltips.RightClick("value")}>
+                                    <InfoIcon fontSize="small" />
+                                </Tooltip>
+                            </Grid>
+
+                        </Grid>
                         <ActionFormRow
                             onChange={setFieldUpdates}
                             value={fieldUpdates}
@@ -107,7 +131,17 @@ const UpdateAction = props => {
                 </>
                 :
                 <>
-                    <Typography >By changing its fields in the following way</Typography>
+                    <Grid container direction="row" alignItems="center" spacing={1}>
+                        <Grid item>
+                            <Typography>By changing its fields in the following way</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip title={ActionTooltips.RightClick("value")}>
+                                <InfoIcon fontSize="small" />
+                            </Tooltip>
+                        </Grid>
+
+                    </Grid>
                     <ActionFormRow
                         onChange={setFieldUpdates}
                         value={fieldUpdates}

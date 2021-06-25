@@ -10,7 +10,7 @@ public abstract class AbstractUpdateQuery {
     private Long generatedKey;
 
     public AbstractUpdateQuery execute() throws Exception {
-        Connection sqlConnection = SQLiteDataSource.get();
+        Connection sqlConnection = SQLiteDataSource.getForCurrentWorkspace();
         PreparedStatement preparedStatement = generate(sqlConnection);
 
         preparedStatement.executeUpdate();

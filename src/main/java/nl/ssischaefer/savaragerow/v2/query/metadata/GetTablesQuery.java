@@ -13,7 +13,7 @@ public class GetTablesQuery {
     private List<String> result;
 
     public GetTablesQuery execute() throws SQLException {
-        Connection connection = SQLiteDataSource.get();
+        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
         DatabaseMetaData md = connection.getMetaData();
         ResultSet rs = md.getTables(null, null, "%", null);
 

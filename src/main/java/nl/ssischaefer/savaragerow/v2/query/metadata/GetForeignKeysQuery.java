@@ -19,7 +19,7 @@ public class GetForeignKeysQuery {
 
 
     public Map<String, String> execute() throws SQLException {
-        Connection connection = SQLiteDataSource.get();
+        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
         DatabaseMetaData metaData = connection.getMetaData();
 
         ResultSet fkResultSet = metaData.getImportedKeys(connection.getCatalog(), null, table);

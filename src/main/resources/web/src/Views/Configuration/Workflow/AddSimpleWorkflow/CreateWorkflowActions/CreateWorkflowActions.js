@@ -5,10 +5,11 @@ import {  Divider, Menu, Paper, Table, TableBody, TableCell, TableContainer, Tab
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
 import { MenuItem } from "react-contextmenu";
-import QueryService from "../../../../../../../Service/QueryService/QueryService";
-import InsertAction from "../AddAction/InsertAction";
-import UpdateAction from "../AddAction/UpdateAction";
-import DeleteAction from "../AddAction/DeleteAction";
+import QueryService from "../../../../../Service/QueryService/QueryService";
+import InsertAction from "../AddAction/CRUDActions/InsertAction";
+import UpdateAction from "../AddAction/CRUDActions/UpdateAction";
+import DeleteAction from "../AddAction/CRUDActions/DeleteAction";
+
 import APICallAction from "../AddAction/APICallAction";
 
 
@@ -72,6 +73,10 @@ const CreateWorkflowActions = props => {
     return (
         <div>
             <Typography variant="h6">Create actions for the workflow</Typography>
+            <Typography>
+                You can define what must happen in the workflow by creating actions. These actions will be executed in the order in which you create them.
+
+            </Typography>
             {actions != undefined && <ActionList onAdd={handleAdd} onEdit={handleEdit} actions={actions}/>}
 
             <ActionDialogSwitch
@@ -119,7 +124,7 @@ const ActionList = props => {
 
     return (
         <>
-            <TableContainer component={Paper} style={{ maxHeight: "50vh", margin: "2em 0" }}>
+            <TableContainer component={Paper} style={{ maxHeight: "35vh", overflow: "auto", margin: "2em 0" }}>
                 <Table stickyHeader >
                     <TableHead >
                         <TableRow>

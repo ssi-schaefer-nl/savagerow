@@ -6,8 +6,8 @@ import { TextField, Typography } from '@material-ui/core';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
 
 import { grey } from '@material-ui/core/colors';
-import QueryService from '../../../../../../../Service/QueryService/QueryService';
-import TableColumnContextMenu from "../../../../../../../Components/TableColumnContextMenu/TableColumnContextMenu";
+import QueryService from '../../Service/QueryService/QueryService';
+import TableColumnContextMenu from "../TableColumnContextMenu/TableColumnContextMenu";
 
 const ActionFormRow = props => {
     const { onChange, placeholders, table, value } = props

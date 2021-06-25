@@ -8,7 +8,7 @@ import nl.ssischaefer.savaragerow.v2.workflow.WorkflowType;
 import nl.ssischaefer.savaragerow.v2.workflow.WorkflowsManager;
 import nl.ssischaefer.savaragerow.v2.query.metadata.GetTablesQuery;
 import nl.ssischaefer.savaragerow.v2.util.RequestParams;
-import nl.ssischaefer.savaragerow.v2.util.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.v2.util.exception.WorkspaceNotSetException;
 import spark.Request;
 import spark.Response;
 import spark.Route;

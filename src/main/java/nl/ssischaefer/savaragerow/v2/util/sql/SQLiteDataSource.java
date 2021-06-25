@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SQLiteDataSource {
-    public static Connection get() throws SQLException {
+    public static Connection getForCurrentWorkspace() throws SQLException {
         return DriverManager.getConnection(Workspace.getCurrentDatabaseUrl());
     }
 

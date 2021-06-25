@@ -125,11 +125,19 @@ const Tables = (props) => {
         </ContextMenu>
       </AppBar>
 
-      {tables.map((table, index) => (
-        <TabPanel value={value} index={index}>
-          <SavageTable table={table} />
-        </TabPanel>
-      ))}
+      {tables.length > 0 ?
+        tables.map((table, index) => (
+          <TabPanel value={value} index={index}>
+            <SavageTable table={table} />
+          </TabPanel>
+        ))
+        :
+        <Grid container style={{height: "50vh"}} justify="center" alignItems="center">
+          <Grid item>
+            <Button variant="contained" color="primary" style={{ height: "5em", width: "15em" }} onClick={() => setAddTable(true)}>Create the first table</Button>
+          </Grid>
+        </Grid>
+      }
       <PopupForm open={addTable} title="Add table" onSubmit={handleAddTable} onClose={() => { setAddTable(false); setNewTableName("") }}>
         <TextField label="Table name" value={newTableName} onChange={(e) => setNewTableName(e.target.value)} />
       </PopupForm>

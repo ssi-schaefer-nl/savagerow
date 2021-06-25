@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.v2.workflow.workflowqueue;
 
 import nl.ssischaefer.savaragerow.v2.workflow.WorkflowsManager;
-import nl.ssischaefer.savaragerow.v2.util.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.v2.util.exception.WorkspaceNotSetException;
 
 import java.util.concurrent.BlockingQueue;
 
