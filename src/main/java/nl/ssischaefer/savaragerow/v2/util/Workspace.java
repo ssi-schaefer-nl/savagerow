@@ -1,5 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.util;
 
+import nl.ssischaefer.savaragerow.v2.util.exception.WorkspaceNotSetException;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

@@ -22,7 +22,7 @@ public class GetColumnsQuery {
     public List<SQLColumn> execute() throws SQLException {
         List<SQLColumn> columnSchemaList = new ArrayList<>();
 
-        Connection connection = SQLiteDataSource.get();
+        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
         ResultSet columnsResultSet = connection.getMetaData().getColumns(null, null, table, null);
 
         while (columnsResultSet.next()) {

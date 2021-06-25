@@ -15,7 +15,7 @@ public abstract class AbstractQuery {
     private List<Map<String, String>> result;
 
     public AbstractQuery execute() throws SQLException {
-        Connection sqlConnection = SQLiteDataSource.get();
+        Connection sqlConnection = SQLiteDataSource.getForCurrentWorkspace();
         PreparedStatement preparedStatement = generate(sqlConnection);
 
         ResultSet rs = preparedStatement.executeQuery();
