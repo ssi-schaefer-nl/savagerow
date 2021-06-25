@@ -126,7 +126,7 @@ const NewWorkflowCondition = props => {
     const handleSubmit = e => {
         e.preventDefault()
         if (thisRow) {
-            const crit = [...rowCriteria, ...tableColumns.filter(c => c.pk).map(c => ({ column: c.name, operator: "==", required: `{${c.name}}` }))]
+            const crit = [...rowCriteria, ...tableColumns.filter(c => c.pk).map(c => ({ column: c.name, comparator: "equals", required: `{${c.name}}` }))]
             onSubmit({ rowCriteria: crit, table: workflowTable, match: match })
             console.log({ rowCriteria: crit, table: workflowTable, match: match })
         }

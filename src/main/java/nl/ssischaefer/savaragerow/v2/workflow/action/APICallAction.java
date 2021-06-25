@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.workflow.action;
 
-import nl.ssischaefer.savaragerow.v2.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.v2.util.PlaceholderResolver;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,8 +15,8 @@ public class APICallAction extends Action {
 
     @Override
     public void perform(Map<String, String> data) {
-        String transformedUrl = StringPlaceholderTransformer.transformPlaceholders(url, data);
-        String transformedJsonBody = StringPlaceholderTransformer.transformPlaceholdersJson(jsonBody, data);
+        String transformedUrl = PlaceholderResolver.resolve(url, data, PlaceholderResolver.BRACKETS_FORMAT);
+        String transformedJsonBody = PlaceholderResolver.resolve(jsonBody, data, PlaceholderResolver.CASH_FORMAT);
 
         try {
             try (CloseableHttpClient client = HttpClients.createDefault()) {

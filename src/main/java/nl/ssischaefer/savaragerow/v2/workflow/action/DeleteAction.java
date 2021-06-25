@@ -1,10 +1,10 @@
 package nl.ssischaefer.savaragerow.v2.workflow.action;
 
-import nl.ssischaefer.savaragerow.v2.workflow.RowCriteria;
+import nl.ssischaefer.savaragerow.v2.workflow.RowCriterion;
 import nl.ssischaefer.savaragerow.v2.workflow.WorkflowType;
 import nl.ssischaefer.savaragerow.v2.query.dml.DeleteRowQuery;
 import nl.ssischaefer.savaragerow.v2.query.dql.GetRowQuery;
-import nl.ssischaefer.savaragerow.v2.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.v2.util.PlaceholderResolver;
 import nl.ssischaefer.savaragerow.v2.workflow.workflowqueue.WorkflowTask;
 import nl.ssischaefer.savaragerow.v2.workflow.workflowqueue.WorkflowTaskQueue;
 
@@ -14,11 +14,11 @@ import java.util.Map;
 
 public class DeleteAction extends CrudAction {
     private String table;
-    private List<RowCriteria> rowCriteria;
+    private List<RowCriterion> rowCriteria;
 
     @Override
     public void perform(Map<String, String> data) {
-        List<RowCriteria> transformedRowCriteria = transformPlaceholders(data, rowCriteria);
+        List<RowCriterion> transformedRowCriteria = transformPlaceholders(data, rowCriteria);
 
         try {
             List<Map<String, String>> deletedRows = new GetRowQuery().setTable(table).setCriteria(transformedRowCriteria).execute().getResult();
@@ -33,11 +33,11 @@ public class DeleteAction extends CrudAction {
         }
     }
 
-    private List<RowCriteria> transformPlaceholders(Map<String, String> data, List<RowCriteria> target) {
-        List<RowCriteria> temp = new ArrayList<>();
-        for (RowCriteria criteria : target) {
-            String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
-            temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
+    private List<RowCriterion> transformPlaceholders(Map<String, String> data, List<RowCriterion> target) {
+        List<RowCriterion> temp = new ArrayList<>();
+        for (RowCriterion criteria : target) {
+            String t = PlaceholderResolver.resolve(criteria.getRequired(), data, PlaceholderResolver.BRACKETS_FORMAT);
+            temp.add(new RowCriterion().setColumn(criteria.getColumn()).setComparator(criteria.getComparator()).setRequired(t));
 
         }
         return temp;
@@ -53,11 +53,11 @@ public class DeleteAction extends CrudAction {
         return this;
     }
 
-    public List<RowCriteria> getRowCriteria() {
+    public List<RowCriterion> getRowCriteria() {
         return rowCriteria;
     }
 
-    public DeleteAction setRowCriteria(List<RowCriteria> rowCriteria) {
+    public DeleteAction setRowCriteria(List<RowCriterion> rowCriteria) {
         this.rowCriteria = rowCriteria;
         return this;
     }

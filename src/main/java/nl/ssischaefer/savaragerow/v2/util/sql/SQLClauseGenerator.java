@@ -1,16 +1,17 @@
 package nl.ssischaefer.savaragerow.v2.util.sql;
 
 import nl.ssischaefer.savaragerow.v2.workflow.FieldUpdate;
-import nl.ssischaefer.savaragerow.v2.workflow.RowCriteria;
-import nl.ssischaefer.savaragerow.v2.util.OperatorTransformer;
+import nl.ssischaefer.savaragerow.v2.workflow.RowCriterion;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static nl.ssischaefer.savaragerow.v2.util.sql.SQLSetAction.*;
+
 public class SQLClauseGenerator {
-    public static String generateWhereClause(List<RowCriteria> criteria) {
+    public static String generateWhereClause(List<RowCriterion> criteria) {
         return String.format("WHERE %s", criteria.stream()
-                .map(c -> String.format("%s %s ?", c.getColumn(), OperatorTransformer.convertToSql(c.getOperator())))
+                .map(c -> String.format("%s %s ?", c.getColumn(), c.getComparator().getComparator()))
                 .collect(Collectors.joining(" AND ")));
     }
 
@@ -24,11 +25,11 @@ public class SQLClauseGenerator {
 
     private static String generateSetAction(FieldUpdate fieldUpdate) {
         switch (fieldUpdate.getAction()) {
-            case "subtract":
+            case SUBTRACT:
                 return String.format("%s - ?", fieldUpdate.getColumn());
-            case "add":
+            case ADD:
                 return String.format("%s + ?", fieldUpdate.getColumn());
-            case "multiply":
+            case MULTIPLY:
                 return String.format("%s * ?", fieldUpdate.getColumn());
             default:
                 return "?";

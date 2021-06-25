@@ -1,9 +1,8 @@
 package nl.ssischaefer.savaragerow.v2.workflow.action;
 
-import nl.ssischaefer.savaragerow.v2.dto.RowDTO;
 import nl.ssischaefer.savaragerow.v2.workflow.WorkflowType;
 import nl.ssischaefer.savaragerow.v2.query.dml.InsertRowQuery;
-import nl.ssischaefer.savaragerow.v2.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.v2.util.PlaceholderResolver;
 import nl.ssischaefer.savaragerow.v2.workflow.workflowqueue.WorkflowTask;
 import nl.ssischaefer.savaragerow.v2.workflow.workflowqueue.WorkflowTaskQueue;
 
@@ -29,7 +28,7 @@ public class InsertAction extends CrudAction {
     private Map<String, String> transformPlaceholders(Map<String, String> data, Map<String, String> target) {
         Map<String, String> temp = new HashMap<>();
         target.forEach((key, value) -> {
-            String t = StringPlaceholderTransformer.transformPlaceholders(value, data);
+            String t = PlaceholderResolver.resolve(value, data, PlaceholderResolver.BRACKETS_FORMAT);
             temp.put(key, t);
         });
         return temp;

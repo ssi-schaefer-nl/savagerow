@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.util.sql;
 
-import nl.ssischaefer.savaragerow.v2.workflow.RowCriteria;
+import nl.ssischaefer.savaragerow.v2.workflow.RowCriterion;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class SQLDQLGenerator {
         return String.format("select rowid as rowid, * from %s", table);
     }
 
-    public static String generateSelectQuery(String table, List<RowCriteria> criteria) {
+    public static String generateSelectQuery(String table, List<RowCriterion> criteria) {
         String sql = generateSelectQuery(table);
         String whereClause = SQLClauseGenerator.generateWhereClause(criteria);
         return sql.concat(" " + whereClause);

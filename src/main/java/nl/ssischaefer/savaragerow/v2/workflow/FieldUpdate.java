@@ -1,8 +1,10 @@
 package nl.ssischaefer.savaragerow.v2.workflow;
 
+import nl.ssischaefer.savaragerow.v2.util.sql.SQLSetAction;
+
 public class FieldUpdate {
     private String column;
-    private String action;
+    private SQLSetAction action;
     private String value;
 
     public String getColumn() {
@@ -14,11 +16,11 @@ public class FieldUpdate {
         return this;
     }
 
-    public String getAction() {
+    public SQLSetAction getAction() {
         return action;
     }
 
-    public FieldUpdate setAction(String action) {
+    public FieldUpdate setAction(SQLSetAction action) {
         this.action = action;
         return this;
     }

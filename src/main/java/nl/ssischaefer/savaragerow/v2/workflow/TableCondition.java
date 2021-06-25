@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.v2.workflow;
 
 import nl.ssischaefer.savaragerow.v2.query.dql.GetRowQuery;
-import nl.ssischaefer.savaragerow.v2.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.v2.util.PlaceholderResolver;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Map;
 public class TableCondition {
     private String table;
     private boolean match;
-    private List<RowCriteria> rowCriteria;
+    private List<RowCriterion> rowCriteria;
 
     public String getTable() {
         return table;
@@ -22,26 +22,26 @@ public class TableCondition {
         return this;
     }
 
-    public List<RowCriteria> getRowCriteria() {
+    public List<RowCriterion> getRowCriteria() {
         return rowCriteria;
     }
 
-    public TableCondition setRowCriteria(List<RowCriteria> rowCriteria) {
+    public TableCondition setRowCriteria(List<RowCriterion> rowCriteria) {
         this.rowCriteria = rowCriteria;
         return this;
     }
 
     public boolean isSatisfied(Map<String, String> data) throws SQLException {
-        List<RowCriteria> transformedRowCriteria = transformPlaceholdersCriteria(data, rowCriteria);
+        List<RowCriterion> transformedRowCriteria = transformPlaceholdersCriteria(data, rowCriteria);
 
         return new GetRowQuery().setTable(table).setCriteria(transformedRowCriteria).execute().getResult().isEmpty() != match;
     }
 
-    private List<RowCriteria> transformPlaceholdersCriteria(Map<String, String> data, List<RowCriteria> target) {
-        List<RowCriteria> temp = new ArrayList<>();
-        for (RowCriteria criteria : target) {
-            String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
-            temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
+    private List<RowCriterion> transformPlaceholdersCriteria(Map<String, String> data, List<RowCriterion> target) {
+        List<RowCriterion> temp = new ArrayList<>();
+        for (RowCriterion criteria : target) {
+            String t = PlaceholderResolver.resolve(criteria.getRequired(), data, PlaceholderResolver.BRACKETS_FORMAT);
+            temp.add(new RowCriterion().setColumn(criteria.getColumn()).setComparator(criteria.getComparator()).setRequired(t));
 
         }
         return temp;

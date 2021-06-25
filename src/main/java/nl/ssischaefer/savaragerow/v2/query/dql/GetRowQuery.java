@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.query.dql;
 
-import nl.ssischaefer.savaragerow.v2.workflow.RowCriteria;
+import nl.ssischaefer.savaragerow.v2.workflow.RowCriterion;
 import nl.ssischaefer.savaragerow.v2.query.AbstractQuery;
 import nl.ssischaefer.savaragerow.v2.util.sql.PreparedStatementParameterHelper;
 import nl.ssischaefer.savaragerow.v2.util.sql.SQLDQLGenerator;
@@ -13,7 +13,7 @@ import java.util.List;
 public class GetRowQuery extends AbstractQuery {
     private String table;
     private Long rowId;
-    private List<RowCriteria> criteria;
+    private List<RowCriterion> criteria;
 
     public GetRowQuery setTable(String table) {
         this.table = table;
@@ -26,7 +26,7 @@ public class GetRowQuery extends AbstractQuery {
         return this;
     }
 
-    public GetRowQuery setCriteria(List<RowCriteria> criteria) {
+    public GetRowQuery setCriteria(List<RowCriterion> criteria) {
         this.criteria = criteria;
         return this;
     }

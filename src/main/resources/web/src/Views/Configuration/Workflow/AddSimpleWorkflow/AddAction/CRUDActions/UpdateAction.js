@@ -33,7 +33,7 @@ const UpdateAction = props => {
     const handleSubmit = e => {
         e.preventDefault()
         if (updateThis) {
-            const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, operator: "==", required: `{${c.name}}` }))
+            const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, comparator: "equals", required: `{${c.name}}` }))
             onSubmit({ name: name, fieldUpdates: fieldUpdates, rowCriteria: crit, table: workflowTable, type: "update", triggerWorkflows: triggerWorkflows })
         }
         else {

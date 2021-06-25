@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.v2.query.dml;
 
 import nl.ssischaefer.savaragerow.v2.workflow.FieldUpdate;
-import nl.ssischaefer.savaragerow.v2.workflow.RowCriteria;
+import nl.ssischaefer.savaragerow.v2.workflow.RowCriterion;
 import nl.ssischaefer.savaragerow.v2.query.AbstractUpdateQuery;
 import nl.ssischaefer.savaragerow.v2.util.sql.PreparedStatementParameterHelper;
 import nl.ssischaefer.savaragerow.v2.util.sql.SQLDMLGenerator;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class UpdateRowQuery extends AbstractUpdateQuery {
     private String table;
     private Map<String, String> row;
-    private List<RowCriteria> criteria;
+    private List<RowCriterion> criteria;
     private List<FieldUpdate> fieldUpdates;
     private Long rowId;
 
@@ -29,7 +29,7 @@ public class UpdateRowQuery extends AbstractUpdateQuery {
         return this;
     }
 
-    public UpdateRowQuery setCriteria(List<RowCriteria> criteria) {
+    public UpdateRowQuery setCriteria(List<RowCriterion> criteria) {
         this.criteria = criteria;
         return this;
     }
