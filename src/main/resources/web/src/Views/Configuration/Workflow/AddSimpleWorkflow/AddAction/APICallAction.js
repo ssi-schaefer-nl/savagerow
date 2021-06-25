@@ -29,6 +29,9 @@ const APICallAction = props => {
         try {
             JSON.parse(body)
             onSubmit({ name: name, url: url, jsonBody: body, type: "api" })
+            setName("")
+            setUrl("")
+            setBody("")
         } catch (error) {
             setJsonIncorrect(true)
             console.log(error)

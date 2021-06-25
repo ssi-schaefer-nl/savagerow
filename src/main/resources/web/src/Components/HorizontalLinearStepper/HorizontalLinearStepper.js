@@ -50,8 +50,8 @@ export default function HorizontalLinearStepper(props) {
                 })}
             </Stepper>
 
-            <Grid direction="column" style={{ margin: "0 2em 0 2em" }}>
-                <Grid item style={{ minHeight: "20vh" }}>
+            <Grid direction="column" style={{ margin: "0 2em 0 2em" }} >
+                <Grid item >
                     {steps[activeStep].Component}
                 </Grid>
                 <Grid item>

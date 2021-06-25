@@ -5,8 +5,9 @@ import PopupForm from "../../../../../../Components/PopupForm/PopupForm"
 import QueryService from '../../../../../../Service/QueryService/QueryService'
 import ActionFormRow from "../../../../../../Components/ActionFormRow/ActionFormRow"
 import ActionFormTextField from "../ActionFormTextField"
-
-
+import ActionTooltips from "../../ActionTooltips"
+import Tooltip from '@material-ui/core/Tooltip';
+import InfoIcon from '@material-ui/icons/Info';
 
 
 const InsertAction = props => {
@@ -26,7 +27,7 @@ const InsertAction = props => {
     const handleSubmit = e => {
         e.preventDefault()
         onSubmit({ name: name, row: row, table: table, type: "insert", triggerWorkflows: triggerWorkflows })
-        
+
     }
 
     return (
@@ -34,21 +35,25 @@ const InsertAction = props => {
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
 
             <Divider />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={triggerWorkflows}
-                        onChange={(e) => setTriggerWorkflows(e.target.checked)}
-                        name="trigger"
-                        color="primary"
-                    />
-                }
-                label="Trigger other workflows with this action"
-            />
+            <Tooltip title={ActionTooltips.Trigger_Other_Workflows()}>
 
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={triggerWorkflows}
+                            onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                            name="trigger"
+                            color="primary"
+                        />
+                    }
+                    label="Trigger other workflows with this action"
+                />
+            </Tooltip>
             <Grid container direction="row" alignItems="center" spacing={2}>
                 <Grid item>
-                    <Typography>Insert a new row into table </Typography>
+                    <Tooltip title={ActionTooltips.Row("insert")}>
+                        <Typography>Insert a new row into table </Typography>
+                    </Tooltip>
                 </Grid>
 
                 <Grid item>
@@ -66,9 +71,19 @@ const InsertAction = props => {
 
             {table.length > 0 &&
                 <>
-                    <Typography>With the following fields</Typography>
+                    <Grid container direction="row" alignItems="center" spacing={1}>
+                        <Grid item>
+                            <Typography>With the following fields</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Tooltip title={ActionTooltips.RightClick("row")}>
+                                <InfoIcon fontSize="small"/>
+                            </Tooltip>
+                        </Grid>
 
+                    </Grid>
                     <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
+
                 </>
             }
         </PopupForm>

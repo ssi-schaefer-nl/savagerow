@@ -5,6 +5,9 @@ import PopupForm from "../../../../../../Components/PopupForm/PopupForm";
 import QueryService from '../../../../../../Service/QueryService/QueryService';
 import RowCriterion from "../../../../../../Components/RowCriterion/RowCriterion";
 import ActionFormTextField from "../ActionFormTextField";
+import Tooltip from '@material-ui/core/Tooltip';
+import ActionTooltips from "../../ActionTooltips";
+import InfoIcon from '@material-ui/icons/Info';
 
 
 
@@ -49,36 +52,44 @@ const DeleteAction = props => {
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
 
             <Divider />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={triggerWorkflows}
-                        onChange={(e) => setTriggerWorkflows(e.target.checked)}
-                        name="trigger"
-                        color="primary"
-                    />
-                }
-                label="Trigger other workflows with this action"
-            />
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={deleteThis}
-                        onChange={(e) => setDeleteThis(e.target.checked)}
-                        name="trigger"
-                        color="primary"
-                    />
-                }
-                label="Delete the row that triggered the workflow"
-            />
+            <Tooltip title={ActionTooltips.Trigger_Other_Workflows()}>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={triggerWorkflows}
+                            onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                            name="trigger"
+                            color="primary"
+                        />
+                    }
+                    label="Trigger other workflows with this action"
+                />
+            </Tooltip>
+            <Tooltip title={ActionTooltips.TriggeredRow("delete")}>
+
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={deleteThis}
+                            onChange={(e) => setDeleteThis(e.target.checked)}
+                            name="trigger"
+                            color="primary"
+                        />
+                    }
+                    label="Delete the row that triggered the workflow"
+                />
+            </Tooltip>
             {!deleteThis &&
                 (
                     <>
                         <Divider style={{ marginBottom: "2em" }} />
                         <Grid container direction="row" alignItems="center" spacing={2}>
-                            <Grid item>
-                                <Typography>Delete one or more rows from table </Typography>
-                            </Grid>
+                            <Tooltip title={ActionTooltips.Row("delete")}>
+
+                                <Grid item>
+                                    <Typography>Delete one or more rows from table </Typography>
+                                </Grid>
+                            </Tooltip>
                             <Grid item>
                                 <Select
                                     InputLabelProps={{ shrink: true }}
@@ -92,13 +103,24 @@ const DeleteAction = props => {
                             </Grid>
                         </Grid>
                         {workflowTable.length > 0 && <>
-                            <Typography >If they match the following criteria</Typography>
-                            <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={{table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : []}} table={workflowTable} />
+                            <Grid style={{marginTop: "2em"}} container direction="row" alignItems="center" spacing={1}>
+                                <Grid item>
+                                    <Typography>If they match the following criteria</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Tooltip title={ActionTooltips.RightClick("row")}>
+                                        <InfoIcon fontSize="small" />
+                                    </Tooltip>
+                                </Grid>
+
+                            </Grid>
+                            <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }} table={workflowTable} />
                         </>}
                     </>
-                )}
+                )
+            }
 
-        </PopupForm>
+        </PopupForm >
     )
 }
 

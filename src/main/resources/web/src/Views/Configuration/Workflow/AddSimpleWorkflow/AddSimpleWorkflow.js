@@ -30,7 +30,7 @@ export default function AddSimpleWorkflow(props) {
         workflowService.saveWorkflow(type, data, () => {
             setSaving(false)
             setValid(true)
-            setFinalStatus("Workflow has been sucessfully added")
+            setFinalStatus("Workflow has been sucessfully saved")
         }, (data) => {
             setSaving(false)
             setValid(false)
@@ -81,8 +81,9 @@ const WorkflowStepName = props => {
     const { onChange, value, disabled } = props
 
     return (
-        <div>
+        <div style={{marginBottom: "5em"}}>
             <Typography variant="h6">Enter a name for the workflow</Typography>
+            <Typography style={{ marginBottom: "2em" }}>The name of a workflow serves as a short description and identification of the workflow</Typography>
             <TextField id="standard-basic" disabled={disabled} label="Workflow name" value={value} autoComplete='off' onChange={(e) => onChange(e.target.value)} />
         </div>
     )
@@ -101,7 +102,12 @@ const WorkflowStepTrigger = props => {
     return (
         <div>
             <Typography variant="h6">Specify the trigger that must initiate the workflow</Typography>
-            <div style={{ margin: "2em" }} >
+            <Typography>
+                The trigger for the workflow specifies upon which kind of event the workflow has to be executed.
+                These events are actions you perform on the data in your tables, such as editing, deleting or adding a row.
+                A workflow is defined by its name, the type of event that triggers it and the table in which this event is triggered.
+            </Typography>
+            <div style={{ margin: "5em 2em" }} >
                 Trigger the workflow when we
                 <Select
                     disabled={disabled}
@@ -135,11 +141,11 @@ const FinalizeStep = (props) => {
     const { valid, message, saving } = props
 
     return (
-        <>
+        <div >
             <Typography variant="h6">Finalizing</Typography>
-            <Typography color={valid || saving ? "default" : "error"}>
+            <Typography style={{marginBottom: "5em"}} color={valid || saving ? "default" : "error"}>
                 {message}
             </Typography>
-        </>
+        </div>
     )
 }

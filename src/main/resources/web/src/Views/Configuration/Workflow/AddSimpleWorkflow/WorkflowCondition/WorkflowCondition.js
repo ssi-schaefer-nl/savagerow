@@ -37,8 +37,18 @@ const WorkflowConditions = props => {
 
     const onClose = () => setNewCondition(false)
     return (
-        <div>
+        <div >
             <Typography variant="h6">Define the conditions for the workflow execution</Typography>
+            <Typography >
+                Optionally you can trigger this workflow only if certain conditions are met.
+                The most basic condition is defining criteria that must be satisfied by the row that triggered this workflow.
+                This is useful, for example, when you only want to execute this workflow if a threshold is exceeded or a certain status is set.
+            </Typography>
+            <Typography style={{marginTop: "1em"}}>
+                You can also create conditions by specifying criteria for rows that you either want to exist, or don't want to exist.
+                An example of when this is useful is when you want to insert a new row into a table with this workflow, but only if that row does not already exist.
+            </Typography>
+
             <Condition placeholders={[]} conditions={conditions} onAdd={handleAdd} onDelete={removeCondition} />
             <NewWorkflowCondition open={newCondition} onClose={onClose} initial={initial} workflowTable={table} onSubmit={actionSubmit} />
         </div >
@@ -49,7 +59,7 @@ const WorkflowConditions = props => {
 const Condition = props => {
     const { conditions, onDelete, onAdd } = props
     return (
-        <TableContainer component={Paper} style={{ maxHeight: "50vh", maxWidth: "40%", margin: "4em 0" }}>
+        <TableContainer component={Paper} style={{ maxHeight: "35vh", overflow: "auto",  maxWidth: "40%", margin: "4em 0" }}>
             <Table stickyHeader >
                 <TableHead >
                     <TableRow>
