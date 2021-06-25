@@ -1,5 +1,6 @@
 package nl.ssischaefer.savaragerow.v2.util;
 
+import nl.ssischaefer.savaragerow.v2.util.exception.WorkspaceNotSetException;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
