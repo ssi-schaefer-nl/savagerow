@@ -1,10 +1,10 @@
 import { Checkbox, Divider, FormControlLabel, Grid, Select, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { MenuItem } from "react-contextmenu";
-import PopupForm from "../../../../../../Components/PopupForm/PopupForm";
-import QueryService from '../../../../../../Service/QueryService/QueryService';
-import RowCriterion from "../../../../../../Components/RowCriterion/RowCriterion";
-import ActionFormRow from "../../../../../../Components/ActionFormRowAdvanced/ActionFormRowAdvanced";
+import PopupForm from "../../../../../../../Components/PopupForm/PopupForm";
+import QueryService from '../../../../../../../Service/QueryService/QueryService';
+import RowCriterion from "../../../../../../../Components/RowCriterion/RowCriterion";
+import ActionFormRow from "../../../../../../../Components/ActionFormRowAdvanced/ActionFormRowAdvanced";
 import ActionFormTextField from "../ActionFormTextField";
 import ActionTooltips from "../../ActionTooltips"
 import Tooltip from '@material-ui/core/Tooltip';

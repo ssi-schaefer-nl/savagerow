@@ -1,6 +1,6 @@
-package nl.ssischaefer.savaragerow.v2.util;
+package nl.ssischaefer.savaragerow.util;
 
-import nl.ssischaefer.savaragerow.v2.util.exception.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.util.exception.WorkspaceNotSetException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

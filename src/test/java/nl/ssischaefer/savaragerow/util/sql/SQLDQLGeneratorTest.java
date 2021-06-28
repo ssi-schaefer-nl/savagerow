@@ -1,7 +1,7 @@
-package nl.ssischaefer.savaragerow.v2.util.sql;
+package nl.ssischaefer.savaragerow.util.sql;
 
-import nl.ssischaefer.savaragerow.v2.workflow.FieldUpdate;
-import nl.ssischaefer.savaragerow.v2.workflow.RowCriterion;
+import nl.ssischaefer.savaragerow.workflow.FieldUpdate;
+import nl.ssischaefer.savaragerow.workflow.RowCriterion;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

@@ -5,7 +5,7 @@ import {  Divider, Menu, Paper, Table, TableBody, TableCell, TableContainer, Tab
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
 import { MenuItem } from "react-contextmenu";
-import QueryService from "../../../../../Service/QueryService/QueryService";
+import QueryService from "../../../../../../Service/QueryService/QueryService";
 import InsertAction from "../AddAction/CRUDActions/InsertAction";
 import UpdateAction from "../AddAction/CRUDActions/UpdateAction";
 import DeleteAction from "../AddAction/CRUDActions/DeleteAction";

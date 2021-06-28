@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Typography } from "@material-ui/core";
-import HorizontalLinearStepper from "../../../../Components/HorizontalLinearStepper/HorizontalLinearStepper"
+import HorizontalLinearStepper from "../../../../../Components/HorizontalLinearStepper/HorizontalLinearStepper"
 import CreateWorkflowActions from "./CreateWorkflowActions/CreateWorkflowActions"
-import WorkflowService from "../../../../Service/WorkflowService/WorkflowService";
-import QueryService from "../../../../Service/QueryService/QueryService";
+import WorkflowService from "../../../../../Service/WorkflowService/WorkflowService";
+import QueryService from "../../../../../Service/QueryService/QueryService";
 import { Select } from '@material-ui/core';
 import { MenuItem } from "react-contextmenu";
 import WorkflowConditions from "./WorkflowCondition/WorkflowCondition";

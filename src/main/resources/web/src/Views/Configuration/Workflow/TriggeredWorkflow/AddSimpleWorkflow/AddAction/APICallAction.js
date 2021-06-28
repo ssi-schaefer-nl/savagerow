@@ -7,8 +7,8 @@ import "ace-builds/src-noconflict/mode-java"
 import "ace-builds/src-noconflict/theme-github"
 import 'ace-builds/src-noconflict/mode-json';
 import { ContextMenuTrigger } from "react-contextmenu"
-import PopupForm from "../../../../../Components/PopupForm/PopupForm"
-import TableColumnContextMenu from "../../../../../Components/TableColumnContextMenu/TableColumnContextMenu"
+import PopupForm from "../../../../../../Components/PopupForm/PopupForm"
+import TableColumnContextMenu from "../../../../../../Components/TableColumnContextMenu/TableColumnContextMenu"
 import ActionFormTextField from "./ActionFormTextField"
 
 

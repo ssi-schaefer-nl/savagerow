@@ -30,7 +30,7 @@
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        nl.ssischaefer.savaragerow.v2.SavageRow
+                                        nl.ssischaefer.savaragerow.SavageRow
                                     </mainClass>
                                 </manifest>
                             </archive>

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SQLClauseGenerator {
+
     public static String generateWhereClause(List<RowCriterion> criteria) {
         return String.format("WHERE %s", criteria.stream()
                 .map(c -> String.format("%s %s ?", c.getColumn(), c.getComparator().getComparator()))
@@ -23,11 +24,11 @@ public class SQLClauseGenerator {
 
     private static String generateSetAction(FieldUpdate fieldUpdate) {
         switch (fieldUpdate.getAction()) {
-            case SQLSetAction.SUBTRACT:
+            case SUBTRACT:
                 return String.format("%s - ?", fieldUpdate.getColumn());
-            case SQLSetAction.ADD:
+            case ADD:
                 return String.format("%s + ?", fieldUpdate.getColumn());
-            case SQLSetAction.MULTIPLY:
+            case MULTIPLY:
                 return String.format("%s * ?", fieldUpdate.getColumn());
             default:
                 return "?";
