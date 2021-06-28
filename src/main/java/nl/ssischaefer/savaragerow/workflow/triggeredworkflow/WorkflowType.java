@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.workflow;
+package nl.ssischaefer.savaragerow.workflow.triggeredworkflow;
 
 public enum WorkflowType {
     UPDATE("update"),

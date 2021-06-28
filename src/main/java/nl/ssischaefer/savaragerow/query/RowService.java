@@ -1,10 +1,10 @@
-package nl.ssischaefer.savaragerow.service;
+package nl.ssischaefer.savaragerow.query;
 
 import nl.ssischaefer.savaragerow.query.dml.DeleteRowQuery;
 import nl.ssischaefer.savaragerow.query.dml.InsertRowQuery;
 import nl.ssischaefer.savaragerow.query.dml.UpdateRowQuery;
 import nl.ssischaefer.savaragerow.query.dql.GetRowQuery;
-import nl.ssischaefer.savaragerow.workflow.WorkflowType;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.WorkflowType;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTask;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTaskQueue;
 

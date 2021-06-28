@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.service;
+package nl.ssischaefer.savaragerow.query;
 
 import nl.ssischaefer.savaragerow.util.exception.DatabaseException;
 import nl.ssischaefer.savaragerow.util.Workspace;

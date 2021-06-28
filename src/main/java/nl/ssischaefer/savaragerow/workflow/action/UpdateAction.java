@@ -4,7 +4,7 @@ import nl.ssischaefer.savaragerow.query.dml.UpdateRowQuery;
 import nl.ssischaefer.savaragerow.query.dql.GetRowQuery;
 import nl.ssischaefer.savaragerow.workflow.FieldUpdate;
 import nl.ssischaefer.savaragerow.workflow.RowCriterion;
-import nl.ssischaefer.savaragerow.workflow.WorkflowType;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.WorkflowType;
 import nl.ssischaefer.savaragerow.util.PlaceholderResolver;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTask;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTaskQueue;

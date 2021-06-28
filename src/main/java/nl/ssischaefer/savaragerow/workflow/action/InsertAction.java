@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.workflow.action;
 
-import nl.ssischaefer.savaragerow.workflow.WorkflowType;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.WorkflowType;
 import nl.ssischaefer.savaragerow.query.dml.InsertRowQuery;
 import nl.ssischaefer.savaragerow.util.PlaceholderResolver;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTask;

@@ -11,6 +11,7 @@ public class RequestParams {
         public static final String Database = "Database";
         public static final String Column = "column";
 
+        public static final String WorkflowVariant = "variant";
         public static final String WorkflowType = "type";
         public static final String WorklfowName = "name";
         public static final String WorkflowActive = "active";

@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.workflow.action;
 
 import nl.ssischaefer.savaragerow.workflow.RowCriterion;
-import nl.ssischaefer.savaragerow.workflow.WorkflowType;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.WorkflowType;
 import nl.ssischaefer.savaragerow.query.dml.DeleteRowQuery;
 import nl.ssischaefer.savaragerow.query.dql.GetRowQuery;
 import nl.ssischaefer.savaragerow.util.PlaceholderResolver;

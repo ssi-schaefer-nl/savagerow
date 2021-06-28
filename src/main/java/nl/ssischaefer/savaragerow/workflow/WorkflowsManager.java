@@ -3,6 +3,8 @@ package nl.ssischaefer.savaragerow.workflow;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.util.Workspace;
 import nl.ssischaefer.savaragerow.util.exception.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.TriggeredWorkflow;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.WorkflowType;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -14,7 +16,7 @@ import java.util.stream.Collectors;
 public class WorkflowsManager {
     private static WorkflowsManager cachedWorkflows = null;
     private static String lastWorkspace = "";
-    private final EnumMap<WorkflowType, List<Workflow>> workflows;
+    private final EnumMap<WorkflowType, List<AbstractWorkflow>> workflows;
 
     public static WorkflowsManager getWorkflowsFromCurrentWorkspace() throws WorkspaceNotSetException {
         String currentWorkspace = Workspace.getCurrentWorkspace();
@@ -31,7 +33,7 @@ public class WorkflowsManager {
         return cachedWorkflows;
     }
 
-    public Map<WorkflowType, List<Workflow>> getWorkflows() {
+    public Map<WorkflowType, List<AbstractWorkflow>> getWorkflows() {
         return workflows;
     }
 
@@ -41,47 +43,52 @@ public class WorkflowsManager {
     }
 
     public void execute(WorkflowType type, String table, Map<String, String> data) {
-        this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> (w.isActive() && w.getTable().equals(table))).forEach(w -> w.execute(data));
+//        this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> (w.isActive() && w.getTable().equals(table))).forEach(w -> w.execute(data));
     }
 
-    public List<Workflow> get() {
+    public List<AbstractWorkflow> get() {
         return workflows.values().stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
-    public List<Workflow> get(WorkflowType type) {
+    public Object get(WorkflowVariant variant) {
+        return null;
+    }
+
+    public List<AbstractWorkflow> get(WorkflowType type) {
         return workflows.get(type);
     }
 
-    public List<Workflow> get(WorkflowType type, String table) {
-        return get(type).stream().filter(w -> w.getTable().equals(table)).collect(Collectors.toList());
+    public List<AbstractWorkflow> get(WorkflowType type, String table) {
+//        return get(type).stream().filter(w -> w.getTable().equals(table)).collect(Collectors.toList());
+        return null;
     }
 
 
-    public void set(WorkflowType type, List<Workflow> workflows) {
+    public void set(WorkflowType type, List<AbstractWorkflow> workflows) {
         this.workflows.put(type, workflows);
     }
 
     public void setActive(WorkflowType type, String table, String name, boolean active) {
-        List<Workflow> updatedWorkflows = get(type).stream().peek(w -> {
-            if (w.getTable().equals(table) && w.getName().equals(name)) w.setActive(active);
-        }).collect(Collectors.toList());
-
-        set(type, updatedWorkflows);
+//        List<TriggeredWorkflow> updatedWorkflows = get(type).stream().peek(w -> {
+//            if (w.getTable().equals(table) && w.getName().equals(name)) w.setActive(active);
+//        }).collect(Collectors.toList());
+//
+//        set(type, updatedWorkflows);
     }
 
 
     public void delete(WorkflowType type, String table, String name) {
-        List<Workflow> resultOfDeletion = get(type).stream()
-                .filter(w -> !(w.getName().equals(name) && w.getTable().equals(table)))
-                .collect(Collectors.toList());
-
-        set(type, resultOfDeletion);
+//        List<TriggeredWorkflow> resultOfDeletion = get(type).stream()
+//                .filter(w -> !(w.getName().equals(name) && w.getTable().equals(table)))
+//                .collect(Collectors.toList());
+//
+//        set(type, resultOfDeletion);
     }
 
-    public void add(WorkflowType type, Workflow workflow) {
-        List<Workflow> temp = this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> !(w.getTable().equals(workflow.getTable()) && w.getName().equals(workflow.getName()))).collect(Collectors.toList());
-        temp.add(workflow);
-        set(type, temp);
+    public void add(WorkflowType type, TriggeredWorkflow workflow) {
+//        List<TriggeredWorkflow> temp = this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> !(w.getTable().equals(workflow.getTable()) && w.getName().equals(workflow.getName()))).collect(Collectors.toList());
+//        temp.add(workflow);
+//        set(type, temp);
     }
 
 

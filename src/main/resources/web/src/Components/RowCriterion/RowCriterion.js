@@ -115,7 +115,7 @@ const Criterion = props => {
                 </Select>
             </Grid>
             <Grid item xs={4}>
-                <ContextMenuTrigger id={`contextmenu-${contextMenuId}`} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
+                <ContextMenuTrigger id={placeholders.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
                     <TextField
                         id="required"
                         value={criterion["required"]}

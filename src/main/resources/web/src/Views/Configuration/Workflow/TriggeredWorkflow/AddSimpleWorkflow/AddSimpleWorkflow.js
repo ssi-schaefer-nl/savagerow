@@ -27,7 +27,7 @@ export default function AddSimpleWorkflow(props) {
         const workflowService = new WorkflowService()
         setSaving(true)
         setFinalStatus("Saving..")
-        workflowService.saveWorkflow(type, data, () => {
+        workflowService.saveTriggeredWorkflow(type, data, () => {
             setSaving(false)
             setValid(true)
             setFinalStatus("Workflow has been sucessfully saved")

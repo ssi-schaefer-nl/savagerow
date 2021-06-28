@@ -27,19 +27,38 @@ class WorkflowService {
         }
     }
 
-    getTableWorkflows(table, type, onSuccess, onFailure) {
+    getTriggeredWorkflows(onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.get(`${this.prefix}/${table}/${type}`)
+            this.httpHelper.get(`${this.prefix}/triggered/all`)
                 .then(res => { onSuccess(res.data) })
                 .catch(res => { onFailure(res) });
         }
     }
 
-    saveWorkflow(type, data, onSuccess, onFailure) {
+    getScheduledWorkflows(onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.post(`${this.prefix}/${type}`, data)
+            this.httpHelper.get(`${this.prefix}/scheduled/all`)
+                .then(res => { onSuccess(res.data) })
+                .catch(res => { onFailure(res) });
+        }
+    }
+
+
+    saveScheduledWorkflow(data, onSuccess, onFailure) {
+        if (this.database != null) {
+
+            this.httpHelper.post(`${this.prefix}/scheduled`, data)
+                .then(res => onSuccess(res))
+                .catch(res => onFailure(res.response.data));
+        }
+    }
+
+    saveTriggeredWorkflow(type, data, onSuccess, onFailure) {
+        if (this.database != null) {
+
+            this.httpHelper.post(`${this.prefix}/triggered/${type}`, data)
                 .then(res => onSuccess(res))
                 .catch(res => onFailure(res.response.data));
         }

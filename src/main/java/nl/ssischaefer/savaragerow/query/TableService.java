@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.service;
+package nl.ssischaefer.savaragerow.query;
 
 import nl.ssischaefer.savaragerow.dto.SQLColumn;
 import nl.ssischaefer.savaragerow.query.ddl.CreateTableQuery;

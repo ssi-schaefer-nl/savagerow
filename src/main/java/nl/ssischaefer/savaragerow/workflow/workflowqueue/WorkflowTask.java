@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.workflow.workflowqueue;
 
-import nl.ssischaefer.savaragerow.workflow.WorkflowType;
+import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.WorkflowType;
 
 import java.util.Map;
 

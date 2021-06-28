@@ -2,7 +2,7 @@ package nl.ssischaefer.savaragerow.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.query.metadata.GetTablesQuery;
-import nl.ssischaefer.savaragerow.service.DatabaseService;
+import nl.ssischaefer.savaragerow.query.DatabaseService;
 import nl.ssischaefer.savaragerow.util.RequestParams;
 import nl.ssischaefer.savaragerow.util.Workspace;
 import spark.Request;

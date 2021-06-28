@@ -5,7 +5,7 @@ import { CircularProgress, Divider, Grid, Menu, Paper, Table, TableBody, TableCe
 import Button from '@material-ui/core/Button';
 import WorkflowService from "../../../../Service/WorkflowService/WorkflowService";
 import AddIcon from '@material-ui/icons/Add';
-import AddSimpleWorkflow from "./AddSimpleWorkflow/AddSimpleWorkflow";
+import AddScheduledWorkflow from "./AddScheduledWorkflow/AddScheduledWorkflow";
 import FullscreenDialog from "../../../../Components/FullscreenDialog/FullscreenDialog";
 import EditIcon from '@material-ui/icons/MoreVert';
 import { MenuItem } from "react-contextmenu";
@@ -13,7 +13,7 @@ import ErrorMessage from "../../../../Service/ErrorMessages/ErrorMessages";
 import CollapsableAlert from "../../../../Components/CollapsableAlert/CollapsableAlert";
 
 
-const TriggeredWorkflow = (props) => {
+const ScheduledWorkflow = (props) => {
     const [workflows, setWorkflows] = useState([])
     const [anchorEditMenu, setAnchorEditMenu] = useState(null);
     const [selectedWorkflow, setSelectedWorkflow] = useState(null);
@@ -26,7 +26,7 @@ const TriggeredWorkflow = (props) => {
 
     const triggerReload = () => setReloadTrigger(t => !t)
 
-    useEffect(() => workflowService.getTriggeredWorkflows((data) => {
+    useEffect(() => workflowService.getAllWorkflows((data) => {
         setWorkflows(data);
         setLoading(false);
         setError(false)
@@ -36,7 +36,7 @@ const TriggeredWorkflow = (props) => {
     }), [reloadTrigger])
 
 
-    const handleAddedSimpleWorkflow = () => {
+    const handleAddScheduledWorkflow = () => {
         setOpenWorkflowDialog(false)
         setSelectedWorkflow(null)
         triggerReload()
@@ -76,7 +76,9 @@ const TriggeredWorkflow = (props) => {
         workflowService.changeActive(table, type, name, !selectedWorkflow.active, triggerReload, () => undefined)
     };
 
-
+    const periodToText = (period) => {
+        return "Every 8 hours"
+    }
     if (loading) return <CircularProgress />
     if (error) return <CollapsableAlert severity="error" message={ErrorMessage.Workflow.Loading()} />
 
@@ -92,8 +94,8 @@ const TriggeredWorkflow = (props) => {
                                 <TableRow>
                                     <TableCell>Table</TableCell>
                                     <TableCell align="right">Workflow Name</TableCell>
-                                    <TableCell align="right">Type</TableCell>
                                     <TableCell align="right">Number of actions</TableCell>
+                                    <TableCell align="right">Period</TableCell>
                                     <TableCell align="right">Active</TableCell>
                                     <TableCell align="right">
                                         <Button onClick={() => setOpenWorkflowDialog(true)}>
@@ -107,8 +109,8 @@ const TriggeredWorkflow = (props) => {
                                     <TableRow key={`${w.table}-${w.name}`}>
                                         <TableCell component="th" scope="row">{w.table}</TableCell>
                                         <TableCell align="right">{w.name}</TableCell>
-                                        <TableCell align="right">{w.type}</TableCell>
                                         <TableCell align="right">{w.actions.length}</TableCell>
+                                        <TableCell align="right">{periodToText(w.actions.period)}</TableCell>
                                         <TableCell align="right">{w.active ? "Yes" : "No"}</TableCell>
                                         <TableCell align="right">
                                             <Button aria-controls="simple-menu" aria-haspopup="true" onClick={(e) => handleClickEdit(e, i)}>
@@ -138,20 +140,20 @@ const TriggeredWorkflow = (props) => {
                 :
                 <Grid container justify="center">
                     <Grid item>
-                        <Button variant="contained" color="primary" style={{ width: "15em" }} onClick={() => setOpenWorkflowDialog(true)}>Create simple workflow</Button>
+                        <Button variant="contained" color="primary" style={{ width: "15em" }} onClick={() => setOpenWorkflowDialog(true)}>Create scheduled workflow</Button>
                     </Grid>
                 </Grid>
             }
             <FullscreenDialog
                 open={openWorkflowDialog}
                 handleClose={() => { setExistingWorkflow(null); setOpenWorkflowDialog(false) }}
-                title={Boolean(selectedWorkflow) ? "Edit existing workflow" : "Add a new simple workflow"}
+                title={Boolean(selectedWorkflow) ? "Edit existing workflow" : "Add a new scheduled workflow"}
             >
-                <AddSimpleWorkflow existing={existingWorkflow} onFinish={handleAddedSimpleWorkflow} />
+                <AddScheduledWorkflow existing={existingWorkflow} onFinish={handleAddScheduledWorkflow} />
             </FullscreenDialog>
 
         </div >
     )
 }
 
-export default TriggeredWorkflow
+export default ScheduledWorkflow

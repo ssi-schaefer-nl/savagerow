@@ -8,7 +8,7 @@ import nl.ssischaefer.savaragerow.dto.TableSchemaDTO;
 import nl.ssischaefer.savaragerow.query.ddl.CreateTableQuery;
 import nl.ssischaefer.savaragerow.query.ddl.DeleteTableQuery;
 import nl.ssischaefer.savaragerow.query.ddl.RenameColumnQuery;
-import nl.ssischaefer.savaragerow.service.TableService;
+import nl.ssischaefer.savaragerow.query.TableService;
 import nl.ssischaefer.savaragerow.util.RequestParams;
 import nl.ssischaefer.savaragerow.util.sql.SQLiteDatatype;
 import spark.Request;

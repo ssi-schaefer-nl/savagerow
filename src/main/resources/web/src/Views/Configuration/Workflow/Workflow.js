@@ -8,6 +8,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { grey } from "@material-ui/core/colors";
 import TriggeredWorkflow from "./TriggeredWorkflow/TriggeredWorkflow";
+import ScheduledWorkflow from "./ScheduledWorkflow/ScheduledWorkflow";
 
 
 const Workflow = (props) => {
@@ -24,7 +25,7 @@ const Workflow = (props) => {
                 <TriggeredWorkflow />
             </AccordionSection>
             <AccordionSection onChange={handleChange("scheduled-workflows")} expanded={expanded === "scheduled-workflows"} title="Scheduled Workflows">
-                <TriggeredWorkflow />
+                <ScheduledWorkflow />
             </AccordionSection>
 
         </>
