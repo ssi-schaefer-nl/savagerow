@@ -26,7 +26,7 @@ const ScheduledWorkflow = (props) => {
 
     const triggerReload = () => setReloadTrigger(t => !t)
 
-    useEffect(() => workflowService.getAllWorkflows((data) => {
+    useEffect(() => workflowService.getScheduledWorkflows((data) => {
         setWorkflows(data);
         setLoading(false);
         setError(false)
@@ -52,12 +52,7 @@ const ScheduledWorkflow = (props) => {
 
     const handleDelete = () => {
         setAnchorEditMenu(null);
-
-        const table = selectedWorkflow.table
-        const type = selectedWorkflow.type
-        const name = selectedWorkflow.name
-
-        workflowService.deleteWorkflow(table, type, name, triggerReload, () => undefined)
+        workflowService.deleteScheduledWorkflow(selectedWorkflow, triggerReload, console.log)
     };
 
     const handleEdit = () => {
@@ -92,8 +87,7 @@ const ScheduledWorkflow = (props) => {
                         <Table stickyHeader >
                             <TableHead >
                                 <TableRow>
-                                    <TableCell>Table</TableCell>
-                                    <TableCell align="right">Workflow Name</TableCell>
+                                    <TableCell>Workflow Name</TableCell>
                                     <TableCell align="right">Number of actions</TableCell>
                                     <TableCell align="right">Period</TableCell>
                                     <TableCell align="right">Active</TableCell>
@@ -106,9 +100,8 @@ const ScheduledWorkflow = (props) => {
                             </TableHead>
                             <TableBody>
                                 {workflows.map((w, i) => (
-                                    <TableRow key={`${w.table}-${w.name}`}>
-                                        <TableCell component="th" scope="row">{w.table}</TableCell>
-                                        <TableCell align="right">{w.name}</TableCell>
+                                    <TableRow key={`${w.name}`}>
+                                        <TableCell component="th" scope="row">{w.name}</TableCell>
                                         <TableCell align="right">{w.actions.length}</TableCell>
                                         <TableCell align="right">{periodToText(w.actions.period)}</TableCell>
                                         <TableCell align="right">{w.active ? "Yes" : "No"}</TableCell>

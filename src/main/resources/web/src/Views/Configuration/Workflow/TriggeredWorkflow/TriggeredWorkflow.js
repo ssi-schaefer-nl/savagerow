@@ -53,11 +53,8 @@ const TriggeredWorkflow = (props) => {
     const handleDelete = () => {
         setAnchorEditMenu(null);
 
-        const table = selectedWorkflow.table
-        const type = selectedWorkflow.type
-        const name = selectedWorkflow.name
 
-        workflowService.deleteWorkflow(table, type, name, triggerReload, () => undefined)
+        workflowService.deleteTriggeredWorkflow(selectedWorkflow, triggerReload, () => undefined)
     };
 
     const handleEdit = () => {

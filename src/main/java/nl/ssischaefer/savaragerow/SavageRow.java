@@ -39,9 +39,7 @@ public class SavageRow {
         get(API_PREFIX + "/:database/database/:table/rows", RowController.getRows);
         get(API_PREFIX + "/:database/database/:table/schema", SchemaController.getSchema);
         get(API_PREFIX + "/:database/database", DatabaseController.getTables);
-//        get(API_PREFIX + "/:database/workflow", WorkflowController.getSummary);
-//        get(API_PREFIX + "/:database/workflow/:table/:type", WorkflowController.getTableWorkflows);
-        get(API_PREFIX + "/:database/workflow/:type/all", WorkflowController.getAllWorkflows);
+        get(API_PREFIX + "/:database/workflow/:variant/all", WorkflowController.getAllWorkflows);
     }
 
     private static void setupPostRoutes() {
@@ -49,7 +47,7 @@ public class SavageRow {
         post(API_PREFIX + "/:database/database/:table", SchemaController.addTable);
         post(API_PREFIX + "/:database/database/:table/column", SchemaController.addColumn);
         post(API_PREFIX + "/:database/database/:table/rows", RowController.addRows);
-        post(API_PREFIX + "/:database/workflow/:type", WorkflowController.addTriggeredWorkflow);
+        post(API_PREFIX + "/:database/workflow/:variant", WorkflowController.addWorkflow);
         post(API_PREFIX + "/:database/workflow/:table/:type/:name/active/:active", WorkflowController.setActive);
 
     }
@@ -64,7 +62,7 @@ public class SavageRow {
         delete(API_PREFIX + "/:database/database/:table", SchemaController.deleteTable);
         delete(API_PREFIX + "/:database/database/:table/rows/:row", RowController.deleteRow);
         delete(API_PREFIX + "/:database/database/:table/column/:column", SchemaController.deleteColumn);
-        delete(API_PREFIX + "/:database/workflow/:table/:type/:name", WorkflowController.deleteWorkflow);
+        delete(API_PREFIX + "/:database/workflow/:variant", WorkflowController.deleteWorkflow);
 
     }
 

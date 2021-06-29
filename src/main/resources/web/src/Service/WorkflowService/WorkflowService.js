@@ -9,7 +9,6 @@ class WorkflowService {
     }
 
     getAllWorkflows(onSuccess, onFailure) {
-        console.log(this.database)
         if (this.database != null) {
 
             this.httpHelper.get(`${this.prefix}/all`)
@@ -30,7 +29,7 @@ class WorkflowService {
     getTriggeredWorkflows(onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.get(`${this.prefix}/triggered/all`)
+            this.httpHelper.get(`${this.prefix}/triggeredworkflow/all`)
                 .then(res => { onSuccess(res.data) })
                 .catch(res => { onFailure(res) });
         }
@@ -39,7 +38,7 @@ class WorkflowService {
     getScheduledWorkflows(onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.get(`${this.prefix}/scheduled/all`)
+            this.httpHelper.get(`${this.prefix}/scheduledworkflow/all`)
                 .then(res => { onSuccess(res.data) })
                 .catch(res => { onFailure(res) });
         }
@@ -75,13 +74,21 @@ class WorkflowService {
         }
     }
 
-    deleteWorkflow(table, type, name, onSuccess, onFailure) {
+    deleteWorkflow(variant, workflow, onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.delete(`${this.prefix}/${table}/${type}/${name}`)
+            this.httpHelper.deleteWithData(`${this.prefix}/${variant}`, workflow)
                 .then(res => onSuccess(res))
-                .catch(res => onFailure(res.response.data));
+                .catch(res => onFailure(res));
         }
+    }
+
+    deleteTriggeredWorkflow(workflow, onSuccess, onFailure) {
+        this.deleteWorkflow("triggeredworkflow", workflow, onSuccess, onFailure)
+    }
+
+    deleteScheduledWorkflow(workflow, onSuccess, onFailure) {
+        this.deleteWorkflow("scheduledworkflow", workflow, onSuccess, onFailure)
     }
 }
 

@@ -26,9 +26,10 @@ public class WorkflowServiceTest {
         List<String> names = Arrays.asList("one", "two", "three");
         List<TriggeredWorkflow> triggeredWorkflows = names.stream().map(this::newTriggeredWorkflow).collect(Collectors.toList());
         List<ScheduledWorkflow> scheduledWorkflows = names.stream().map(this::newScheduledWorkflow).collect(Collectors.toList());
+        scheduledWorkflows.add(newScheduledWorkflow("four"));
         Map<String, Object> m = new HashMap<>();
-        m.put("scheduled", scheduledWorkflows);
-        m.put("triggered", triggeredWorkflows);
+        m.put(ScheduledWorkflow.class.getSimpleName().toLowerCase(), scheduledWorkflows);
+        m.put(TriggeredWorkflow.class.getSimpleName().toLowerCase(), triggeredWorkflows);
         return JsonPath.parse(new ObjectMapper().writeValueAsString(m));
     }
 
@@ -47,68 +48,100 @@ public class WorkflowServiceTest {
     }
 
     @Test
-    public void shouldReadThreeTriggeredWorkflows() throws Exception, WorkspaceNotSetException {
+    public void shouldReadThreeTriggeredWorkflows() throws Exception {
         mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
         Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
 
         WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
 
-        Assert.assertEquals(3, workflowService.find(WorkflowVariant.TRIGGERED).size());
+        Assert.assertEquals(3, workflowService.find(WorkflowVariant.TRIGGERED.getType()).size());
     }
 
     @Test
-    public void shouldReadThreeScheduledWorkflows() throws Exception, WorkspaceNotSetException {
+    public void shouldReadFourScheduledWorkflows() throws Exception {
         mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
         Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
 
         WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
 
-        Assert.assertEquals(3, workflowService.find(WorkflowVariant.SCHEDULED).size());
+        Assert.assertEquals(4, workflowService.find(WorkflowVariant.SCHEDULED.getType()).size());
     }
 
     @Test
-    public void shouldRemoveOneTriggeredWorkflow() throws Exception, WorkspaceNotSetException {
+    public void shouldRemoveOneTriggeredWorkflow() throws Exception {
         mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
         Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
 
         WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
+        int initialSize = workflowService.find(WorkflowVariant.TRIGGERED.getType()).size();
 
         workflowService.delete(newTriggeredWorkflow("one"));
-        Assert.assertEquals(2, workflowService.find(WorkflowVariant.TRIGGERED).size());
+        Assert.assertEquals(initialSize - 1, workflowService.find(WorkflowVariant.TRIGGERED.getType()).size());
     }
 
     @Test
-    public void shouldRemoveOneScheduledWorkflow() throws Exception, WorkspaceNotSetException {
+    public void shouldRemoveOneScheduledWorkflow() throws Exception {
         mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
         Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
 
         WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
+        int initialSize = workflowService.find(WorkflowVariant.SCHEDULED.getType()).size();
 
         workflowService.delete(newScheduledWorkflow("one"));
-        Assert.assertEquals(2, workflowService.find(WorkflowVariant.TRIGGERED).size());
+        Assert.assertEquals(initialSize - 1, workflowService.find(WorkflowVariant.TRIGGERED.getType()).size());
     }
 
     @Test
-    public void shouldAddOneScheduledWorkflow() throws Exception, WorkspaceNotSetException {
+    public void shouldAddOneScheduledWorkflow() throws Exception {
         mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
         Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
-
         WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
-        ScheduledWorkflow scheduledWorkflow = newScheduledWorkflow("four");
 
-        workflowService.add(scheduledWorkflow, WorkflowVariant.SCHEDULED);
-        Assert.assertEquals(4, workflowService.find(WorkflowVariant.SCHEDULED).size());
+        ScheduledWorkflow scheduledWorkflow = newScheduledWorkflow("five");
+        int initialSize = workflowService.find(WorkflowVariant.SCHEDULED.getType()).size();
+
+        workflowService.add(scheduledWorkflow);
+        Assert.assertEquals(initialSize + 1, workflowService.find(WorkflowVariant.SCHEDULED.getType()).size());
     }
 
     @Test
-    public void shouldAddOneTriggeredWorkflow() throws Exception, WorkspaceNotSetException {
+    public void shouldAddOneTriggeredWorkflow() throws Exception {
         mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
         Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
 
         WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
         TriggeredWorkflow triggeredWorkflow = newTriggeredWorkflow("four");
 
-        workflowService.add(triggeredWorkflow, WorkflowVariant.TRIGGERED);
-        Assert.assertEquals(4, workflowService.find(WorkflowVariant.TRIGGERED).size());
+        int initialSize = workflowService.find(WorkflowVariant.TRIGGERED.getType()).size();
+        workflowService.add(triggeredWorkflow);
+        Assert.assertEquals(initialSize + 1, workflowService.find(WorkflowVariant.TRIGGERED.getType()).size());
+    }
+
+    @Test
+    public void shouldDeleteDeserializedScheduledWorkflow() throws Exception {
+        mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
+        Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
+        System.out.println(getJsonForWorkflows().jsonString());
+        WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
+        AbstractWorkflow workflow = new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(newScheduledWorkflow("one")), WorkflowVariant.SCHEDULED.getType());
+
+        int initialSize = workflowService.find(WorkflowVariant.SCHEDULED.getType()).size();
+        workflowService.delete(workflow);
+
+        Assert.assertEquals(initialSize - 1, workflowService.find(WorkflowVariant.SCHEDULED.getType()).size());
+    }
+
+    @Test
+    public void shouldDeleteDeserializedTriggeredWorkflow() throws Exception {
+        mockedWorkflowCache = Mockito.mock(WorkflowCache.class);
+        Mockito.when(mockedWorkflowCache.getDocument()).thenReturn(getJsonForWorkflows());
+
+        WorkflowService workflowService = new WorkflowService(mockedWorkflowCache);
+        AbstractWorkflow workflow = new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(newTriggeredWorkflow("one")), WorkflowVariant.TRIGGERED.getType());
+
+        int initialSize = workflowService.find(WorkflowVariant.TRIGGERED.getType()).size();
+        workflowService.delete(workflow);
+
+        Assert.assertEquals(initialSize - 1, workflowService.find(WorkflowVariant.TRIGGERED.getType()).size());
     }
 }
