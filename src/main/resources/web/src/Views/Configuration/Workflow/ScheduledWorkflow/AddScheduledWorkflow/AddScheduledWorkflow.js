@@ -24,20 +24,32 @@ export default function AddScheduledWorkflow(props) {
 
 
     const saveWorkflow = () => {
-        const data = { name: name, period: {time: time, days: days}, actions: actions, active: true, conditions: conditions }
+        const data = { name: name, period: { time: time, days: days }, actions: actions, active: true, conditions: conditions }
         const workflowService = new WorkflowService()
         setSaving(true)
         setFinalStatus("Saving..")
-        workflowService.saveScheduledWorkflow(data, () => {
-            setSaving(false)
-            setValid(true)
-            setFinalStatus("Workflow has been sucessfully saved")
-        }, (data) => {
-            setSaving(false)
-            setValid(false)
-            setFinalStatus(data)
-        })
-
+        if (existing != null) {
+            workflowService.updateScheduledWorkflow(data, () => {
+                setSaving(false)
+                setValid(true)
+                setFinalStatus("Workflow has been sucessfully saved")
+            }, (data) => {
+                setSaving(false)
+                setValid(false)
+                setFinalStatus(data)
+            })
+        }
+        else {
+            workflowService.saveScheduledWorkflow(data, () => {
+                setSaving(false)
+                setValid(true)
+                setFinalStatus("Workflow has been sucessfully saved")
+            }, (data) => {
+                setSaving(false)
+                setValid(false)
+                setFinalStatus(data)
+            })
+        }
     }
 
     const editingSteps = [

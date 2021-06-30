@@ -1,9 +1,13 @@
 package nl.ssischaefer.savaragerow.workflow;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
+import net.minidev.json.JSONArray;
 import nl.ssischaefer.savaragerow.workflow.triggeredworkflow.TriggeredWorkflow;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WorkflowService {
     private final WorkflowCache workflowCache;
@@ -12,23 +16,29 @@ public class WorkflowService {
         this.workflowCache = workflowCache;
     }
 
-    public List<? extends AbstractWorkflow> find(Class<? extends AbstractWorkflow> workflow) throws Exception {
+    public List<AbstractWorkflow> find(WorkflowVariant variant) throws Exception {
         DocumentContext document = workflowCache.getDocument();
-        return document.read(String.format("$.%s[*]", workflow.getSimpleName().toLowerCase()));
+        JSONArray read = document.read(String.format("$.%s[*]", variant.getType().getSimpleName().toLowerCase()));
+        return read.stream().map(r -> new ObjectMapper().convertValue(r, variant.getType())).collect(Collectors.toList());
+
     }
 
     public void delete(AbstractWorkflow workflow) throws Exception {
-
         DocumentContext document = workflowCache.getDocument();
         String query = generateQuery(workflow);
         document.delete(query);
         workflowCache.saveDocument(document);
     }
 
-
     public void add(AbstractWorkflow workflow) throws Exception {
         DocumentContext document = workflowCache.getDocument();
-        document.add(String.format("$.%s", workflow.getClass().getSimpleName().toLowerCase()), workflow);
+        document.add(String.format("$.%s", workflow.getClass().getSimpleName().toLowerCase()), new ObjectMapper().convertValue(workflow, LinkedHashMap.class));
+        workflowCache.saveDocument(document);
+    }
+
+    public void update(AbstractWorkflow workflow) throws Exception {
+        DocumentContext document = workflowCache.getDocument();
+        document.set(generateQuery(workflow),  new ObjectMapper().convertValue(workflow, LinkedHashMap.class));
         workflowCache.saveDocument(document);
     }
 

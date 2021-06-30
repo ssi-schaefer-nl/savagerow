@@ -29,7 +29,7 @@ public class WorkflowTaskQueue {
     }
 
     public boolean start() {
-        if (executor != null) return false;
+        if (executor != null || workerCount == 0) return false;
         executor = Executors.newFixedThreadPool(workerCount);
         IntStream.range(0, workerCount).forEach(i -> executor.submit(new WorkflowTaskConsumer(queue)));
         return true;

@@ -64,11 +64,9 @@ const ScheduledWorkflow = (props) => {
     const handleChangeActive = () => {
         setAnchorEditMenu(null);
 
-        const table = selectedWorkflow.table
-        const type = selectedWorkflow.type
-        const name = selectedWorkflow.name
+        const workflow = {...selectedWorkflow, active: !selectedWorkflow.active}
 
-        workflowService.changeActive(table, type, name, !selectedWorkflow.active, triggerReload, () => undefined)
+        workflowService.updateScheduledWorkflow(workflow, triggerReload, () => undefined)
     };
 
     const periodToText = (period) => {

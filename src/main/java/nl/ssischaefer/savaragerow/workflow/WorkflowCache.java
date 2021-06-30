@@ -1,5 +1,7 @@
 package nl.ssischaefer.savaragerow.workflow;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import nl.ssischaefer.savaragerow.util.Workspace;
@@ -21,8 +23,11 @@ public class WorkflowCache {
 
     public void saveDocument(DocumentContext documentContext) throws WorkspaceNotSetException, IOException {
         cachedJsonDocument = documentContext;
+        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        String json = mapper.writeValueAsString(mapper.readValue(documentContext.jsonString(), Object.class));
+
         Path path = Paths.get(Workspace.getCurrentWorkspace(), "workflows.json");
-        Files.write(path, documentContext.jsonString().getBytes());
+        Files.write(path, json.getBytes());
 
     }
 

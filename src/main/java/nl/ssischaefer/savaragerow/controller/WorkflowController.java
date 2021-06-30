@@ -21,7 +21,11 @@ public class WorkflowController {
     public static final Route getAllWorkflows = (Request request, Response response) -> {
         WorkflowVariant variant = WorkflowVariant.fromString(request.params(RequestParams.Parameter.WorkflowVariant));
         if (variant != null) {
-            return new ObjectMapper().writeValueAsString(workflowService.find(variant.getType()));
+            try {
+                return new ObjectMapper().writeValueAsString(workflowService.find(variant));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return "";
     };
@@ -36,30 +40,24 @@ public class WorkflowController {
         return "";
     };
 
-    public static final Route deleteWorkflow = (Request request, Response response) -> {
+    public static final Route updateWorkflow = (Request request, Response response) -> {
         WorkflowVariant variant = WorkflowVariant.fromString(request.params(RequestParams.Parameter.WorkflowVariant));
 
         if (variant != null) {
             AbstractWorkflow workflow = new ObjectMapper().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS).readValue(request.body(), variant.getType());
-            workflowService.delete(workflow);
+            workflowService.update(workflow);
         }
-
         return "";
     };
 
-    public static final Route setActive = (Request request, Response response) -> {
-//        WorkflowType type = WorkflowType.fromString(request.params(RequestParams.Parameter.WorkflowType));
-//        String name = request.params(RequestParams.Parameter.WorklfowName);
-//        String table = request.params(RequestParams.Parameter.Table);
-//        boolean active = Boolean.parseBoolean(request.params(RequestParams.Parameter.WorkflowActive));
-//
-//        try {
-//            WorkflowsManager workflows = WorkflowsManager.getWorkflowsFromCurrentWorkspace();
-//            workflows.setActive(type, table, name, active);
-//            WorkflowsManager.save(workflows);
-//        } catch (WorkspaceNotSetException e) {
-//            e.printStackTrace();
-//        }
+
+    public static final Route deleteWorkflow = (Request request, Response response) -> {
+        WorkflowVariant variant = WorkflowVariant.fromString(request.params(RequestParams.Parameter.WorkflowVariant));
+        System.out.println(variant);
+        if (variant != null) {
+            AbstractWorkflow workflow = new ObjectMapper().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS).readValue(request.body(), variant.getType());
+            workflowService.delete(workflow);
+        }
 
         return "";
     };

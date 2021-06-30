@@ -48,21 +48,39 @@ class WorkflowService {
     saveScheduledWorkflow(data, onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.post(`${this.prefix}/scheduled`, data)
+            this.httpHelper.post(`${this.prefix}/scheduledworkflow`, data)
                 .then(res => onSuccess(res))
                 .catch(res => onFailure(res.response.data));
         }
     }
 
-    saveTriggeredWorkflow(type, data, onSuccess, onFailure) {
+    saveTriggeredWorkflow(data, onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.post(`${this.prefix}/triggered/${type}`, data)
+            this.httpHelper.post(`${this.prefix}/triggeredworkflow`, data)
                 .then(res => onSuccess(res))
                 .catch(res => onFailure(res.response.data));
         }
     }
 
+    updateTriggeredWorkflow(data, onSuccess, onFailure) {
+        if (this.database != null) {
+
+            this.httpHelper.put(`${this.prefix}/triggeredworkflow`, data)
+                .then(res => onSuccess(res))
+                .catch(res => onFailure(res.response.data));
+        }
+    }
+
+    
+    updateScheduledWorkflow(data, onSuccess, onFailure) {
+        if (this.database != null) {
+
+            this.httpHelper.put(`${this.prefix}/scheduledworkflow`, data)
+                .then(res => onSuccess(res))
+                .catch(res => onFailure(res.response.data));
+        }
+    }
 
     changeActive(table, type, name, active, onSuccess, onFailure) {
         if (this.database != null) {

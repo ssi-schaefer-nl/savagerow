@@ -66,11 +66,9 @@ const TriggeredWorkflow = (props) => {
     const handleChangeActive = () => {
         setAnchorEditMenu(null);
 
-        const table = selectedWorkflow.table
-        const type = selectedWorkflow.type
-        const name = selectedWorkflow.name
-
-        workflowService.changeActive(table, type, name, !selectedWorkflow.active, triggerReload, () => undefined)
+        const workflow = {...selectedWorkflow, active: !selectedWorkflow.active}
+        console.log(workflow)
+        workflowService.updateTriggeredWorkflow(workflow, triggerReload, () => undefined)
     };
 
 

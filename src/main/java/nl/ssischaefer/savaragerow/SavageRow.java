@@ -17,10 +17,13 @@ public class SavageRow {
     public static void main(String[] args) {
 
         port(Configuration.parseOrDefaultInteger("PORT", 9010));
-
+        WorkflowTaskQueue.setWorkerCount(0);
         WorkflowTaskQueue.getQueue().start();
+
         staticFiles.location("/public");
+
         setupBefore();
+
         setupGetRoutes();
         setupPostRoutes();
         setupPutRoutes();
@@ -48,11 +51,11 @@ public class SavageRow {
         post(API_PREFIX + "/:database/database/:table/column", SchemaController.addColumn);
         post(API_PREFIX + "/:database/database/:table/rows", RowController.addRows);
         post(API_PREFIX + "/:database/workflow/:variant", WorkflowController.addWorkflow);
-        post(API_PREFIX + "/:database/workflow/:table/:type/:name/active/:active", WorkflowController.setActive);
 
     }
 
     private static void setupPutRoutes() {
+        put(API_PREFIX + "/:database/workflow/:variant", WorkflowController.updateWorkflow);
         put(API_PREFIX + "/:database/database/:table/rows/:row", RowController.updateRow);
         put(API_PREFIX + "/:database/database/:table/column/:column", SchemaController.renameColumn);
     }

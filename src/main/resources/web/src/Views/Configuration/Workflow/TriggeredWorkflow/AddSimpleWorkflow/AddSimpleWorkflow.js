@@ -27,16 +27,28 @@ export default function AddSimpleWorkflow(props) {
         const workflowService = new WorkflowService()
         setSaving(true)
         setFinalStatus("Saving..")
-        workflowService.saveTriggeredWorkflow(type, data, () => {
-            setSaving(false)
-            setValid(true)
-            setFinalStatus("Workflow has been sucessfully saved")
-        }, (data) => {
-            setSaving(false)
-            setValid(false)
-            setFinalStatus(data)
-        })
-
+        if (existing != null) {
+            workflowService.updateTriggeredWorkflow(data, () => {
+                setSaving(false)
+                setValid(true)
+                setFinalStatus("Workflow has been sucessfully saved")
+            }, (data) => {
+                setSaving(false)
+                setValid(false)
+                setFinalStatus(data)
+            })
+        }
+        else {
+            workflowService.saveTriggeredWorkflow(data, () => {
+                setSaving(false)
+                setValid(true)
+                setFinalStatus("Workflow has been sucessfully saved")
+            }, (data) => {
+                setSaving(false)
+                setValid(false)
+                setFinalStatus(data)
+            })
+        }
     }
 
     const editingSteps = [
@@ -81,7 +93,7 @@ const WorkflowStepName = props => {
     const { onChange, value, disabled } = props
 
     return (
-        <div style={{marginBottom: "5em"}}>
+        <div style={{ marginBottom: "5em" }}>
             <Typography variant="h6">Enter a name for the workflow</Typography>
             <Typography style={{ marginBottom: "2em" }}>The name of a workflow serves as a short description and identification of the workflow</Typography>
             <TextField id="standard-basic" disabled={disabled} label="Workflow name" value={value} autoComplete='off' onChange={(e) => onChange(e.target.value)} />
@@ -143,7 +155,7 @@ const FinalizeStep = (props) => {
     return (
         <div >
             <Typography variant="h6">Finalizing</Typography>
-            <Typography style={{marginBottom: "5em"}} color={valid || saving ? "default" : "error"}>
+            <Typography style={{ marginBottom: "5em" }} color={valid || saving ? "default" : "error"}>
                 {message}
             </Typography>
         </div>
