@@ -2,15 +2,10 @@ package nl.ssischaefer.savaragerow.v2.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 class WorkspaceTest {
 
     @Test
     public void testShouldDetectWorkspace()  {
-        Path path = Paths.get("c:\\test", "test.json");
-        System.out.println(path);
         try{
             String currentWorkspace = Workspace.getCurrentWorkspace();
             System.out.println(currentWorkspace);
@@ -18,5 +13,4 @@ class WorkspaceTest {
             System.out.println(e);
         }
     }
-
 }

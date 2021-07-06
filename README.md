@@ -23,6 +23,11 @@ The actions of Simple Workflows are basic: they perform a simple task and will n
 
 ### Getting Started
 
+
+```
+docker run -e PORT="8080" -e WORKSPACE="/mnt" -v c:\Users\debarshi\tmpdata:/mnt ssischaefernl/savagerow
+``` 
+
 ### Tutorials
 
 ### Contributor
