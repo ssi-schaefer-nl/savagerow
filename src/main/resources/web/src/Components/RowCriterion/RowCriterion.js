@@ -13,7 +13,7 @@ const RowCriterion = props => {
     const { onChange, placeholders, table, value } = props
     const [initialTable, setInitialTable] = useState(table)
     const [columns, setColumns] = useState([])
-    const [criteria, setCriteria] = useState((value == undefined || value.length == 0 ? [{ column: "", operator: "", required: "" }] : value))
+    const [criteria, setCriteria] = useState((value == undefined || value.length == 0 ? [{ column: "", comparator: "", required: "" }] : value))
 
     useEffect(() => {
         if (table != null && table.length > 0) {
@@ -25,7 +25,7 @@ const RowCriterion = props => {
 
     }, [table])
 
-    const addNewCriterion = () => setCriteria(c => [...c, { column: "", operator: "", required: "" }])
+    const addNewCriterion = () => setCriteria(c => [...c, { column: "", comparator: "", required: "" }])
     const removeCriterion = (i) => {
         const copyOfCriteria = [...criteria];
         copyOfCriteria.splice(i, 1)
@@ -70,11 +70,10 @@ const RowCriterion = props => {
 }
 
 const operators = {
-    "==": "Equals",
-    "!=": "Not equals",
-    "~=": "Contains",
-    "<": "Smaller than",
-    ">": "Greater than"
+    "equals": "Equals",
+    "not": "Not equals",
+    "smaller": "Smaller than",
+    "greater": "Greater than"
 }
 
 const Criterion = props => {
@@ -82,7 +81,6 @@ const Criterion = props => {
 
     const [appender, setAppender] = useState(() => () => undefined)
     const [contextMenuId, setContextMenuId] = useState(Math.floor(Math.random() * 100))
-    // const [criterion, setCriterion] = useState({ column: "", operator: "", required: "" })
 
     const handleChange = (field, value) => {
         const newCriterion = { ...criterion, [field]: value }
@@ -109,15 +107,15 @@ const Criterion = props => {
                 <Select
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "100%" }}
-                    onChange={(e) => handleChange('operator', e.target.value)}
-                    value={criterion["operator"]}
+                    onChange={(e) => handleChange('comparator', e.target.value)}
+                    value={criterion["comparator"]}
                     required
                 >
                     {Object.keys(operators).map(key => (<MenuItem key={key} value={key}>{operators[key]}</MenuItem>))}
                 </Select>
             </Grid>
             <Grid item xs={4}>
-                <ContextMenuTrigger id={`contextmenu-${contextMenuId}`} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
+                <ContextMenuTrigger id={placeholders.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
                     <TextField
                         id="required"
                         value={criterion["required"]}
