@@ -33,7 +33,7 @@ The actions of Simple Workflows are basic: they perform a simple task and will n
 
 
 ```
-docker run -e PORT="8080" -e WORKSPACE="/mnt" -v c:\Users\debarshi\tmpdata:/mnt ssischaefernl/savagerow
+docker run -e PORT="8080" -e WORKSPACE="/mnt" -v c:\Users\%username%\tmpdata:/mnt ssischaefernl/savagerow
 ``` 
 
 ### Tutorials
