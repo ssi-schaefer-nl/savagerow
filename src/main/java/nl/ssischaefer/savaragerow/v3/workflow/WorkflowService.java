@@ -1,101 +1,52 @@
 package nl.ssischaefer.savaragerow.v3.workflow;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.ssischaefer.savaragerow.v3.util.Workspace;
-import nl.ssischaefer.savaragerow.v3.util.exception.WorkspaceNotSetException;
+import com.jayway.jsonpath.DocumentContext;
+import net.minidev.json.JSONArray;
 import nl.ssischaefer.savaragerow.v3.workflow.model.Workflow;
-import nl.ssischaefer.savaragerow.v3.workflow.model.WorkflowType;
+import nl.ssischaefer.savaragerow.v3.workflow.workflowqueue.WorkflowTask;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class WorkflowService {
-    private static WorkflowService cachedWorkflows = null;
-    private static String lastWorkspace = "";
-    private final EnumMap<WorkflowType, List<Workflow>> workflows;
+    private final WorkflowDataSource dataSource;
+    private static final String WORKFLOW_KEY = Workflow.class.getSimpleName().toLowerCase();
 
-    public static WorkflowService getWorkflowServiceForCurrentWorkspace() throws WorkspaceNotSetException {
-        String currentWorkspace = Workspace.getCurrentWorkspace();
-
-        if (cachedWorkflows == null || !lastWorkspace.equals(currentWorkspace)) {
-            Path path = Paths.get(Workspace.getCurrentWorkspace() , "workflows.json");
-            try (FileReader reader = new FileReader(path.toString())) {
-                cachedWorkflows = new ObjectMapper().readValue(reader, WorkflowService.class);
-                lastWorkspace = currentWorkspace;
-            } catch (Exception e) {
-                return new WorkflowService();
-            }
-        }
-        return cachedWorkflows;
+    public WorkflowService(WorkflowDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-    public Map<WorkflowType, List<Workflow>> getWorkflows() {
-        return workflows;
+    public List<Workflow> findAll() throws Exception {
+        return readWorkflows(String.format("$.%s[*]", WORKFLOW_KEY));
     }
 
-    private WorkflowService() {
-        workflows = new EnumMap<>(WorkflowType.class);
-        Arrays.stream(WorkflowType.values()).forEach(t -> workflows.put(t, new ArrayList<>()));
+    public List<Workflow> findByTask(WorkflowTask task) throws Exception {
+        return readWorkflows(String.format("$.%s[?(@.table == '%s' && @.type == '%s')]", WORKFLOW_KEY, task.getTable(), task.getType()));
     }
 
-    public void execute(WorkflowType type, String table, Map<String, String> data) {
-        this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> (w.isActive() && w.getTable().equals(table))).forEach(w -> w.execute(data));
+    private List<Workflow> readWorkflows(String query) throws Exception {
+        JSONArray read = dataSource.getDocument().read(query);
+        return read.stream().map(r -> new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true).convertValue(r, Workflow.class)).collect(Collectors.toList());
     }
 
-    public List<Workflow> get() {
-        return workflows.values().stream().flatMap(List::stream).collect(Collectors.toList());
+    public void update(Workflow workflow) throws Exception {
+        dataSource.getDocument().set(String.format("$.%s[?(@.identifier == '%s')]", WORKFLOW_KEY, workflow.getIdentifier()), workflow);
+        dataSource.saveDocument();
     }
 
-    public List<Workflow> get(WorkflowType type) {
-        return workflows.get(type);
+    public void add(Workflow workflow) throws Exception {
+        workflow.setIdentifier(UUID.randomUUID().toString());
+        dataSource.getDocument().add(String.format("$.%s", WORKFLOW_KEY), new ObjectMapper().convertValue(workflow, LinkedHashMap.class));
+        dataSource.saveDocument();
+    }
+    public void delete(Workflow workflow) throws Exception {
+        dataSource.getDocument().delete(String.format("$.%s[?(@.identifier == '%s')]", WORKFLOW_KEY, workflow.getIdentifier()));
+        dataSource.saveDocument();
     }
 
-    public List<Workflow> get(WorkflowType type, String table) {
-        return get(type).stream().filter(w -> w.getTable().equals(table)).collect(Collectors.toList());
-    }
-
-
-    public void set(WorkflowType type, List<Workflow> workflows) {
-        this.workflows.put(type, workflows);
-    }
-
-    public void setActive(WorkflowType type, String table, String name, boolean active) {
-        List<Workflow> updatedWorkflows = get(type).stream().peek(w -> {
-            if (w.getTable().equals(table) && w.getName().equals(name)) w.setActive(active);
-        }).collect(Collectors.toList());
-
-        set(type, updatedWorkflows);
-    }
-
-
-    public void delete(WorkflowType type, String table, String name) {
-        List<Workflow> resultOfDeletion = get(type).stream()
-                .filter(w -> !(w.getName().equals(name) && w.getTable().equals(table)))
-                .collect(Collectors.toList());
-
-        set(type, resultOfDeletion);
-    }
-
-    public void add(WorkflowType type, Workflow workflow) {
-        List<Workflow> temp = this.workflows.getOrDefault(type, new ArrayList<>()).stream().filter(w -> !(w.getTable().equals(workflow.getTable()) && w.getName().equals(workflow.getName()))).collect(Collectors.toList());
-        temp.add(workflow);
-        set(type, temp);
-    }
-
-
-    public static void save(WorkflowService workflows) throws Exception, WorkspaceNotSetException {
-        Path path = Paths.get(Workspace.getCurrentWorkspace(), "workflows.json");
-        try (FileWriter file = new FileWriter(path.toString())) {
-            file.write(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(workflows));
-            file.flush();
-            cachedWorkflows = workflows;
-        } catch (Exception e) {
-            throw new Exception("Error while saving workflows");
-        }
-    }
 
 }

@@ -30,7 +30,6 @@ const ActionFormRow = props => {
 
     }, [table])
 
-
     if (columns.length > 0) {
         return (
             <>
@@ -48,7 +47,7 @@ const ActionFormRow = props => {
                             <TableRow key={1}>
                                 {value != null && columns.map(c => (
                                     <TableCell size="small" style={{ padding: "0em", margin: "0em", border: "1px solid", borderColor: grey[200] }}>
-                                        <ContextMenuTrigger id={placeholders.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => onChange({ ...value, [c.name]: value != undefined ? value[c.name] + x : x }))}>
+                                        <ContextMenuTrigger id={placeholders.values != undefined && placeholders.values.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => onChange({ ...value, [c.name]: value != undefined ? value[c.name] + x : x }))}>
                                             <TextField
                                                 id={c.name}
                                                 value={value[c.name]}

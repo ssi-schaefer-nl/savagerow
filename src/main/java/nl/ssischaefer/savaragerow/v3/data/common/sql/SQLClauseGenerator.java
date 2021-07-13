@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class SQLClauseGenerator {
     public static String generateWhereClause(List<RowCriteria> criteria) {
         return String.format("WHERE %s", criteria.stream()
-                .map(c -> String.format("%s %s ?", c.getColumn(), OperatorTransformer.convertToSql(c.getOperator())))
+                .map(c -> String.format("%s %s ?", c.getColumn(), OperatorTransformer.convertToSql(c.getComparator())))
                 .collect(Collectors.joining(" AND ")));
     }
 

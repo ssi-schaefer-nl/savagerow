@@ -1,5 +1,8 @@
 package nl.ssischaefer.savaragerow.v3;
 
+import nl.ssischaefer.savaragerow.v3.workflow.WorkflowDataSource;
+import nl.ssischaefer.savaragerow.v3.workflow.WorkflowService;
+import nl.ssischaefer.savaragerow.v3.workflow.workflowqueue.WorkflowTaskProducer;
 import nl.ssischaefer.savaragerow.v3.workflow.workflowqueue.WorkflowTaskQueue;
 import nl.ssischaefer.savaragerow.v3.api.controller.DatabaseController;
 import nl.ssischaefer.savaragerow.v3.api.controller.RowController;
@@ -20,20 +23,21 @@ public class SavageRow {
         port(parseOrDefaultInteger("PORT", 9010));
         staticFiles.location("/public");
 
+        WorkflowService workflowService = new WorkflowService(WorkflowDataSource.get());
         ManagementService managementService = new ManagementService();
-        OperationsService operationsService = new OperationsService();
+        WorkflowTaskQueue taskQueue = WorkflowTaskQueue.initQueue(workflowService);
+        WorkflowTaskProducer taskProducer = new WorkflowTaskProducer(taskQueue);
+        OperationsService operationsService = new OperationsService(taskProducer);
 
         DatabaseController databaseController = new DatabaseController(managementService);
         SchemaController schemaController = new SchemaController(managementService);
-        WorkflowController workflowController = new WorkflowController();
+        WorkflowController workflowController = new WorkflowController(workflowService);
         RowController rowController = new RowController(operationsService);
 
         databaseController.setup(API_PREFIX);
         schemaController.setup(API_PREFIX);
         workflowController.setup(API_PREFIX);
         rowController.setup(API_PREFIX);
-
-        WorkflowTaskQueue.getQueue().start();
 
         setupBefore();
         setupExceptions();

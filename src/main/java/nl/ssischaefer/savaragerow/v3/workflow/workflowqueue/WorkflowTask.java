@@ -1,13 +1,13 @@
 package nl.ssischaefer.savaragerow.v3.workflow.workflowqueue;
 
-import nl.ssischaefer.savaragerow.v3.workflow.model.WorkflowType;
+import nl.ssischaefer.savaragerow.v3.workflow.model.WorkflowTriggerType;
 
 import java.util.Map;
 
 public class WorkflowTask {
     private Map<String, String> data;
     private String table;
-    private WorkflowType type;
+    private WorkflowTriggerType type;
 
 
     public Map<String, String> getData() {
@@ -28,11 +28,11 @@ public class WorkflowTask {
         return this;
     }
 
-    public WorkflowType getType() {
+    public WorkflowTriggerType getType() {
         return type;
     }
 
-    public WorkflowTask setType(WorkflowType type) {
+    public WorkflowTask setType(WorkflowTriggerType type) {
         this.type = type;
         return this;
     }

@@ -2,24 +2,24 @@ package nl.ssischaefer.savaragerow.v3.workflow.model;
 
 import nl.ssischaefer.savaragerow.v3.workflow.model.action.Action;
 
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 public class Workflow {
+    private String identifier;
     private String table;
     private String name;
     private boolean active;
-    private WorkflowType type;
+    private WorkflowTriggerType type;
     private List<Action> actions;
     private List<TableCondition> conditions;
 
-    public WorkflowType getType() {
+    public WorkflowTriggerType getType() {
         return type;
     }
 
-    public Workflow setType(WorkflowType type) {
+    public Workflow setTriggerType(WorkflowTriggerType type) {
         this.type = type;
         return this;
     }
@@ -85,5 +85,19 @@ public class Workflow {
     public Workflow setConditions(List<TableCondition> conditions) {
         this.conditions = conditions;
         return this;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public Workflow setIdentifier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+
+
+    public void setType(WorkflowTriggerType type) {
+        this.type = type;
     }
 }

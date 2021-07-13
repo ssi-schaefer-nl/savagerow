@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.v3.workflow.model;
 
-public enum WorkflowType {
+public enum WorkflowTriggerType {
     UPDATE("update"),
     DELETE("delete"),
     INSERT("insert"),
@@ -8,7 +8,7 @@ public enum WorkflowType {
 
     private String type;
 
-    WorkflowType(String type) {
+    WorkflowTriggerType(String type) {
         this.type = type;
     }
 
@@ -16,8 +16,8 @@ public enum WorkflowType {
         return this.type;
     }
 
-    public static WorkflowType fromString(String type) {
-        for (WorkflowType t : WorkflowType.values()) {
+    public static WorkflowTriggerType fromString(String type) {
+        for (WorkflowTriggerType t : WorkflowTriggerType.values()) {
             if (t.type.equalsIgnoreCase(type)) {
                 return t;
             }

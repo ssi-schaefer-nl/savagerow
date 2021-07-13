@@ -9,6 +9,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;
 
+import java.util.List;
+import java.util.Map;
+
 import static spark.Spark.*;
 
 public class RowController {
@@ -30,9 +33,14 @@ public class RowController {
         String table = request.params(RequestParams.Parameter.Table);
         String row = request.queryParamOrDefault(RequestParams.Query.Row, "");
 
-        FindRowQuery sqlStatement = new FindRowQuery().setTable(table);
-        if (!row.isEmpty() && NumberUtils.isParsable(row)) sqlStatement.setRowId(Long.parseLong(row));
-        return new ObjectMapper().writeValueAsString(sqlStatement.executeQuery().getResult());
+        List<Map<String, String>> res;
+
+        if (!row.isEmpty() && NumberUtils.isParsable(row))
+            res = operations.getByRowId(table, Long.parseLong(row));
+        else
+            res = operations.getAll(table);
+
+        return new ObjectMapper().writeValueAsString(res);
     }
 
     public String addRows(Request request, Response response) throws Exception {

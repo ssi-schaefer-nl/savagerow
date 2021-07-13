@@ -28,6 +28,7 @@ export default function AddSimpleWorkflow(props) {
         setSaving(true)
         setFinalStatus("Saving..")
         if (existing != null) {
+            data.identifier = existing.identifier
             workflowService.updateTriggeredWorkflow(data, () => {
                 setSaving(false)
                 setValid(true)
@@ -59,7 +60,7 @@ export default function AddSimpleWorkflow(props) {
         },
         {
             "name": "Specify the trigger",
-            "Component": <WorkflowStepTrigger disabled={existing != null} onChangeTable={setTable} table={table} onChangeType={setType} type={type} />,
+            "Component": <WorkflowStepTrigger onChangeTable={setTable} table={table} onChangeType={setType} type={type} />,
             "nextAllowed": table.length > 0 && type.length > 0
         },
         {
