@@ -3,7 +3,6 @@ package nl.ssischaefer.savaragerow.v3.workflow.model;
 import nl.ssischaefer.savaragerow.v3.data.operations.query.FindRowQuery;
 import nl.ssischaefer.savaragerow.v3.util.StringPlaceholderTransformer;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class TableCondition {
         List<RowCriteria> temp = new ArrayList<>();
         for (RowCriteria criteria : target) {
             String t = StringPlaceholderTransformer.transformPlaceholders(criteria.getRequired(), data);
-            temp.add(new RowCriteria().setColumn(criteria.getColumn()).setOperator(criteria.getOperator()).setRequired(t));
+            temp.add(new RowCriteria().setColumn(criteria.getColumn()).setComparator(criteria.getComparator()).setRequired(t));
 
         }
         return temp;

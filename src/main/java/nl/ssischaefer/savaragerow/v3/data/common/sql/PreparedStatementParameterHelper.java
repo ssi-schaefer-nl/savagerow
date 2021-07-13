@@ -13,7 +13,7 @@ public class PreparedStatementParameterHelper {
         int nextParamIndex = startIndex;
         for (RowCriteria c : criteria) {
 
-            String op = c.getOperator();
+            String op = c.getComparator();
             String val = c.getRequired();
 
             if (op.equals(">") || op.equals("<"))

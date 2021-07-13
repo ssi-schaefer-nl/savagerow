@@ -2,7 +2,7 @@ package nl.ssischaefer.savaragerow.v3.workflow.model;
 
 public class RowCriteria {
     private String column;
-    private String operator;
+    private String comparator;
     private String required;
 
     public String getColumn() {
@@ -14,12 +14,12 @@ public class RowCriteria {
         return this;
     }
 
-    public String getOperator() {
-        return operator;
+    public String getComparator() {
+        return comparator;
     }
 
-    public RowCriteria setOperator(String operator) {
-        this.operator = operator;
+    public RowCriteria setComparator(String comparator) {
+        this.comparator = comparator;
         return this;
     }
 

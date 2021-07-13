@@ -109,7 +109,7 @@ const Columns = props => {
                 </Select>
             </Grid>
             <Grid item xs={4}>
-                <ContextMenuTrigger id={placeholders.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('value', (fields["value"] == undefined ? x : fields["value"] + x)))}>
+                <ContextMenuTrigger id={placeholders.values != undefined && placeholders.values.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('value', (fields["value"] == undefined ? x : fields["value"] + x)))}>
                     <TextField
                         id="value"
                         value={fields["value"]}

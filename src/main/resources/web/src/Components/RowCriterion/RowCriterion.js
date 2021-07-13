@@ -15,6 +15,7 @@ const RowCriterion = props => {
     const [columns, setColumns] = useState([])
     const [criteria, setCriteria] = useState((value == undefined || value.length == 0 ? [{ column: "", comparator: "", required: "" }] : value))
 
+    console.log(placeholders)
     useEffect(() => {
         if (table != null && table.length > 0) {
             new QueryService(table).getSchema(data => {
@@ -115,7 +116,7 @@ const Criterion = props => {
                 </Select>
             </Grid>
             <Grid item xs={4}>
-                <ContextMenuTrigger id={placeholders.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
+                <ContextMenuTrigger id={placeholders.values != undefined && placeholders.values.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
                     <TextField
                         id="required"
                         value={criterion["required"]}

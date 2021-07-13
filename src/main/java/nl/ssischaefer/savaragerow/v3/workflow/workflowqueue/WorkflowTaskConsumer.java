@@ -1,28 +1,24 @@
 package nl.ssischaefer.savaragerow.v3.workflow.workflowqueue;
 
 import nl.ssischaefer.savaragerow.v3.workflow.WorkflowService;
-import nl.ssischaefer.savaragerow.v3.util.exception.WorkspaceNotSetException;
-
 import java.util.concurrent.BlockingQueue;
 
 public class WorkflowTaskConsumer implements Runnable {
     private final BlockingQueue<WorkflowTask> queue;
+    private final WorkflowService workflowService;
 
-    public WorkflowTaskConsumer(BlockingQueue<WorkflowTask> queue) {
+    public WorkflowTaskConsumer(BlockingQueue<WorkflowTask> queue, WorkflowService workflowService) {
         this.queue = queue;
+        this.workflowService = workflowService;
     }
 
     @Override
     public void run() {
-        while(!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             WorkflowTask task = null;
             try {
                 task = queue.take();
-                try {
-                    handle(task);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                handle(task);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -31,9 +27,8 @@ public class WorkflowTaskConsumer implements Runnable {
 
     private void handle(WorkflowTask task) {
         try {
-            WorkflowService workflows = WorkflowService.getWorkflowServiceForCurrentWorkspace();
-            workflows.execute(task.getType(), task.getTable(), task.getData());
-        } catch (WorkspaceNotSetException e) {
+            workflowService.findByTask(task).forEach(workflow -> workflow.execute(task.getData()));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
