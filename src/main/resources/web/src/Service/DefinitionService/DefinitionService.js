@@ -46,7 +46,7 @@ class DefinitionService {
 
     renameColumn(column, newName, onSuccess, onFailure) {
         if (this.database != null) {
-            this.httpHelper.put(`${this.prefix}/${column}/column`, { name: newName })
+            this.httpHelper.put(`${this.prefix}/column/${column}`, { name: newName })
                 .then(res => { onSuccess(res) })
                 .catch(res => { onFailure(res) });
         }

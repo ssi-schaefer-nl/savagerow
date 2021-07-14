@@ -32,7 +32,7 @@ public class ManagementService {
         List<String> selectColumns = currentColumns.stream().filter(c -> columns.stream().anyMatch(x -> x.getName().equals(c))).collect(Collectors.toList());
 
         new CreateTableQuery().setTableName(table+"_temp").setColumns(columns).executeUpdate();
-        new InsertRowQuery().setFromTable(table).setToTable(table+"_temp").setSelectColumns(selectColumns).executeQuery();
+        new InsertRowQuery().setFromTable(table).setToTable(table+"_temp").setSelectColumns(selectColumns).executeUpdate();
         new DeleteTableQuery().setTable(table).executeUpdate();
         new RenameTableQuery().setFrom(table+"_temp").setTo(table).executeQuery();
     }
