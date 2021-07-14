@@ -21,7 +21,7 @@ class WorkspaceService {
     
         this.httpHelper.post(this.prefix, { file: payload})
             .then(res => { onSuccess(res) })
-            .catch(res => { onFailure(res) });
+            .catch(res => { onFailure(res.response.data) });
     }
 
 }

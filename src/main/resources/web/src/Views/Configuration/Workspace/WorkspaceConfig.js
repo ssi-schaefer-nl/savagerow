@@ -8,27 +8,27 @@ import WorkspaceService from "../../../Service/WorkspaceService/WorkspaceService
 
 const WorkspaceConfig = props => {
     const [rerender, setRerender] = useState(false)
+    const [importError, setImportError] = useState("")
     const workspaceService = new WorkspaceService()
     const db = localStorage.getItem("database");
     const handleExport = () => {
-
-        workspaceService.export(db, (data) => {
-            console.log(data)
-            window.location.href = '/api/v1/' + db + '/workspace'
-        }, (x) => console.log(x))
+        window.location.href = '/api/v1/' + db + '/workspace'
     }
 
     const handleImport = (e) => {
+        console.log( "DS aD S")
         const file = e.target.files[0]
+        console.log(file)
         var reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = function (evt) {
-            console.log(evt.target.result.split(',')[1])
-            workspaceService.import(evt.target.result.split(',')[1], () => window.location.reload(false), () => undefined)
+            workspaceService.import(evt.target.result.split(',')[1], () => window.location.reload(false), (e) => setImportError(e))
         }
         reader.onerror = function (evt) {
-            document.getElementById("fileContents").innerHTML = "error reading file";
+            setImportError("error reading file");
         }
+        e.target.value = ''
+
     }
 
     return (
@@ -70,6 +70,12 @@ const WorkspaceConfig = props => {
                             />
                         </Button>
                     </Grid>
+                    {importError.length > 0 &&
+                        <Grid item>
+                            <Typography color="error">{importError}</Typography>
+
+                        </Grid>
+                    }
                 </Grid>
             </Grid>
 
