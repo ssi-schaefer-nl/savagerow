@@ -25,14 +25,12 @@ public class SavageRow {
         var taskProducer = new WorkflowTaskProducer(taskQueue);
         var operationsService = new OperationsService(taskProducer);
 
-        var databaseController = new DatabaseController(managementService);
         var schemaController = new SchemaController(managementService);
         var workflowController = new WorkflowController(workflowService);
         var rowController = new RowController(operationsService);
         var workspaceController = new WorkspaceController();
 
         workspaceController.setup(API_PREFIX);
-        databaseController.setup(API_PREFIX);
         schemaController.setup(API_PREFIX);
         workflowController.setup(API_PREFIX);
         rowController.setup(API_PREFIX);

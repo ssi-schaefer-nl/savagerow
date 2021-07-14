@@ -12,7 +12,7 @@ const WorkspaceConfig = props => {
     const workspaceService = new WorkspaceService()
     const db = localStorage.getItem("database");
     const handleExport = () => {
-        window.location.href = '/api/v1/' + db + '/workspace'
+        window.location.href = '/api/v1/workspace/'+db
     }
 
     const handleImport = (e) => {
