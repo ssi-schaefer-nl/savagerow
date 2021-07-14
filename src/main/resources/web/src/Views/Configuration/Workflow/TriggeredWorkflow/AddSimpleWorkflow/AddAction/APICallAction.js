@@ -38,7 +38,6 @@ const APICallAction = props => {
         }
     }
 
-    console.log(body)
     return (
         <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose} title="New API Call Action">
             <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required />
