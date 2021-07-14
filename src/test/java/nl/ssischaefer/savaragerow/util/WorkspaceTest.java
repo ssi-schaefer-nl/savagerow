@@ -10,8 +10,10 @@ class WorkspaceTest {
 
     @Test
     public void testShouldDetectWorkspace()  {
+
         Path path = Paths.get("c:\\test", "test.json");
         System.out.println(path);
+
         try{
             String currentWorkspace = Workspace.getCurrentWorkspace();
             System.out.println(currentWorkspace);
