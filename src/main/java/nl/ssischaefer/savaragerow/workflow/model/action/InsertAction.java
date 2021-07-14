@@ -2,7 +2,7 @@ package nl.ssischaefer.savaragerow.workflow.model.action;
 
 import nl.ssischaefer.savaragerow.workflow.model.WorkflowTriggerType;
 import nl.ssischaefer.savaragerow.data.operations.query.InsertRowQuery;
-import nl.ssischaefer.savaragerow.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.workflow.util.StringPlaceholderTransformer;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -24,13 +24,11 @@ import {
 } from "react-router-dom";
 import StorageIcon from '@material-ui/icons/Storage';
 import HomeIcon from '@material-ui/icons/Home';
-import InfoIcon from '@material-ui/icons/Info';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 import {
   Link,
 } from "react-router-dom";
-import RoutedComponent from "./RoutedComponent";
 import { grey, red } from "@material-ui/core/colors";
 
 const drawerWidth = 240;

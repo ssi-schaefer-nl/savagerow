@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.workflow.model;
 
 import nl.ssischaefer.savaragerow.data.operations.query.FindRowQuery;
-import nl.ssischaefer.savaragerow.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.workflow.util.StringPlaceholderTransformer;
 
 import java.util.ArrayList;
 import java.util.List;

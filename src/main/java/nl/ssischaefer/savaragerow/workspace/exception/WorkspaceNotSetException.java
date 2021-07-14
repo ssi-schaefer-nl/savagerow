@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.util.exception;
+package nl.ssischaefer.savaragerow.workspace.exception;
 
 public class WorkspaceNotSetException extends Exception {
 }

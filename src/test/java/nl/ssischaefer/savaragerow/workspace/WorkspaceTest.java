@@ -1,6 +1,6 @@
-package nl.ssischaefer.savaragerow.util;
+package nl.ssischaefer.savaragerow.workspace;
 
-import nl.ssischaefer.savaragerow.util.exception.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.workspace.exception.WorkspaceNotSetException;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -15,7 +15,7 @@ class WorkspaceTest {
         System.out.println(path);
 
         try{
-            String currentWorkspace = Workspace.getCurrentWorkspace();
+            String currentWorkspace = WorkspaceService.getCurrentWorkspace();
             System.out.println(currentWorkspace);
         }catch (WorkspaceNotSetException e) {
             System.out.println(e);

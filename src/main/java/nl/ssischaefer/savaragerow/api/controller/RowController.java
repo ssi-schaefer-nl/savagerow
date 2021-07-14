@@ -3,7 +3,7 @@ package nl.ssischaefer.savaragerow.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.data.common.model.SQLRow;
 import nl.ssischaefer.savaragerow.data.operations.OperationsService;
-import nl.ssischaefer.savaragerow.util.RequestParams;
+import nl.ssischaefer.savaragerow.api.util.RequestParams;
 import org.apache.commons.lang3.math.NumberUtils;
 import spark.Request;
 import spark.Response;

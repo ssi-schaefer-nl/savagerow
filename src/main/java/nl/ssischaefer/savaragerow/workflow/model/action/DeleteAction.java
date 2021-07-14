@@ -4,7 +4,7 @@ import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
 import nl.ssischaefer.savaragerow.workflow.model.WorkflowTriggerType;
 import nl.ssischaefer.savaragerow.data.operations.query.DeleteRowQuery;
 import nl.ssischaefer.savaragerow.data.operations.query.FindRowQuery;
-import nl.ssischaefer.savaragerow.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.workflow.util.StringPlaceholderTransformer;
 
 import java.util.ArrayList;
 import java.util.List;

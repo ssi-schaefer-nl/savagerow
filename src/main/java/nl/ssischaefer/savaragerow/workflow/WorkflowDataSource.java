@@ -3,8 +3,8 @@ package nl.ssischaefer.savaragerow.workflow;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.JsonFormatter;
-import nl.ssischaefer.savaragerow.util.Workspace;
-import nl.ssischaefer.savaragerow.util.exception.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
+import nl.ssischaefer.savaragerow.workspace.exception.WorkspaceNotSetException;
 import nl.ssischaefer.savaragerow.workflow.model.Workflow;
 
 import java.io.IOException;
@@ -42,13 +42,13 @@ public class WorkflowDataSource {
     }
 
     private boolean isRefreshCacheNecessary() throws WorkspaceNotSetException {
-        String currentWorkspace = Workspace.getCurrentWorkspace();
+        String currentWorkspace = WorkspaceService.getCurrentWorkspace();
         return cachedJsonDocument == null || !lastWorkspace.equals(currentWorkspace);
     }
 
     private void refreshCachedDocument() throws WorkspaceNotSetException, IOException {
-        Path path = Paths.get(Workspace.getCurrentWorkspace(), FILE_NAME);
-        lastWorkspace = Workspace.getCurrentWorkspace();
+        Path path = Paths.get(WorkspaceService.getCurrentWorkspace(), FILE_NAME);
+        lastWorkspace = WorkspaceService.getCurrentWorkspace();
         try {
             cachedJsonDocument = JsonPath.parse(Files.readString(path));
         } catch (IOException | IllegalArgumentException e) {
@@ -69,7 +69,7 @@ public class WorkflowDataSource {
 
     public void saveDocument() throws WorkspaceNotSetException, IOException {
         String json = JsonFormatter.prettyPrint(cachedJsonDocument.jsonString());
-        Path path = Paths.get(Workspace.getCurrentWorkspace(), FILE_NAME);
+        Path path = Paths.get(WorkspaceService.getCurrentWorkspace(), FILE_NAME);
         Files.write(path, json.getBytes());
         refreshCachedDocument();
     }

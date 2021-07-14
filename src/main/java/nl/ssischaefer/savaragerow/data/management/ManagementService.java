@@ -10,7 +10,7 @@ import nl.ssischaefer.savaragerow.data.management.query.RenameTableQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetColumnsQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetForeignKeysQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetPrimaryKeyColumnsQuery;
-import nl.ssischaefer.savaragerow.util.Workspace;
+import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 
 public class ManagementService {
     public void createDatabase(String database) throws DatabaseException, IOException, SQLException {
-        boolean exists = Workspace.listDatabases().stream().anyMatch(d -> d.equals(database));
+        boolean exists = WorkspaceService.listDatabases().stream().anyMatch(d -> d.equals(database));
         if(exists) throw new DatabaseException("Database already exists");
 
-        Workspace.setCurrentWorkspace(database);
+        WorkspaceService.setCurrentWorkspace(database);
         SQLiteDataSource.getForCurrentWorkspace().close(); // Create the new database by connecting to it once
     }
 
