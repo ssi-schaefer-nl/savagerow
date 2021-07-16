@@ -38,6 +38,13 @@ class HttpHelper {
     return this.http.delete(url)
   }
 
+  deleteWithData(url, data) {
+    return this.http.delete(url, { data: data})
+  }
+
+  request(request) {
+    return this.http.request(request)
+  }
 }
 
 export default HttpHelper;

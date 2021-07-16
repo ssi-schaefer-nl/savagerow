@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
 import Button from '@material-ui/core/Button';
-import PopupForm from '../../Views/Configuration/Workflow/ManageWorkflows/AddWorkflow/AddSimpleWorkflow/AddAction/PopupForm';
+import PopupForm from '../PopupForm/PopupForm';
 
 const CreateDatabaseForm = (props) => {
     const { onCreate } = props
