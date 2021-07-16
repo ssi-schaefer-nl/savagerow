@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.api.dto.Base64File;
 import nl.ssischaefer.savaragerow.api.util.RequestParams;
+import nl.ssischaefer.savaragerow.data.common.exception.DatabaseException;
 import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
 import org.apache.commons.codec.binary.Base64;
 import spark.Request;
@@ -13,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import static spark.Spark.*;
@@ -21,10 +21,11 @@ import static spark.Spark.*;
 public class WorkspaceController {
 
     public void setup(String prefix) {
-        get(prefix + "/workspace/:database", this::exportDatabase);
-        post(prefix + "/workspace", this::importDatabase);
-        delete(prefix + "/workspace/:database", this::deleteDatabase);
         get(prefix + "/workspace", this::getAllDatabases);
+        post(prefix + "/workspace", this::importDatabase);
+        get(prefix + "/workspace/:database", this::exportDatabase);
+        post(prefix + "/workspace/:database", this::createDatabase);
+        delete(prefix + "/workspace/:database", this::deleteDatabase);
 
     }
 
@@ -33,6 +34,12 @@ public class WorkspaceController {
         WorkspaceService.export(db, response.raw().getOutputStream());
         response.raw().setContentType("application/zip");
         response.raw().setHeader("Content-Disposition","attachment; filename="+db+".zip");
+        return "";
+    }
+
+    public String createDatabase(Request request, Response response) throws DatabaseException, IOException, SQLException {
+        String database = request.params(RequestParams.Parameter.Database);
+        WorkspaceService.createDatabase(database);
         return "";
     }
 

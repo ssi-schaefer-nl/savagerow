@@ -1,6 +1,8 @@
 package nl.ssischaefer.savaragerow.workspace;
 
 import net.lingala.zip4j.ZipFile;
+import nl.ssischaefer.savaragerow.data.common.exception.DatabaseException;
+import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.workspace.exception.WorkspaceNotSetException;
 import nl.ssischaefer.savaragerow.workspace.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
@@ -63,6 +65,14 @@ public class WorkspaceService {
         String p = getDatabasePath(database);
         var file = new File(p);
         FileUtils.deleteDirectory(file);
+    }
+
+    public static void createDatabase(String database) throws DatabaseException, IOException, SQLException {
+        boolean exists = listDatabases().stream().anyMatch(d -> d.equals(database));
+        if(exists) throw new DatabaseException("Database already exists");
+
+        WorkspaceService.setCurrentWorkspace(database);
+        SQLiteDataSource.getForCurrentWorkspace().close(); // Create the new database by connecting to it once
     }
 
     public static String getCurrentDatabaseUrl() {

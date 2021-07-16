@@ -19,13 +19,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ManagementService {
-    public void createDatabase(String database) throws DatabaseException, IOException, SQLException {
-        boolean exists = WorkspaceService.listDatabases().stream().anyMatch(d -> d.equals(database));
-        if(exists) throw new DatabaseException("Database already exists");
-
-        WorkspaceService.setCurrentWorkspace(database);
-        SQLiteDataSource.getForCurrentWorkspace().close(); // Create the new database by connecting to it once
-    }
 
     public void recreateTable(String table, List<SQLColumn> columns) throws Exception {
         List<String> currentColumns = new GetColumnsQuery().setTable(table).execute().stream().map(SQLColumn::getName).collect(Collectors.toList());

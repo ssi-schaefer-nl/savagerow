@@ -39,15 +39,9 @@ public class SchemaController {
         put(prefix + "/:database/database/:table/column/:column", this::renameColumn);
         delete(prefix + "/:database/database/:table", this::deleteTable);
         delete(prefix + "/:database/database/:table/column/:column", this::deleteColumn);
-        get(prefix + "/:database/database", this::getTables);
-        post(prefix + "/:database/database", this::createDatabase);
-    }
+        get(prefix + "/:database/database", this::getTables); }
 
-    public String createDatabase(Request request, Response response) throws DatabaseException, IOException, SQLException {
-        String database = request.params(RequestParams.Parameter.Database);
-        managementService.createDatabase(database);
-        return "";
-    }
+
 
     public String getSchema(Request request, Response response) throws SQLException, JsonProcessingException {
         String table = request.params(RequestParams.Parameter.Table);

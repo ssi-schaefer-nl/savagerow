@@ -29,7 +29,6 @@ const WorkspaceOverview = props => {
         databaseService.listAllDatabases((res) => setWorkspaces(res.data), () => setLoadingError(true))
     }, [addWorkspace, areYouSure])
 
-    console.log(loadingError)
     const removeSelectedDatabase = () => {
         const database = selectedDatabase
 
