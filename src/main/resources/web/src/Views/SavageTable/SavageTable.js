@@ -7,6 +7,7 @@ import QueryService from '../../Service/QueryService/QueryService';
 import DefinitionService from '../../Service/DefinitionService/DefinitionService';
 import ManipulationService from '../../Service/ManipulationService/ManipulationService';
 import { Box, Button, CircularProgress, Grid } from '@material-ui/core';
+import DefineColumnDialog from '../../Components/DefineColumnDialog/DefineColumnDialog';
 const SavageTable = (props) => {
 
   const queryService = new QueryService(props.table)
@@ -142,7 +143,9 @@ const SavageTable = (props) => {
         handleClose={(index) => setNotifications(curr => curr.filter((notifications, i) => i !== index))}
       />
 
-      <AddColumn open={addColumnDialogOpen} table={props.table} handleClose={() => setAddColumnDialogOpen(false)} onSuccess={reloadSchema} />
+      {addColumnDialogOpen &&
+        <DefineColumnDialog open={addColumnDialogOpen} table={props.table} handleClose={() => setAddColumnDialogOpen(false)} onSuccess={reloadSchema} />
+      }
     </div>
   )
 }

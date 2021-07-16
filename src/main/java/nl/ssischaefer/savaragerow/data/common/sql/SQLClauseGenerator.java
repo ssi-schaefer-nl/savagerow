@@ -2,7 +2,7 @@ package nl.ssischaefer.savaragerow.data.common.sql;
 
 import nl.ssischaefer.savaragerow.workflow.model.FieldUpdate;
 import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
-import nl.ssischaefer.savaragerow.util.OperatorTransformer;
+import nl.ssischaefer.savaragerow.data.common.util.OperatorTransformer;
 
 import java.util.List;
 import java.util.stream.Collectors;

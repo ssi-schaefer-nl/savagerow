@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.util;
+package nl.ssischaefer.savaragerow;
 
 public class Configuration {
     public static Integer parseOrDefaultInteger(String variable, Integer defaultValue) {

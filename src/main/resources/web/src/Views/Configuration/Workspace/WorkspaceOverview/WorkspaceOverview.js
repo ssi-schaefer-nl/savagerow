@@ -68,7 +68,7 @@ const WorkspaceOverview = props => {
         setAreYouSure(false)
     }
 
-    if(loadingError) {
+    if (loadingError) {
         return (<CollapsableAlert severity="error" message={ErrorMessage.Database.Loading()} />)
     }
 
@@ -111,7 +111,9 @@ const WorkspaceOverview = props => {
                 {addDatabaseErrorMessage.length > 0 &&
                     <CollapsableAlert severity="error" message={ErrorMessage.Database.Creating(addDatabaseErrorMessage)} />
                 }
+
                 <TextField label="Workspace name" value={newDatabaseName} onChange={(e) => setNewDatabaseName(e.target.value)} />
+
             </PopupForm>
 
             <PopupForm open={areYouSure} hide title="Confirm deletion" onSubmit={() => undefined} onClose={() => handleClose()}>

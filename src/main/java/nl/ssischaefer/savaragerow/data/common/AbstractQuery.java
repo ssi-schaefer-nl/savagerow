@@ -54,7 +54,7 @@ public abstract class AbstractQuery {
 
 
 
-    protected abstract PreparedStatement generate(Connection sqlConnection) throws SQLException, Exception;
+    protected abstract PreparedStatement generate(Connection sqlConnection) throws Exception;
 
     private void retrieveResult(ResultSet rs) throws SQLException {
         List<Map<String, String>> rows = new ArrayList<>();

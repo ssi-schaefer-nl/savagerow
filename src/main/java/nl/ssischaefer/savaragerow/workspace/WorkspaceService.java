@@ -1,22 +1,26 @@
-package nl.ssischaefer.savaragerow.util;
+package nl.ssischaefer.savaragerow.workspace;
 
-import nl.ssischaefer.savaragerow.util.exception.WorkspaceNotSetException;
+import net.lingala.zip4j.ZipFile;
+import nl.ssischaefer.savaragerow.workspace.exception.WorkspaceNotSetException;
+import nl.ssischaefer.savaragerow.workspace.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
-import static nl.ssischaefer.savaragerow.util.Configuration.parseOrDefault;
+import static nl.ssischaefer.savaragerow.Configuration.parseOrDefault;
 
-public class Workspace {
+public class WorkspaceService {
     private static final String WORKSPACE = "WORKSPACE";
     private static final String DEFAULT_VALUE = "/tmp";
     private static final String DB_EXT = ".db";
@@ -40,13 +44,13 @@ public class Workspace {
 
     private static String getDatabasePath(String databaseName) throws IOException {
         String workspace = parseOrDefault(WORKSPACE, DEFAULT_VALUE);
-        Path path = Paths.get(workspace, databaseName);
+        var path = Paths.get(workspace, databaseName);
         Files.createDirectories(path);
         return path.toString();
     }
 
     public static List<String> listDatabases() {
-        File workspaceDirectory = new File(parseOrDefault(WORKSPACE, DEFAULT_VALUE));
+        var workspaceDirectory = new File(parseOrDefault(WORKSPACE, DEFAULT_VALUE));
         File[] files = workspaceDirectory.listFiles();
         if (files == null) {
             return Collections.emptyList();
@@ -57,11 +61,21 @@ public class Workspace {
 
     public static void removeDatabase(String database) throws IOException {
         String p = getDatabasePath(database);
-        File file = new File(p);
+        var file = new File(p);
         FileUtils.deleteDirectory(file);
     }
 
     public static String getCurrentDatabaseUrl() {
         return currentDatabaseUrl;
+    }
+
+    public static ZipOutputStream export(String databaseName, OutputStream stream) throws IOException, SQLException {
+        setCurrentWorkspace(databaseName);
+        return ZipUtil.zipDirectory(currentWorkspace, stream);
+
+    }
+
+    public static void importDatabase(ZipInputStream zipInputStream) throws IOException {
+        ZipUtil.unzipFile(zipInputStream, parseOrDefault(WORKSPACE, DEFAULT_VALUE));
     }
 }

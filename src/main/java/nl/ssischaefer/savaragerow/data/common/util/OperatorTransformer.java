@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.util;
+package nl.ssischaefer.savaragerow.data.common.util;
 
 public class OperatorTransformer {
     public static String convertToSql(String operator) {

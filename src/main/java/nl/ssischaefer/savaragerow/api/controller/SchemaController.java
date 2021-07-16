@@ -4,17 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import nl.ssischaefer.savaragerow.data.common.exception.DatabaseException;
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
 import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDatatype;
 import nl.ssischaefer.savaragerow.data.management.ManagementService;
 import nl.ssischaefer.savaragerow.data.management.query.CreateTableQuery;
 import nl.ssischaefer.savaragerow.data.management.query.DeleteTableQuery;
+import nl.ssischaefer.savaragerow.data.management.query.GetTablesQuery;
 import nl.ssischaefer.savaragerow.data.management.query.RenameColumnQuery;
 import nl.ssischaefer.savaragerow.api.dto.TableSchemaDTO;
-import nl.ssischaefer.savaragerow.util.RequestParams;
+import nl.ssischaefer.savaragerow.api.util.RequestParams;
 import spark.Request;
 import spark.Response;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -36,18 +39,25 @@ public class SchemaController {
         put(prefix + "/:database/database/:table/column/:column", this::renameColumn);
         delete(prefix + "/:database/database/:table", this::deleteTable);
         delete(prefix + "/:database/database/:table/column/:column", this::deleteColumn);
+        get(prefix + "/:database/database", this::getTables);
+        post(prefix + "/:database/database", this::createDatabase);
+    }
 
+    public String createDatabase(Request request, Response response) throws DatabaseException, IOException, SQLException {
+        String database = request.params(RequestParams.Parameter.Database);
+        managementService.createDatabase(database);
+        return "";
     }
 
     public String getSchema(Request request, Response response) throws SQLException, JsonProcessingException {
         String table = request.params(RequestParams.Parameter.Table);
-        TableSchemaDTO tableSchemaDTO = new TableSchemaDTO().setName(table).setColumns(managementService.getColumnsForTable(table));
+        var tableSchemaDTO = new TableSchemaDTO().setName(table).setColumns(managementService.getColumnsForTable(table));
         return new ObjectMapper().writeValueAsString(tableSchemaDTO);
     }
 
     public String addColumn(Request request, Response response) throws Exception {
         String table = request.params(RequestParams.Parameter.Table);
-        ObjectMapper objectMapper = new ObjectMapper().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+        var objectMapper = new ObjectMapper().enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
         SQLColumn column = objectMapper.readValue(request.body(), SQLColumn.class);
 
         List<SQLColumn> columns = managementService.getColumnsForTable(table);
@@ -87,4 +97,9 @@ public class SchemaController {
         new CreateTableQuery().setTableName(table).setColumns(Collections.singletonList(columnSchema)).executeUpdate();
         return "";
     }
+
+    public String getTables(Request request, Response response) throws SQLException, JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(new GetTablesQuery().execute().getResult());
+    }
+
 }

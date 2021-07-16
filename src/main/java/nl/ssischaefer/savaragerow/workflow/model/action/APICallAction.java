@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.workflow.model.action;
 
-import nl.ssischaefer.savaragerow.util.StringPlaceholderTransformer;
+import nl.ssischaefer.savaragerow.workflow.util.StringPlaceholderTransformer;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;

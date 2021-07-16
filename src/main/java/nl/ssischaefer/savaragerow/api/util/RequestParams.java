@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.util;
+package nl.ssischaefer.savaragerow.api.util;
 
 public class RequestParams {
     public static class Query {

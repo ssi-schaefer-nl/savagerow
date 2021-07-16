@@ -1,14 +1,10 @@
 package nl.ssischaefer.savaragerow;
 
-import nl.ssischaefer.savaragerow.api.controller.DatabaseController;
-import nl.ssischaefer.savaragerow.api.controller.RowController;
-import nl.ssischaefer.savaragerow.api.controller.SchemaController;
-import nl.ssischaefer.savaragerow.api.controller.WorkflowController;
+import nl.ssischaefer.savaragerow.api.controller.*;
 import nl.ssischaefer.savaragerow.data.management.ManagementService;
 import nl.ssischaefer.savaragerow.data.operations.OperationsService;
-import nl.ssischaefer.savaragerow.util.Configuration;
-import nl.ssischaefer.savaragerow.util.RequestParams;
-import nl.ssischaefer.savaragerow.util.Workspace;
+import nl.ssischaefer.savaragerow.api.util.RequestParams;
+import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
 import nl.ssischaefer.savaragerow.workflow.WorkflowDataSource;
 import nl.ssischaefer.savaragerow.workflow.WorkflowService;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTaskProducer;
@@ -23,18 +19,18 @@ public class SavageRow {
         port(Configuration.parseOrDefaultInteger("PORT", 9010));
         staticFiles.location("/public");
 
-        WorkflowService workflowService = new WorkflowService(WorkflowDataSource.get());
-        ManagementService managementService = new ManagementService();
-        WorkflowTaskQueue taskQueue = WorkflowTaskQueue.initQueue(workflowService);
-        WorkflowTaskProducer taskProducer = new WorkflowTaskProducer(taskQueue);
-        OperationsService operationsService = new OperationsService(taskProducer);
+        var workflowService = new WorkflowService(WorkflowDataSource.get());
+        var managementService = new ManagementService();
+        var taskQueue = WorkflowTaskQueue.initQueue(workflowService);
+        var taskProducer = new WorkflowTaskProducer(taskQueue);
+        var operationsService = new OperationsService(taskProducer);
 
-        DatabaseController databaseController = new DatabaseController(managementService);
-        SchemaController schemaController = new SchemaController(managementService);
-        WorkflowController workflowController = new WorkflowController(workflowService);
-        RowController rowController = new RowController(operationsService);
+        var schemaController = new SchemaController(managementService);
+        var workflowController = new WorkflowController(workflowService);
+        var rowController = new RowController(operationsService);
+        var workspaceController = new WorkspaceController();
 
-        databaseController.setup(API_PREFIX);
+        workspaceController.setup(API_PREFIX);
         schemaController.setup(API_PREFIX);
         workflowController.setup(API_PREFIX);
         rowController.setup(API_PREFIX);
@@ -44,7 +40,8 @@ public class SavageRow {
     }
 
     private static void setupBefore() {
-        before(API_PREFIX + "/:database/*", (request, response) -> Workspace.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
+        before(API_PREFIX + "/:database/database", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
+        before(API_PREFIX + "/:database/workflow", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
     }
 
     private static void setupExceptions() {

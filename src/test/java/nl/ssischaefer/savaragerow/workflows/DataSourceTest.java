@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.workflows;
 
-import nl.ssischaefer.savaragerow.util.Workspace;
+import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
 import nl.ssischaefer.savaragerow.workflow.WorkflowDataSource;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +16,7 @@ public class DataSourceTest {
 
     @BeforeEach
     public void setupWorkspace() throws IOException, SQLException {
-        Workspace.setCurrentWorkspace(TEST_WORKSPACE);
+        WorkspaceService.setCurrentWorkspace(TEST_WORKSPACE);
     }
 
     @Test
@@ -28,6 +28,6 @@ public class DataSourceTest {
 
     @AfterEach
     public void cleanupWorkspace() throws IOException {
-        Workspace.removeDatabase(TEST_WORKSPACE);
+        WorkspaceService.removeDatabase(TEST_WORKSPACE);
     }
 }

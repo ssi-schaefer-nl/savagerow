@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.util;
+package nl.ssischaefer.savaragerow.workflow.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
