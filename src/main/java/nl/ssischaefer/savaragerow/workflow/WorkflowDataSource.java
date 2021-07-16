@@ -47,7 +47,7 @@ public class WorkflowDataSource {
     }
 
     private void refreshCachedDocument() throws WorkspaceNotSetException, IOException {
-        Path path = Paths.get(WorkspaceService.getCurrentWorkspace(), FILE_NAME);
+        var path = Paths.get(WorkspaceService.getCurrentWorkspace(), FILE_NAME);
         lastWorkspace = WorkspaceService.getCurrentWorkspace();
         try {
             cachedJsonDocument = JsonPath.parse(Files.readString(path));
@@ -56,7 +56,7 @@ public class WorkflowDataSource {
         }
     }
 
-    private DocumentContext createEmptyDocument() throws IOException, WorkspaceNotSetException {
+    public DocumentContext createEmptyDocument() throws IOException, WorkspaceNotSetException {
         Map<String, Object> m = new HashMap<>();
         m.put(Workflow.class.getSimpleName().toLowerCase(), new ArrayList<>());
 

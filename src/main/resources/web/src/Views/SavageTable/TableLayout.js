@@ -30,6 +30,7 @@ const Tables = (props) => {
   const [reload, setReload] = useState(false)
   const [newTableName, setNewTableName] = useState("")
   const [selectedTable, setSelectedTable] = useState("")
+  const [addTableError, setAddTableError] = useState("")
 
   const triggerReload = () => setReload(r => !r)
 
@@ -54,9 +55,12 @@ const Tables = (props) => {
 
   const handleAddTable = () => {
     const defService = new DefinitionService(newTableName)
-    defService.createTable(triggerReload, () => undefined)
-    setAddTable(false)
-    setNewTableName("")
+    defService.createTable(() => {
+      triggerReload()
+      setAddTable(false)
+      setNewTableName("")
+      setAddTableError("")
+    }, () => setAddTableError("Error adding table. Check its name on errors and make sure it does not already exist"))
   }
 
   const handleDeleteTable = () => {
@@ -132,14 +136,17 @@ const Tables = (props) => {
           </TabPanel>
         ))
         :
-        <Grid container style={{height: "50vh"}} justify="center" alignItems="center">
+        <Grid container style={{ height: "50vh" }} justify="center" alignItems="center">
           <Grid item>
             <Button variant="contained" color="primary" style={{ height: "5em", width: "15em" }} onClick={() => setAddTable(true)}>Create the first table</Button>
           </Grid>
         </Grid>
       }
-      <PopupForm open={addTable} title="Add table" onSubmit={handleAddTable} onClose={() => { setAddTable(false); setNewTableName("") }}>
+      <PopupForm open={addTable} title="Add table" onSubmit={handleAddTable} onClose={() => { setAddTable(false); setNewTableName(""); setAddTableError("") }}>
         <TextField label="Table name" value={newTableName} onChange={(e) => setNewTableName(e.target.value)} />
+        {addTableError.length > 0 &&
+          <Typography color="error">{addTableError}</Typography>
+        }
       </PopupForm>
     </div>
   );

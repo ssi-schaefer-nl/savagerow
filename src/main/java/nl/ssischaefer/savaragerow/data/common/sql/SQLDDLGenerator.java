@@ -29,7 +29,7 @@ public class SQLDDLGenerator {
         String constraints = "";
         if ((columnSchema.isPk() && datatype != SQLiteDatatype.Integer) || !columnSchema.isNullable())
             constraints = constraints.concat("NOT NULL ");
-        if (!columnSchema.isPk() && columnSchema.getDefaultValue() != null)
+        if (!columnSchema.isPk() && columnSchema.getDefaultValue() != null && !columnSchema.getDefaultValue().isEmpty())
             constraints = constraints.concat("DEFAULT [" + columnSchema.getDefaultValue() + "] ");
 
         return String.format("%s %s %s", name, datatype.datatype, constraints);

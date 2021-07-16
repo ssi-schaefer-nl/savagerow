@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -10,6 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Grid, Typography } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import QueryService from '../../Service/QueryService/QueryService';
+import DefinitionService from '../../Service/DefinitionService/DefinitionService';
 
 const datatypes = [
     "text",
@@ -18,7 +20,7 @@ const datatypes = [
 ]
 
 export default function DefineColumnDialog(props) {
-    const { open, onSubmit, handleClose, errorMessage } = props
+    const { open, onSuccess, table, handleClose } = props
     const [name, setName] = useState("")
     const [dataType, setDataType] = useState(datatypes[0])
     const [nullable, setNullable] = useState(true)
@@ -27,31 +29,63 @@ export default function DefineColumnDialog(props) {
     const [fkTable, setFkTable] = useState("")
     const [fkColumn, setFkColumn] = useState("")
     const [defaultValue, setDefaultValue] = useState("")
+    const [fkDataType, setFkDataType] = useState("")
+    const [availableFkColumns, setAvailableFkColumns] = useState([])
+    const [availableFkTables, setAvailableFkTables] = useState([])
+    const [errorMsg, setErrorMsg] = useState("")
+    const [empty, setEmpty] = useState(false)
+
+
+    useEffect(() => {
+        if (open) {
+            const q = new QueryService(table)
+            q.getRowSet(data => setEmpty(data.data.length == 0), () => setEmpty(false))
+            q.getTables(
+                (data) => setAvailableFkTables(data.data),
+                () => setErrorMsg("Error loading tables for column reference")
+            )
+        }
+    }, [open])
+
 
     const onEnter = (e) => {
         e.preventDefault()
         const data = {
             name: name,
             datatype: dataType,
-            nullable: nullable,
+            nullable: pk ? false : nullable, // if column is PK it shouldnt be nullable
             pk: pk,
             fk: fk ? `${fkTable}.${fkColumn}` : null,
             defaultValue: defaultValue
         }
 
-        onSubmit(data)
+        new DefinitionService(table).addColumn(data,
+            () => {
+                onSuccess()
+                onClose()
+            },
+            (e) => { setErrorMsg(e.response.data) })
     }
 
     const onClose = () => {
-        setName("")
-        setDataType(datatypes[0])
-        setNullable(true)
-        setDefaultValue("")
-        setPk(false)
-        setFk(false)
-        setFkTable("")
-        setFkColumn("")
         handleClose()
+    }
+
+    const handleSetFkTable = (table) => {
+        setFkTable(table)
+        const queryService = new QueryService(table)
+        queryService.getSchema(data => {
+            console.log(data)
+            setAvailableFkColumns(data.data.columns)
+        },
+            () => setErrorMsg("Error loading columns for column reference")
+        )
+    }
+
+    const handleSetFKColumn = (col) => {
+        setFkColumn(col)
+        const datatype = availableFkColumns.find(c => c.name == col).datatype.toLowerCase()
+        setFkDataType(datatype)
     }
 
     return (
@@ -67,7 +101,7 @@ export default function DefineColumnDialog(props) {
 
                     <DialogContent dividers style={{ margin: "1em" }}>
                         <DialogContentText>Define the column by entering the fields below.</DialogContentText>
-                        {errorMessage && <Typography variant="body1" color="error">{errorMessage}</Typography>}
+                        {errorMsg.length > 0 && <Typography variant="body1" color="error">{errorMsg}</Typography>}
                         <Grid container direction="row" justify="space-between" style={{ padding: "1em" }}>
                             <Grid container direction="column" spacing={2} xs={4}>
                                 <Grid item>
@@ -88,8 +122,9 @@ export default function DefineColumnDialog(props) {
                                         id="datatype"
                                         select
                                         required
+                                        disabled={fk}
                                         label="Datatype"
-                                        value={dataType}
+                                        value={fk && fkDataType.length > 0 ? fkDataType : dataType}
                                         onChange={(e) => setDataType(e.target.value)}
                                     >
                                         {datatypes.map((option) => (
@@ -99,23 +134,24 @@ export default function DefineColumnDialog(props) {
                                         ))}
                                     </TextField>
                                 </Grid>
-
                                 <Grid item>
                                     <TextField
                                         id="default"
                                         label="Default value"
                                         type={dataType === "text" ? "text" : "number"}
                                         value={defaultValue}
-                                        required={!nullable}
+                                        required={!nullable && !empty}
                                         onChange={(e) => setDefaultValue(e.target.value)}
                                     />
                                 </Grid>
+
                             </Grid>
                             <Grid container direction="column" spacing={1} xs={6} alignItems="flex-end">
                                 <Grid item>
                                     <FormControlLabel
                                         label="Nullable"
                                         labelPlacement="start"
+                                        disabled={pk}
                                         control={
                                             <Checkbox
                                                 checked={nullable}
@@ -166,17 +202,33 @@ export default function DefineColumnDialog(props) {
                                                 label="Table"
                                                 value={fkTable}
                                                 required
-                                                onChange={(e) => setFkTable(e.target.value)}
-                                            />
+                                                fullWidth
+                                                select
+                                                onChange={(e) => handleSetFkTable(e.target.value)}
+                                            >
+                                                {availableFkTables.map((t) => (
+                                                    <MenuItem key={t} value={t}>
+                                                        {t}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <TextField
                                                 required
                                                 id="fkColumn"
                                                 label="Column"
+                                                fullWidth
                                                 value={fkColumn}
-                                                onChange={(e) => setFkColumn(e.target.value)}
-                                            />
+                                                onChange={(e) => handleSetFKColumn(e.target.value)}
+                                                select
+                                            >
+                                                {availableFkColumns.map((c) => (
+                                                    <MenuItem key={c.name} value={c.name}>
+                                                        {c.name}
+                                                    </MenuItem>
+                                                ))}
+                                            </TextField>
                                         </Grid>
                                     </Grid>
                                 }

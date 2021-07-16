@@ -2,6 +2,7 @@ package nl.ssischaefer.savaragerow.workflow;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.PathNotFoundException;
 import net.minidev.json.JSONArray;
 import nl.ssischaefer.savaragerow.workflow.model.Workflow;
 import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTask;
@@ -28,7 +29,12 @@ public class WorkflowService {
     }
 
     private List<Workflow> readWorkflows(String query) throws Exception {
-        JSONArray read = dataSource.getDocument().read(query);
+        JSONArray read;
+        try {
+            read = dataSource.getDocument().read(query);
+        } catch (PathNotFoundException e) {
+            read = dataSource.createEmptyDocument().read(query);
+        }
         return read.stream().map(r -> new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true).convertValue(r, Workflow.class)).collect(Collectors.toList());
     }
 
@@ -42,6 +48,7 @@ public class WorkflowService {
         dataSource.getDocument().add(String.format("$.%s", WORKFLOW_KEY), new ObjectMapper().convertValue(workflow, LinkedHashMap.class));
         dataSource.saveDocument();
     }
+
     public void delete(Workflow workflow) throws Exception {
         dataSource.getDocument().delete(String.format("$.%s[?(@.identifier == '%s')]", WORKFLOW_KEY, workflow.getIdentifier()));
         dataSource.saveDocument();
