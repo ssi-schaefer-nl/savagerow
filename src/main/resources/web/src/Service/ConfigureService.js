@@ -23,7 +23,7 @@ class DatabaseService {
 
     
     addDatabase(database, onSuccess, onFailure) {
-        this.httpHelper.post(`/api/v1/${database}/database`)
+        this.httpHelper.post(`/api/v1/workspace/${database}`)
             .then(res => { onSuccess(res) })
             .catch(res => { onFailure(res) });
 

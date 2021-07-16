@@ -35,7 +35,7 @@ const WorkspaceConfig = props => {
         <>
             <Typography variant="h6" color="primary" style={{ margin: "1em 0" }}>Database</Typography>
             <Divider style={{ margin: "2em 0" }} />
-            <Grid container direction="row" spacing={5} style={{ paddingLeft: "2em" }}>
+            <Grid container direction="row" style={{ paddingLeft: "2em" }}>
                 <Grid item container direction="row" spacing={5} xs={3}>
 
                     <Grid item>

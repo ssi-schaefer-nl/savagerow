@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Typography from '@material-ui/core/Typography';
 
-import { makeStyles} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -9,10 +9,12 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { grey } from "@material-ui/core/colors";
 import TriggeredWorkflow from "./TriggeredWorkflow/TriggeredWorkflow";
 import ScheduledWorkflow from "./ScheduledWorkflow/ScheduledWorkflow";
+import DatabaseSelect from "../../../Components/DatabaseSelect/DatabaseSelect";
 
 
 const Workflow = (props) => {
     const [expanded, setExpanded] = React.useState("triggered-workflows");
+    const database = localStorage.getItem("database")
 
     const handleChange = (panel) => (event, isExpanded) => (setExpanded(isExpanded ? panel : false));
 
@@ -20,14 +22,19 @@ const Workflow = (props) => {
     return (
         <>
             <Typography variant="h6" color="primary" style={{ margin: "1em 0" }}>Workflows</Typography>
-
-            <AccordionSection onChange={handleChange("triggered-workflows")} expanded={expanded === "triggered-workflows"} title="Triggered Workflows">
-                <TriggeredWorkflow />
-            </AccordionSection>
-            {/* <AccordionSection onChange={handleChange("scheduled-workflows")} expanded={expanded === "scheduled-workflows"} title="Scheduled Workflows">
-                <ScheduledWorkflow />
-            </AccordionSection> */}
-
+            {database == null ?
+                <div style={{ margin: "3em" }}>
+                    <Typography style={{ marginBottom: "2em" }}>No workspace is selected. Please select a database</Typography>
+                    <DatabaseSelect onSelect={() => window.location.reload(false)} />
+                </div>
+                :
+                <AccordionSection onChange={handleChange("triggered-workflows")} expanded={expanded === "triggered-workflows"} title="Triggered Workflows">
+                    <TriggeredWorkflow />
+                </AccordionSection>
+                // <AccordionSection onChange={handleChange("scheduled-workflows")} expanded={expanded === "scheduled-workflows"} title="Scheduled Workflows">
+                //         <ScheduledWorkflow />
+                //     </AccordionSection>
+            }
         </>
     )
 }
