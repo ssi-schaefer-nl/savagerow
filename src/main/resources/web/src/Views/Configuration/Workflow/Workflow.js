@@ -52,12 +52,17 @@ const AccordionSection = (props) => {
     const classes = useStyles();
 
     return (
-        <Accordion expanded={props.expanded} onChange={props.onChange}>
+        <Accordion expanded={props.expanded} onChange={props.onChange} style={{margin: "0.5em"}}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
-                style={{ backgroundColor: grey[100] }}
+                style={{padding: "1em"}}
+                ref={(node) => {
+                    if (node) {
+                      node.style.setProperty('background-color', `${grey[50]}`,'important');
+                    }
+                  }}
             >
                 <Typography className={classes.heading}>{props.title}</Typography>
             </AccordionSummary>
