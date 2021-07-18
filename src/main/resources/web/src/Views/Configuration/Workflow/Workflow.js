@@ -21,7 +21,6 @@ const Workflow = (props) => {
 
     return (
         <>
-            <Typography variant="h6" color="primary" style={{ margin: "1em 0" }}>Workflows</Typography>
             {database == null ?
                 <div style={{ margin: "3em" }}>
                     <Typography style={{ marginBottom: "2em" }}>No workspace is selected. Please select a database</Typography>
