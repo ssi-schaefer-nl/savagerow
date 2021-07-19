@@ -6,6 +6,7 @@ import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.workspace.exception.WorkspaceNotSetException;
 import nl.ssischaefer.savaragerow.workspace.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,8 +66,11 @@ public class WorkspaceService {
     }
 
     private static boolean containsDbFile(File file) {
-        //todo implement
-        return true;
+        File[] files = file.listFiles();
+        if (files != null) {
+            return Arrays.stream(files).map(File::getName).map(FilenameUtils::getExtension).anyMatch(e -> e.equals("db"));
+        }
+        return false;
     }
 
     public static void removeDatabase(String database) throws IOException {
