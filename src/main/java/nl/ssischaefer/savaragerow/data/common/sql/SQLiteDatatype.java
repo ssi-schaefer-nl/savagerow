@@ -13,7 +13,7 @@ public enum SQLiteDatatype {
         for(SQLiteDatatype d: SQLiteDatatype.values()) {
             if(d.datatype.equalsIgnoreCase(s)) return d;
         }
-        return null;
+        return Text;
     }
 
     private SQLiteDatatype(String datatype) {
