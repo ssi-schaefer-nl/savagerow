@@ -35,11 +35,14 @@ public class OperationsService {
     }
 
     public void delete(String table, Long rowid) throws Exception {
-        Map<String, String> data =  new FindRowQuery().setTable(table).setRowId(rowid).executeQuery().getResult().get(0);
-        new DeleteRowQuery().setTable(table).setRow(rowid).executeUpdate();
+        List<Map<String, String>> result = new FindRowQuery().setTable(table).setRowId(rowid).executeQuery().getResult();
+        if(!result.isEmpty()) {
+            Map<String, String> data = result.get(0);
+            new DeleteRowQuery().setTable(table).setRow(rowid).executeUpdate();
 
-        WorkflowTask task = new WorkflowTask().setTable(table).setData(data).setType(WorkflowTriggerType.DELETE);
-        taskProducer.produce(task);
+            WorkflowTask task = new WorkflowTask().setTable(table).setData(data).setType(WorkflowTriggerType.DELETE);
+            taskProducer.produce(task);
+        }
     }
 
     public List<Map<String, String>> getAll(String table) throws Exception {

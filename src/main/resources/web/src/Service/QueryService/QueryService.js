@@ -30,7 +30,7 @@ class QueryService {
     getTables(onSuccess, onFailure) {
         if (this.database != null) {
 
-            this.httpHelper.get(this.prefix)
+            this.httpHelper.get(`${this.prefix}/tables`)
                 .then(res => { onSuccess(res) })
                 .catch(res => { onFailure(res) });
         }

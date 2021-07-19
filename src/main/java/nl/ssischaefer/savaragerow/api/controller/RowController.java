@@ -67,7 +67,6 @@ public class RowController {
             long row = Long.parseLong(rowid);
             operations.delete(table, row);
         }
-
         return "";
     }
 }

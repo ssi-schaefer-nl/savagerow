@@ -51,6 +51,25 @@ const DataGridTable = (props) => {
     const highlightedRows = props.highlightRows ? props.highlightRows : []
     var changingColumnName = null
 
+    useEffect(() => {
+        const handleKeys = (e) => {
+            if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                e.preventDefault()
+                props.onSave(selectedRow)
+            }
+            else if (e.keyCode == 68 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
+                e.preventDefault()
+                props.onDelete(selectedRow)
+            }
+        }
+        window.addEventListener('keydown', handleKeys);
+    
+        return () => {
+          window.removeEventListener('keydown', handleKeys);
+        };
+      });
+    
+
     const HeaderRenderer = (item) => {
         return (
             <ContextMenuTrigger
@@ -97,7 +116,7 @@ const DataGridTable = (props) => {
                 holdToDisplay="-1"
             >
                 {highlightedRow == undefined ?
-                    <GridRow {...props} className={classname} />
+                    <GridRow {...props} className={classname} onClick={() => setSelectedRow(props.rowIdx)}/>
                     :
                     <LightTooltip
                         title={rowTooltip}
@@ -107,7 +126,7 @@ const DataGridTable = (props) => {
                         placement="bottom-start"
                         arrow
                     >
-                        <GridRow {...props} className={classname} />
+                        <GridRow {...props} className={classname} onClick={() => setSelectedRow(props.rowIdx)}/>
                     </LightTooltip>
                 }
             </ContextMenuTrigger>

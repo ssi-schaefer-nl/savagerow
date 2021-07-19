@@ -47,7 +47,10 @@ public class WorkspaceService {
     private static String getDatabasePath(String databaseName) throws IOException {
         String workspace = parseOrDefault(WORKSPACE, DEFAULT_VALUE);
         var path = Paths.get(workspace, databaseName);
-        Files.createDirectories(path);
+        if(!Files.isDirectory(path)) {
+            Files.createDirectories(path);
+        }
+
         return path.toString();
     }
 

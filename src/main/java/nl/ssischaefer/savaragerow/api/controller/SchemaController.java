@@ -39,7 +39,7 @@ public class SchemaController {
         put(prefix + "/:database/database/:table/column/:column", this::renameColumn);
         delete(prefix + "/:database/database/:table", this::deleteTable);
         delete(prefix + "/:database/database/:table/column/:column", this::deleteColumn);
-        get(prefix + "/:database/database", this::getTables); }
+        get(prefix + "/:database/database/tables", this::getTables); }
 
 
 
