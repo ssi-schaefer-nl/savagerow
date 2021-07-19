@@ -111,7 +111,7 @@ const Tables = (props) => {
                     collect={() => setSelectedTable(table)}
                     holdToDisplay="-1"
                   >
-                    <Tab textColor="secundary" onClick={() => handleChange(null, tables.indexOf(table))} label={table} {...a11yProps(index)} />
+                    <Tab fullWidth textColor="secundary" onClick={() => handleChange(null, tables.indexOf(table))} label={table} {...a11yProps(index)} />
                   </ContextMenuTrigger>
                 ))}
 

@@ -61,7 +61,12 @@ public class WorkspaceService {
             return Collections.emptyList();
         }
 
-        return Arrays.stream(files).filter(File::isDirectory).map(File::getName).collect(Collectors.toList());
+        return Arrays.stream(files).filter(File::isDirectory).filter(WorkspaceService::containsDbFile).map(File::getName).collect(Collectors.toList());
+    }
+
+    private static boolean containsDbFile(File file) {
+        //todo implement
+        return true;
     }
 
     public static void removeDatabase(String database) throws IOException {
