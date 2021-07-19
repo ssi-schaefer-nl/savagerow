@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class UpdateRowQuery extends AbstractQuery {
     private String table;
@@ -55,7 +56,8 @@ public class UpdateRowQuery extends AbstractQuery {
             return preparedStatement;
         }
         else {
-            List<String> columns = new ArrayList<>(row.keySet());
+
+            List<String> columns = row.entrySet().stream().filter(entry -> entry.getValue() != null).map(Map.Entry::getKey).collect(Collectors.toList());
             String sql = SQLDMLGenerator.generateUpdateQuery(table, columns, rowId);
             PreparedStatement preparedStatement = sqlConnection.prepareStatement(sql);
             PreparedStatementParameterHelper.setForRow(preparedStatement, row, columns);

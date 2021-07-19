@@ -5,6 +5,7 @@ import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.util.List;
 import java.util.Map;
 

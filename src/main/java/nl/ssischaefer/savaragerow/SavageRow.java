@@ -40,8 +40,8 @@ public class SavageRow {
     }
 
     private static void setupBefore() {
-        before(API_PREFIX + "/:database/database", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
-        before(API_PREFIX + "/:database/workflow", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
+        before(API_PREFIX + "/:database/database/*", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
+        before(API_PREFIX + "/:database/workflow/*", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
     }
 
     private static void setupExceptions() {
