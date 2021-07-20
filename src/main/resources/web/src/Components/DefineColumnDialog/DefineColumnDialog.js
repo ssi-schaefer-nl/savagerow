@@ -14,12 +14,12 @@ import QueryService from '../../Service/QueryService/QueryService';
 import DefinitionService from '../../Service/DefinitionService/DefinitionService';
 
 const datatypes = [
-    "text",
-    "integer",
-    "real",
-    "boolean",
-    "date",
-    "datetime"
+    "Text",
+    "Integer",
+    "Real",
+    "Boolean",
+    "Date",
+    "Datetime"
 ]
 
 export default function DefineColumnDialog(props) {
