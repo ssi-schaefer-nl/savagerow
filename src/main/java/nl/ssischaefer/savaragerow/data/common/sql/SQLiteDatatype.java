@@ -4,7 +4,10 @@ public enum SQLiteDatatype {
     Integer("INTEGER"),
     Text("TEXT"),
     Real("REAL"),
-    Blob("BLOB");
+    Blob("BLOB"),
+    Date("DATE"),
+    Datetime("DATETIME"),
+    Boolean("BOOLEAN");
 
 
     public final String datatype;

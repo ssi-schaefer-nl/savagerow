@@ -29,6 +29,19 @@ import { Delete, Filter } from "@material-ui/icons";
 import { grey } from "@material-ui/core/colors";
 import QueryService from "../../../Service/QueryService/QueryService";
 import ReferencedRowSelection from "./ReferencedRowSelection";
+import { LinearProgress } from "@material-ui/core";
+import { InputAdornment } from "@material-ui/core";
+import DateFnsUtils from '@date-io/date-fns';
+import {
+    MuiPickersUtilsProvider,
+    KeyboardTimePicker,
+    KeyboardDatePicker,
+} from '@material-ui/pickers';
+import DatePicker from "./DatePicker";
+import DatePickerEditor from "./DatePicker";
+import NumberInputEditor from "./NumberInputEditor";
+import BooleanInputEditor from "./BooleanInputEditor";
+import DateTimePicker from "./DateTimePicker";
 
 
 const LightTooltip = withStyles((theme) => ({
@@ -63,12 +76,12 @@ const DataGridTable = (props) => {
             }
         }
         window.addEventListener('keydown', handleKeys);
-    
+
         return () => {
-          window.removeEventListener('keydown', handleKeys);
+            window.removeEventListener('keydown', handleKeys);
         };
-      });
-    
+    });
+
 
     const HeaderRenderer = (item) => {
         return (
@@ -116,7 +129,7 @@ const DataGridTable = (props) => {
                 holdToDisplay="-1"
             >
                 {highlightedRow == undefined ?
-                    <GridRow {...props} className={classname} onClick={() => setSelectedRow(props.rowIdx)}/>
+                    <GridRow {...props} className={classname} onClick={() => setSelectedRow(props.rowIdx)} />
                     :
                     <LightTooltip
                         title={rowTooltip}
@@ -126,14 +139,33 @@ const DataGridTable = (props) => {
                         placement="bottom-start"
                         arrow
                     >
-                        <GridRow {...props} className={classname} onClick={() => setSelectedRow(props.rowIdx)}/>
+                        <GridRow {...props} className={classname} onClick={() => setSelectedRow(props.rowIdx)} />
                     </LightTooltip>
                 }
             </ContextMenuTrigger>
         );
     }
 
+    const getAppropriateEditor = (col) => {
+        if (col.fk) return ReferencedRowSelection
+        switch (col.datatype) {
+            case "Integer": return NumberInputEditor
+            case "Real": return NumberInputEditor
+            case "Date": return null
+            case "Datetime": return null
+            case "Boolean": return null
+            default: return TextEditor
+        }
+    }
 
+    const getAppropriateFormatter = (col) => {
+        switch (col.datatype) {
+            case "Date": return DatePickerEditor
+            case "Boolean": return BooleanInputEditor
+            case "Datetime": return DateTimePicker
+            default: return null
+        }
+    }
 
     const columns = props.columns.map(col => ({
         key: col.name,
@@ -145,11 +177,8 @@ const DataGridTable = (props) => {
         editorOptions: {
             editOnClick: true
         },
-        editor: col.pk && col.fk == null
-            ?
-            undefined
-            :
-            col.fk == null ? col.datatype == "Text" ? TextEditor : NumberEditor : ReferencedRowSelection
+        editor: getAppropriateEditor(col),
+        formatter: getAppropriateFormatter(col)
     }));
 
 
@@ -324,38 +353,6 @@ function HideColumnsPopup(props) {
             </Dialog>
         </div>
     );
-}
-
-const NumberEditor = ({ row, onRowChange, column }) => {
-    return (
-        <TextField
-            value={row[column.key]}
-            type="number"
-            autoFocus
-            style={{
-                appearance: 'none',
-                boxSizing: 'border-box',
-                width: '100%',
-                height: '100%',
-                padding: '1px 6px 0 6px',
-                border: '2px solid #ccc',
-                verticalAlign: 'top',
-            }}
-            onChange={event => {
-                let val = event.target.value
-                if (val === "") val = 0
-                if (!isNaN(val)) onRowChange({ ...row, [column.key]: val }, false)
-                console.log(val)
-            }}
-            InputProps={{
-                disableUnderline: true,
-                style: {
-                    fontSize: 14,
-                },
-            }}
-
-        />
-    )
 }
 
 

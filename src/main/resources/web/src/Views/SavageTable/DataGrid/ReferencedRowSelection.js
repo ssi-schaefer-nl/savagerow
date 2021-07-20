@@ -47,13 +47,12 @@ const ReferencedRowSelection = ({ row, onRowChange, column }) => {
         <>
             <Button
                 onClick={handleClick}
+                
                 style={{
                     appearance: 'none',
-                    boxSizing: 'border-box',
                     width: '100%',
                     height: '100%',
                     padding: '1px 6px 0 6px',
-                    border: '2px solid #ccc',
                     verticalAlign: 'top',
                     justifyContent: "flex-start"
                 }}
