@@ -1,4 +1,4 @@
-import { Checkbox, Divider, FormControlLabel, Grid, Select, Typography } from "@material-ui/core";
+import { Checkbox, Divider, FormControlLabel, Grid, InputLabel, Select, Typography } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { MenuItem } from "react-contextmenu";
 import PopupForm from "../../../../../../../Components/PopupForm/PopupForm";
@@ -9,12 +9,13 @@ import ActionFormTextField from "../ActionFormTextField";
 import ActionTooltips from "../../ActionTooltips"
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
+import VerticalLinearStepper from "../../../../../../../Components/VerticalLinearStepper/VerticalLinearStepper";
 
 
 const UpdateAction = props => {
     const { onSubmit, workflowTable, initial, open, onClose } = props
     const [tables, setTables] = useState([])
-    const [updateThis, setUpdateThis] = useState(true)
+    const [updateThis, setUpdateThis] = useState(false)
     const [tableColumns, setTableColumns] = React.useState(null);
 
     const [name, setName] = useState(initial == null ? "" : initial.name)
@@ -31,7 +32,6 @@ const UpdateAction = props => {
     }, [])
 
     const handleSubmit = e => {
-        e.preventDefault()
         if (updateThis) {
             const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, comparator: "equals", required: `{${c.name}}` }))
             onSubmit({ name: name, fieldUpdates: fieldUpdates, rowCriteria: crit, table: workflowTable, type: "update", triggerWorkflows: triggerWorkflows })
@@ -41,116 +41,120 @@ const UpdateAction = props => {
         }
     }
 
-
-    return (
-        <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
-            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
-
-            <Divider />
-            <Tooltip title={ActionTooltips.Trigger_Other_Workflows()}>
-
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={triggerWorkflows}
-                            onChange={(e) => setTriggerWorkflows(e.target.checked)}
-                            name="trigger"
-                            color="primary"
-                        />
-                    }
-                    label="Trigger other workflows with this action"
-                />
-            </Tooltip>
-            <Tooltip title={ActionTooltips.TriggeredRow("update")}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={updateThis}
-                            onChange={(e) => setUpdateThis(e.target.checked)}
-                            name="trigger"
-                            color="primary"
-                        />
-                    }
-                    label="Update the row that triggered the workflow"
-                />
-            </Tooltip>
-            {!updateThis
-                ?
+    const steps = [
+        {
+            "name": "Enter a name",
+            "Component": <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />,
+            "nextAllowed": name != null && name.length > 0
+        },
+        {
+            "name": "Optional: Trigger other workflows",
+            "Component":
                 <>
-                    <Grid container direction="row" alignItems="center" spacing={2}>
-                        <Tooltip title={ActionTooltips.Row("update")}>
-                            <Grid item>
-                                <Typography>Update one or more rows in table </Typography>
-                            </Grid>
-                        </Tooltip>
-                        <Grid item>
-                            <Select
-                                InputLabelProps={{ shrink: true }}
-                                style={{ minWidth: "30%" }}
-                                onChange={(e) => setTable(e.target.value)}
-                                value={table}
-                                required
-                            >
-                                {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-                            </Select>
-                        </Grid>
-                    </Grid>
-                    {table.length > 0 && <>
+                    <Typography style={{ marginBottom: "1em", width: "70%" }}>{ActionTooltips.Trigger_Other_Workflows()}</Typography>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={triggerWorkflows}
+                                onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                                name="trigger"
+                                color="primary"
+                            />
+                        }
+                        label="Trigger other workflows with this action"
+                    />
+                </>,
+        },
+        {
+            "name": "Optional: Update triggering row",
+            "Component":
+                <Tooltip title={ActionTooltips.TriggeredRow("update")}>
 
-                        <Grid style={{marginTop: "2em"}} container direction="row" alignItems="center" spacing={1}>
-                            <Grid item>
-                                <Typography>If the rows satisfy the following criteria</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Tooltip title={ActionTooltips.RightClick("value")}>
-                                    <InfoIcon fontSize="small" />
-                                </Tooltip>
-                            </Grid>
-
-                        </Grid>
-                        <RowCriterion requireValues={false} onChange={setRowCriteria} value={rowCriteria} placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }} table={table} />
-                        <Grid style={{marginTop: "2em"}} container direction="row" alignItems="center" spacing={1}>
-                            <Grid item>
-                                <Typography>By changing its fields in the following way</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Tooltip title={ActionTooltips.RightClick("value")}>
-                                    <InfoIcon fontSize="small" />
-                                </Tooltip>
-                            </Grid>
-
-                        </Grid>
-                        <ActionFormRow
-                            onChange={setFieldUpdates}
-                            value={fieldUpdates}
-                            placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }}
-                            table={updateThis ? workflowTable : table}
-                        />
-                    </>
-                    }
-                </>
-                :
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={updateThis}
+                                onChange={(e) => setUpdateThis(e.target.checked)}
+                                name="trigger"
+                                color="primary"
+                            />
+                        }
+                        label="Update the row that triggered the workflow"
+                    />
+                </Tooltip>,
+        },
+        {
+            "name": "Specify the target table",
+            "Component":
                 <>
-                    <Grid container direction="row" alignItems="center" spacing={1}>
-                        <Grid item>
-                            <Typography>By changing its fields in the following way</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title={ActionTooltips.RightClick("value")}>
-                                <InfoIcon fontSize="small" />
-                            </Tooltip>
-                        </Grid>
+                    <InputLabel id="select-table">Table</InputLabel>
+                    <Select
+                        id="select-table"
+                        InputLabelProps={{ shrink: true }}
+                        style={{ minWidth: "30%" }}
+                        onChange={(e) => {
+                            setTable(e.target.value)
+                            setRowCriteria([])
+                        }}
+                        value={table}
+                        required
+                    >
+                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
+                    </Select>
+                </>,
+            "nextAllowed": table.length > 0,
+            "disabled": updateThis
+        },
+        {
+            "name": "Specify the row criteria",
+            "Component":
+                <>
+                    <Typography style={{ marginBottom: "1em", width: "70%" }}>
+                        The row criteria will determine which row(s) will be updated. The rows that satisfy all criteria will be updated.
 
-                    </Grid>
+                    </Typography>
+                    <RowCriterion
+                        requireValues={false}
+                        onChange={setRowCriteria}
+                        value={rowCriteria}
+                        placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }}
+                        table={table}
+                    />
+                </>,
+            "disabled": updateThis
+        },
+        {
+            "name": "Specify the column updates",
+            "Component":
+                <>
+                    <Typography style={{ marginBottom: "1em", width: "70%" }}>
+                        The column updates define how the matching rows will be updated.
+
+                    </Typography>
                     <ActionFormRow
                         onChange={setFieldUpdates}
                         value={fieldUpdates}
                         placeholders={{ table: workflowTable, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }}
                         table={updateThis ? workflowTable : table}
                     />
-                </>
+                </>,
+            "nextButton": "Save",
+            "nextButtonType": "submit",
+        },
 
-            }
+
+    ]
+
+    return (
+        <PopupForm hide wide onSubmit={(e) => {
+            e.preventDefault()
+            handleSubmit()
+        }}
+            title="Create Update Action"
+            open={open}
+            onClose={onClose}
+        >
+            <VerticalLinearStepper steps={steps} />
 
 
         </PopupForm >

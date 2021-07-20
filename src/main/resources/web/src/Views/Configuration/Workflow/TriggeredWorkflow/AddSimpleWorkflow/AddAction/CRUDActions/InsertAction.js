@@ -1,4 +1,4 @@
-import { Checkbox, Divider, FormControlLabel, Grid, Select, Typography } from "@material-ui/core"
+import { Checkbox, Divider, FormControlLabel, Grid, InputLabel, Select, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react"
 import { MenuItem } from "react-contextmenu"
 import PopupForm from "../../../../../../../Components/PopupForm/PopupForm"
@@ -8,6 +8,9 @@ import ActionFormTextField from "../ActionFormTextField"
 import ActionTooltips from "../../ActionTooltips"
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
+import VerticalLinearStepper from "../../../../../../../Components/VerticalLinearStepper/VerticalLinearStepper"
+
+
 
 
 const InsertAction = props => {
@@ -18,6 +21,59 @@ const InsertAction = props => {
     const [table, setTable] = useState(initial == null ? "" : initial.table)
     const [row, setRow] = useState(initial == null ? [] : initial.row)
     const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
+
+
+    const steps = [
+        {
+            "name": "Enter a name",
+            "Component": <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />,
+            "nextAllowed": name != null && name.length > 0
+        },
+        {
+            "name": "Optional: Trigger other workflows",
+            "Component":
+                <>
+                    <Typography style={{marginBottom: "1em", width: "70%"}}>{ActionTooltips.Trigger_Other_Workflows()}</Typography>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={triggerWorkflows}
+                                onChange={(e) => setTriggerWorkflows(e.target.checked)}
+                                name="trigger"
+                                color="primary"
+                            />
+                        }
+                        label="Trigger other workflows with this action"
+                    />
+                </>,
+        },
+        {
+            "name": "Specify the target table",
+            "Component":
+                <>
+                    <InputLabel id="select-table">Table</InputLabel>
+                    <Select
+                        id="select-table"
+                        InputLabelProps={{ shrink: true }}
+                        style={{ minWidth: "30%" }}
+                        onChange={(e) => setTable(e.target.value)}
+                        value={table}
+                        placeholder="Select the table"
+                        required
+                    >
+                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
+                    </Select>
+                </>,
+            "nextAllowed": table.length > 0,
+        },
+        {
+            "name": "Define the new row",
+            "Component":
+                <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />,
+            "nextButton": "Save",
+            "nextButtonType": "submit",
+        },
+    ]
 
     useEffect(() => {
         const queryService = new QueryService("")
@@ -31,61 +87,8 @@ const InsertAction = props => {
     }
 
     return (
-        <PopupForm open={open} onSubmit={handleSubmit} onClose={onClose}>
-            <ActionFormTextField id="name" onChange={setName} value={name} label="Action Name" required title="Create a new insert action" />
-
-            <Divider />
-            <Tooltip title={ActionTooltips.Trigger_Other_Workflows()}>
-
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={triggerWorkflows}
-                            onChange={(e) => setTriggerWorkflows(e.target.checked)}
-                            name="trigger"
-                            color="primary"
-                        />
-                    }
-                    label="Trigger other workflows with this action"
-                />
-            </Tooltip>
-            <Grid container direction="row" alignItems="center" spacing={2}>
-                <Grid item>
-                    <Tooltip title={ActionTooltips.Row("insert")}>
-                        <Typography>Insert a new row into table </Typography>
-                    </Tooltip>
-                </Grid>
-
-                <Grid item>
-                    <Select
-                        InputLabelProps={{ shrink: true }}
-                        style={{ minWidth: "30%" }}
-                        onChange={(e) => setTable(e.target.value)}
-                        value={table}
-                        required
-                    >
-                        {tables.map(item => (<MenuItem key={item} value={item}>{item}</MenuItem>))}
-                    </Select>
-                </Grid>
-            </Grid>
-
-            {table.length > 0 &&
-                <>
-                    <Grid container direction="row" alignItems="center" spacing={1}>
-                        <Grid item>
-                            <Typography>With the following fields</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Tooltip title={ActionTooltips.RightClick("row")}>
-                                <InfoIcon fontSize="small"/>
-                            </Tooltip>
-                        </Grid>
-
-                    </Grid>
-                    <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />
-
-                </>
-            }
+        <PopupForm onSubmit={handleSubmit} title="Create Insert Action" open={open} onClose={onClose} hide wide>
+            <VerticalLinearStepper steps={steps} />
         </PopupForm>
     )
 }

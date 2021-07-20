@@ -1,4 +1,4 @@
-import { Divider } from "@material-ui/core"
+import { CircularProgress, Divider, Grid, LinearProgress } from "@material-ui/core"
 import { useState, useEffect } from "react"
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu"
 
@@ -29,6 +29,7 @@ const ActionFormRow = props => {
         }
 
     }, [table])
+
 
     if (columns.length > 0) {
         return (
@@ -74,7 +75,13 @@ const ActionFormRow = props => {
             </>
         )
     }
-    else return null;
+    else return (
+        <Grid container justify='center'>
+            <Grid item>
+                <CircularProgress/>
+            </Grid>
+        </Grid>
+    );
 }
 
 

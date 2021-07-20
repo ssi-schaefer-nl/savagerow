@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import Button from '@material-ui/core/Button';
-import {  Divider, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
+import { Divider, Menu, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/MoreVert';
 import { MenuItem } from "react-contextmenu";
@@ -32,9 +32,10 @@ const CreateWorkflowActions = props => {
 
     const addActionToList = (action) => {
         const step = actions.length + 1
-        const newActions = [...actions, { step: step, ...action}]
+        const newActions = [...actions, { step: step, ...action }]
         onChange(newActions)
         setActionSubmit(null)
+        handleCloseDialog()
     }
 
     const replaceAction = (step, action) => {
@@ -43,6 +44,7 @@ const CreateWorkflowActions = props => {
         copyOfActions[pos] = action
         onChange(copyOfActions)
         setActionSubmit(null)
+        handleCloseDialog()
     }
 
     const deleteStep = (step) => {
@@ -77,17 +79,19 @@ const CreateWorkflowActions = props => {
                 You can define what must happen in the workflow by creating actions. These actions will be executed in the order in which you create them.
 
             </Typography>
-            {actions != undefined && <ActionList onAdd={handleAdd} onEdit={handleEdit} actions={actions}/>}
+            {actions != undefined && <ActionList onAdd={handleAdd} onEdit={handleEdit} actions={actions} />}
 
-            <ActionDialogSwitch
-                type={actionType}
-                placeholders={{table: table, values: tableColumns != null ? tableColumns.map(c => c.name) : []}}
-                onSubmit={actionSubmit}
-                onClose={handleCloseDialog}
-                initial={editAction}
-                table={table}
-                columns={tableColumns}
-            />
+            {actionType != null &&
+                <ActionDialogSwitch
+                    type={actionType}
+                    placeholders={{ table: table, values: tableColumns != null ? tableColumns.map(c => c.name) : [] }}
+                    onSubmit={actionSubmit}
+                    onClose={handleCloseDialog}
+                    initial={editAction}
+                    table={table}
+                    columns={tableColumns}
+                />
+            }
         </div >
     )
 
@@ -96,6 +100,7 @@ const CreateWorkflowActions = props => {
 
 const ActionDialogSwitch = props => {
     const { type, placeholders, onSubmit, initial, onClose, table, columns } = props
+    console.log(initial)
     switch (type) {
         // case "email": return <EmailAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "insert": return <InsertAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
@@ -206,7 +211,7 @@ const SelectActionTypeMenu = props => {
             <MenuItem onClick={() => handleClick('insert')}>Insert</MenuItem>
             <MenuItem onClick={() => handleClick('update')}>Update</MenuItem>
             <MenuItem onClick={() => handleClick('delete')}>Delete</MenuItem>
-            <Divider/>
+            <Divider />
             <MenuItem onClick={() => handleClick('api call')}>API Call</MenuItem>
 
         </Menu>

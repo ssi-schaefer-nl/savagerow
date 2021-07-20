@@ -49,7 +49,7 @@ function PopupForm(props) {
                 <DialogActions>
                     {!hide &&
                         <>
-                            <Button color="primary" type="submit">Apply</Button>
+                            {onSubmit != undefined  && <Button color="primary" type="submit">Apply</Button>}
                             <Button color="primary" onClick={onClose}>Cancel</Button>
                         </>
                     }

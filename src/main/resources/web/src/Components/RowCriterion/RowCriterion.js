@@ -28,6 +28,7 @@ const RowCriterion = props => {
 
     const addNewCriterion = () => setCriteria(c => [...c, { column: "", comparator: "", required: "" }])
     const removeCriterion = (i) => {
+        if(criteria.length == 1) return
         const copyOfCriteria = [...criteria];
         copyOfCriteria.splice(i, 1)
         onChange(copyOfCriteria);
@@ -90,7 +91,7 @@ const Criterion = props => {
 
 
     return (
-        <Grid container direction="row" spacing={2} justify="space-around" style={{ width: "100%", margin: "0.5em 0", border: "1px solid grey", borderRadius: "5px" }}>
+        <Grid container direction="row" spacing={2} justify="space-between" style={{ width: "60%", margin: "0.5em 0" }}>
             <Grid item xs={3}>
                 <InputLabel shrink required id="table">Column</InputLabel>
                 <Select
@@ -104,7 +105,7 @@ const Criterion = props => {
                 </Select>
             </Grid>
             <Grid item xs={3}>
-                <InputLabel shrink required id="table">Operator</InputLabel>
+                <InputLabel shrink required id="table">Comparator</InputLabel>
                 <Select
                     InputLabelProps={{ shrink: true }}
                     style={{ width: "100%" }}
@@ -115,10 +116,12 @@ const Criterion = props => {
                     {Object.keys(operators).map(key => (<MenuItem key={key} value={key}>{operators[key]}</MenuItem>))}
                 </Select>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
                 <ContextMenuTrigger id={placeholders.values != undefined && placeholders.values.length > 0 ? `contextmenu-${contextMenuId}` : "none"} collect={() => setAppender(() => (x) => handleChange('required', (criterion["required"] == undefined ? x : criterion["required"] + x)))}>
                     <TextField
                         id="required"
+                        style={{ width: "100%" }}
+
                         value={criterion["required"]}
                         required={true}
                         InputLabelProps={{ shrink: true }}
@@ -133,6 +136,7 @@ const Criterion = props => {
             </Grid>
             <Grid item >
                 <Button
+                    variant='outlined'
                     aria-controls="add-action"
                     aria-haspopup="true"
                     color="secondary"

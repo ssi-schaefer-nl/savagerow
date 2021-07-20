@@ -83,7 +83,7 @@ const Columns = props => {
 
 
     return (
-        <Grid container direction="row" spacing={2} justify="space-around" style={{ width: "100%", margin: "0.5em 0", border: "1px solid grey", borderRadius: "5px" }}>
+        <Grid container direction="row" spacing={2} justify="space-between" style={{ width: "60%", margin: "0.5em 0" }}>
             <Grid item xs={3}>
                 <InputLabel shrink required id="table">Column</InputLabel>
                 <Select
@@ -126,6 +126,7 @@ const Columns = props => {
                 <Button
                     aria-controls="add-action"
                     aria-haspopup="true"
+                    variant="outlined"
                     color="secondary"
                     onClick={(e) => onDelete()}
                 >
