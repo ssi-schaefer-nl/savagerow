@@ -140,7 +140,7 @@ const TriggeredWorkflow = (props) => {
             <FullscreenDialog
                 open={openWorkflowDialog}
                 handleClose={() => { setExistingWorkflow(null); setOpenWorkflowDialog(false) }}
-                title={Boolean(selectedWorkflow) ? "Edit existing workflow" : "Add a new simple workflow"}
+                title={"Triggered Workflow"}
             >
                 <AddSimpleWorkflow existing={existingWorkflow} onFinish={handleAddedSimpleWorkflow} />
             </FullscreenDialog>
