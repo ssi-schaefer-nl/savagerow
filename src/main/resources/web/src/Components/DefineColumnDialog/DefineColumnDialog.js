@@ -16,7 +16,10 @@ import DefinitionService from '../../Service/DefinitionService/DefinitionService
 const datatypes = [
     "text",
     "integer",
-    "real"
+    "real",
+    "boolean",
+    "date",
+    "datetime"
 ]
 
 export default function DefineColumnDialog(props) {
