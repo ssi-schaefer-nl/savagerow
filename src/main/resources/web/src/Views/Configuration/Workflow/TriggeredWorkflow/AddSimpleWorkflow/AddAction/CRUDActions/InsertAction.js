@@ -9,6 +9,7 @@ import ActionTooltips from "../../ActionTooltips"
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
 import VerticalLinearStepper from "../../../../../../../Components/VerticalLinearStepper/VerticalLinearStepper"
+import PopupWindow from "../../../../../../../Components/PopupWindow/PopupWindow"
 
 
 
@@ -23,6 +24,10 @@ const InsertAction = props => {
     const [triggerWorkflows, setTriggerWorkflows] = useState(initial == null ? false : initial.triggerWorkflows)
 
 
+    const handleSubmit = () => {
+        onSubmit({ name: name, row: row, table: table, type: "insert", triggerWorkflows: triggerWorkflows })
+
+    }
     const steps = [
         {
             "name": "Enter a name",
@@ -33,7 +38,7 @@ const InsertAction = props => {
             "name": "Optional: Trigger other workflows",
             "Component":
                 <>
-                    <Typography style={{marginBottom: "1em", width: "70%"}}>{ActionTooltips.Trigger_Other_Workflows()}</Typography>
+                    <Typography style={{ marginBottom: "1em", width: "70%" }}>{ActionTooltips.Trigger_Other_Workflows()}</Typography>
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -71,7 +76,8 @@ const InsertAction = props => {
             "Component":
                 <ActionFormRow onChange={setRow} value={row} placeholders={placeholders} table={table} />,
             "nextButton": "Save",
-            "nextButtonType": "submit",
+            "onNext": handleSubmit,
+            "nextAllowed": Object.values(row).filter(v => v.length > 0).length > 0
         },
     ]
 
@@ -80,16 +86,13 @@ const InsertAction = props => {
         queryService.getTables(data => setTables(data.data), () => setTables([]))
     }, [])
 
-    const handleSubmit = e => {
-        e.preventDefault()
-        onSubmit({ name: name, row: row, table: table, type: "insert", triggerWorkflows: triggerWorkflows })
-
-    }
 
     return (
-        <PopupForm onSubmit={handleSubmit} title="Create Insert Action" open={open} onClose={onClose} hide wide>
-            <VerticalLinearStepper steps={steps} />
-        </PopupForm>
+        <PopupWindow open={open} onClose={onClose} title="Create Insert Action" wide>
+            <div style={{ width: "50vw", height: "60vh" }}>
+                <VerticalLinearStepper steps={steps} />
+            </div>
+        </PopupWindow>
     )
 }
 

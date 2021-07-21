@@ -10,6 +10,7 @@ import ActionTooltips from "../../ActionTooltips"
 import Tooltip from '@material-ui/core/Tooltip';
 import InfoIcon from '@material-ui/icons/Info';
 import VerticalLinearStepper from "../../../../../../../Components/VerticalLinearStepper/VerticalLinearStepper";
+import PopupWindow from "../../../../../../../Components/PopupWindow/PopupWindow";
 
 
 const UpdateAction = props => {
@@ -31,7 +32,7 @@ const UpdateAction = props => {
 
     }, [])
 
-    const handleSubmit = e => {
+    const handleSubmit = () => {
         if (updateThis) {
             const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, comparator: "equals", required: `{${c.name}}` }))
             onSubmit({ name: name, fieldUpdates: fieldUpdates, rowCriteria: crit, table: workflowTable, type: "update", triggerWorkflows: triggerWorkflows })
@@ -121,7 +122,8 @@ const UpdateAction = props => {
                         table={table}
                     />
                 </>,
-            "disabled": updateThis
+            "disabled": updateThis,
+            "nextAllowed":  rowCriteria.length > 0 && rowCriteria.filter(r => Object.values(r).filter(v => v.length == 0).length > 0).length == 0 
         },
         {
             "name": "Specify the column updates",
@@ -139,25 +141,17 @@ const UpdateAction = props => {
                     />
                 </>,
             "nextButton": "Save",
-            "nextButtonType": "submit",
+            "nextAllowed":  fieldUpdates.length > 0 && fieldUpdates.filter(r => Object.values(r).filter(v => v.length == 0).length > 0).length == 0,
+            "onNext": handleSubmit,
         },
-
-
     ]
 
     return (
-        <PopupForm hide wide onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit()
-        }}
-            title="Create Update Action"
-            open={open}
-            onClose={onClose}
-        >
-            <VerticalLinearStepper steps={steps} />
-
-
-        </PopupForm >
+        <PopupWindow open={open} onClose={onClose} title="Create Update Action" wide>
+            <div style={{ width: "50vw", height: "60vh" }}>
+                <VerticalLinearStepper steps={steps} />
+            </div>
+        </PopupWindow >
     )
 }
 

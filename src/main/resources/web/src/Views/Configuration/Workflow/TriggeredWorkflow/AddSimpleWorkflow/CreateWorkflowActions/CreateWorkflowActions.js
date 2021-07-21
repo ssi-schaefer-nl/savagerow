@@ -41,7 +41,8 @@ const CreateWorkflowActions = props => {
     const replaceAction = (step, action) => {
         const pos = actions.findIndex(a => a.step == step);
         const copyOfActions = [...actions]
-        copyOfActions[pos] = action
+        console.log(action)
+        copyOfActions[pos] = {...copyOfActions[pos], ...action}
         onChange(copyOfActions)
         setActionSubmit(null)
         handleCloseDialog()
@@ -72,6 +73,7 @@ const CreateWorkflowActions = props => {
         setActionSubmit(() => (x) => addActionToList(x))
     }
 
+    console.log(actions)
     return (
         <div>
             <Typography variant="h6">Create actions for the workflow</Typography>
@@ -100,7 +102,6 @@ const CreateWorkflowActions = props => {
 
 const ActionDialogSwitch = props => {
     const { type, placeholders, onSubmit, initial, onClose, table, columns } = props
-    console.log(initial)
     switch (type) {
         // case "email": return <EmailAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />
         case "insert": return <InsertAction open={Boolean(type) && Boolean(onSubmit)} onClose={onClose} initial={initial} placeholders={placeholders} onSubmit={onSubmit} />

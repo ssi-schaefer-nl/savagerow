@@ -25,16 +25,18 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function VerticalLinearStepper(props) {
-    const { steps, onFinish } = props;
+    const { steps: allSteps, onFinish } = props;
 
+    const steps = allSteps.filter(s => s.disabled == undefined || !s.disabled)
     const classes = useStyles();
     const [activeStep, setActiveStep] = React.useState(0);
 
     const handleNext = () => {
         const currentStep = steps[activeStep]
+
         if (currentStep.onNext != undefined)
             currentStep.onNext()
-        if (activeStep != steps.length - 1)
+        if (activeStep != steps.filter(s => !s.disabled).length - 1)
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
@@ -57,7 +59,7 @@ export default function VerticalLinearStepper(props) {
                                 <div>
                                     <Button disabled={(activeStep === 0) || step.restrictBack} onClick={handleBack} className={classes.button}>Back</Button>
                                     <Button
-                                        variant="outlined" 
+                                        variant="outlined"
                                         color="primary"
                                         type={step.nextButtonType}
                                         onClick={handleNext}

@@ -83,7 +83,7 @@ const Columns = props => {
 
 
     return (
-        <Grid container direction="row" spacing={2} justify="space-between" style={{ width: "60%", margin: "0.5em 0" }}>
+        <Grid container direction="row" spacing={2} justify="space-between" style={{ width: "90%", margin: "0.5em 0" }}>
             <Grid item xs={3}>
                 <InputLabel shrink required id="table">Column</InputLabel>
                 <Select

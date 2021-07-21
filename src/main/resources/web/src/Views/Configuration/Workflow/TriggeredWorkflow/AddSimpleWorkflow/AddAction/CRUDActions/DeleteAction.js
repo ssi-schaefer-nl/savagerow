@@ -9,6 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import ActionTooltips from "../../ActionTooltips";
 import InfoIcon from '@material-ui/icons/Info';
 import VerticalLinearStepper from "../../../../../../../Components/VerticalLinearStepper/VerticalLinearStepper";
+import PopupWindow from "../../../../../../../Components/PopupWindow/PopupWindow";
 
 
 
@@ -32,7 +33,7 @@ const DeleteAction = props => {
             onSubmit({ name: name, rowCriteria: crit, table: workflowTable, type: "delete", triggerWorkflows: triggerWorkflows })
         }
         else {
-            onSubmit({ name: name, rowCriteria: rowCriteria, table: workflowTable, type: "delete", triggerWorkflows: triggerWorkflows })
+            onSubmit({ name: name, rowCriteria: rowCriteria, table: table, type: "delete", triggerWorkflows: triggerWorkflows })
         }
 
     }
@@ -107,10 +108,10 @@ const DeleteAction = props => {
             "name": "Specify the row criteria",
             "Component":
                 <>
-                <Typography style={{marginBottom: "1em", width: "70%"}}>
-                    The row criteria will determine which row(s) will be deleted. The rows that satisfy all criteria will be deleted.
+                    <Typography style={{ marginBottom: "1em", width: "70%" }}>
+                        The row criteria will determine which row(s) will be deleted. The rows that satisfy all criteria will be deleted.
 
-                </Typography>
+                    </Typography>
                     <RowCriterion
                         requireValues={false}
                         onChange={setRowCriteria}
@@ -120,11 +121,11 @@ const DeleteAction = props => {
                     />
                 </>,
             "nextButton": "Save",
-            "nextButtonType": "submit",
+            "onNext": handleSubmit,
+            "nextAllowed":  rowCriteria.length > 0 && rowCriteria.filter(r => Object.values(r).filter(v => v.length == 0).length > 0).length == 0,
             "disabled": deleteThis
         },
     ]
-
 
     useEffect(() => {
         const queryService = new QueryService(workflowTable)
@@ -138,18 +139,11 @@ const DeleteAction = props => {
 
 
     return (
-        <PopupForm hide wide onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit()
-        }}
-            title="Create Delete Action"
-            open={open}
-            onClose={onClose}
-        >
-            <VerticalLinearStepper steps={steps} />
-
-
-        </PopupForm >
+        <PopupWindow open={open} onClose={onClose} title="Create Delete Action" wide>
+            <div style={{ width: "50vw", height: "60vh" }}>
+                <VerticalLinearStepper steps={steps} />
+            </div>
+        </PopupWindow >
     )
 }
 
