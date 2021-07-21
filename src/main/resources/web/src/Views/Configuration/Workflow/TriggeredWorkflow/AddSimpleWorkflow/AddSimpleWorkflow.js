@@ -55,7 +55,7 @@ export default function AddSimpleWorkflow(props) {
     const editingSteps = [
         {
             "name": "Enter a name",
-            "Component": <WorkflowStepName disabled={existing != null} onChange={setName} value={name} />,
+            "Component": <WorkflowStepName onChange={setName} value={name} />,
             "nextAllowed": name != null && name.length > 0
         },
         {

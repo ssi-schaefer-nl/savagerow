@@ -29,7 +29,7 @@ const DeleteAction = props => {
 
     const handleSubmit = () => {
         if (deleteThis) {
-            const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, comparator: "equals", required: `{${c.name}}` }))
+            const crit = tableColumns.filter(c => c.pk).map(c => ({ column: c.name, comparator: "==", required: `{${c.name}}` }))
             onSubmit({ name: name, rowCriteria: crit, table: workflowTable, type: "delete", triggerWorkflows: triggerWorkflows })
         }
         else {

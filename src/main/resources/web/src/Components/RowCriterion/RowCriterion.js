@@ -72,10 +72,10 @@ const RowCriterion = props => {
 }
 
 const operators = {
-    "equals": "Equals",
-    "not": "Not equals",
-    "smaller": "Smaller than",
-    "greater": "Greater than"
+    "==": "Equals",
+    "!=": "Not equals",
+    "<": "Smaller than",
+    ">": "Greater than"
 }
 
 const Criterion = props => {
