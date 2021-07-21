@@ -66,7 +66,7 @@ const TriggeredWorkflow = (props) => {
     const handleChangeActive = () => {
         setAnchorEditMenu(null);
 
-        const workflow = {...selectedWorkflow, active: !selectedWorkflow.active}
+        const workflow = { ...selectedWorkflow, active: !selectedWorkflow.active }
         console.log(workflow)
         workflowService.updateTriggeredWorkflow(workflow, triggerReload, () => undefined)
     };
@@ -85,8 +85,8 @@ const TriggeredWorkflow = (props) => {
                         <Table stickyHeader >
                             <TableHead >
                                 <TableRow>
-                                    <TableCell>Table</TableCell>
-                                    <TableCell align="right">Workflow Name</TableCell>
+                                    <TableCell >Workflow Name</TableCell>
+                                    <TableCell align="right">Table</TableCell>
                                     <TableCell align="right">Type</TableCell>
                                     <TableCell align="right">Number of actions</TableCell>
                                     <TableCell align="right">Active</TableCell>
@@ -100,8 +100,8 @@ const TriggeredWorkflow = (props) => {
                             <TableBody>
                                 {workflows.map((w, i) => (
                                     <TableRow key={`${w.table}-${w.name}`}>
-                                        <TableCell component="th" scope="row">{w.table}</TableCell>
-                                        <TableCell align="right">{w.name}</TableCell>
+                                        <TableCell component="th" scope="row">{w.name}</TableCell>
+                                        <TableCell align="right">{w.table}</TableCell>
                                         <TableCell align="right">{w.type}</TableCell>
                                         <TableCell align="right">{w.actions.length}</TableCell>
                                         <TableCell align="right">{w.active ? "Yes" : "No"}</TableCell>
