@@ -130,7 +130,7 @@ const ActionList = props => {
 
     return (
         <>
-            <TableContainer component={Paper} style={{ maxHeight: "35vh", overflow: "auto", margin: "2em 0" }}>
+            <TableContainer component={Paper} style={{ maxHeight: "50vh", overflow: "auto", margin: "2em 0" }}>
                 <Table stickyHeader >
                     <TableHead >
                         <TableRow>

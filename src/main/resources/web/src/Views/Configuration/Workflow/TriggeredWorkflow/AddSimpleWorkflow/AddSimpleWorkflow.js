@@ -64,16 +64,17 @@ export default function AddSimpleWorkflow(props) {
             "nextAllowed": table.length > 0 && type.length > 0
         },
         {
+            "name": "Optional: Add conditions",
+            "Component": <WorkflowConditions onChange={(c) => { console.log(c); setConditions(c); }} conditions={conditions} table={table} />,
+        },
+        {
             "name": "Create actions",
             "Component": <CreateWorkflowActions actions={actions} table={table} onChange={setActions} />,
             "nextAllowed": actions.length > 0,
-        },
-        {
-            "name": "Add conditions",
-            "Component": <WorkflowConditions onChange={(c) => { console.log(c); setConditions(c); }} conditions={conditions} table={table} />,
             "nextButton": "Save",
             "onNext": saveWorkflow
         },
+
         {
             "name": "Finalize",
             "Component": <FinalizeStep message={finalStatus} saving={saving} valid={valid} />,

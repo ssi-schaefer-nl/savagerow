@@ -23,6 +23,7 @@ const DateTimePicker = (props) => {
                 }}
                 
                 showTodayButton={true}
+                clearable
                 format="MM/dd/yyyy HH:mm"
                 value={props.row[props.column.key]}
                 InputProps={{

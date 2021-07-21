@@ -57,7 +57,7 @@ public class UpdateRowQuery extends AbstractQuery {
         }
         else {
 
-            List<String> columns = row.entrySet().stream().filter(entry -> entry.getValue() != null).map(Map.Entry::getKey).collect(Collectors.toList());
+            List<String> columns = row.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
             String sql = SQLDMLGenerator.generateUpdateQuery(table, columns, rowId);
             PreparedStatement preparedStatement = sqlConnection.prepareStatement(sql);
             PreparedStatementParameterHelper.setForRow(preparedStatement, row, columns);

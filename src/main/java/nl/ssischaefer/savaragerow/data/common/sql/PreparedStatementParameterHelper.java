@@ -6,6 +6,7 @@ import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLType;
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,9 @@ public class PreparedStatementParameterHelper {
         int i;
         for (i = 0; i < columnsForOrder.size(); i++) {
             String fieldValue = row.get(columnsForOrder.get(i));
-            preparedStatement.setString(i + 1, fieldValue.isEmpty() ? null : fieldValue);
+            if(fieldValue == null) preparedStatement.setNull(i + 1, Types.VARCHAR);
+            else
+                preparedStatement.setString(i + 1, fieldValue.isEmpty() ? null : fieldValue);
         }
         return i;
     }

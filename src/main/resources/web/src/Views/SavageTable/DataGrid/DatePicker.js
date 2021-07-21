@@ -20,7 +20,8 @@ const DatePicker = (props) => {
                     padding: '1px 6px 0 6px',
                     verticalAlign: 'top',
                 }}
-                variant="inline"
+                clearable
+                showTodayButton
                 format="MM/dd/yyyy"
                 value={props.row[props.column.key]}
                 InputProps={{
