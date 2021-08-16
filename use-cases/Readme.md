@@ -1,7 +1,7 @@
 # Brief Use Cases
 This document describes the brief use cases for SavageRow. SavageRow is a product that enables you to easily manage your data located in databases. You can have multiple databases in your workspace, and easily switch between them to inspect or alter its data. Moreover, for each database in your workspace, you can define workflows that you can trigger when you add, edit or delete data in your database. These workflows consist of multiple actions such as editing, adding or deleting data in other tables.
 
-## 1 Database
+## 1. Database
 The following use cases are concerned with managing the databases in the workspace. 
 
 ### 1.1 Create a new database
