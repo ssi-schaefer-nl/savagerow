@@ -1,6 +1,8 @@
 # Brief Use Cases
 
 ## 1 Database
+The following use cases are concerned with managing the databases in the workspace. 
+
 ### 1.1 Create a new database
 The user open the databases configuration page and chooses to create a new database. The system prompts for a name for the database. The user enters a unique name. The system validates the name and creates a new database in the workspace. 
 
