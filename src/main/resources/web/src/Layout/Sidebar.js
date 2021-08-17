@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
         ...theme.mixins.toolbar,
     },
     sublistElement: {
-        borderWidth: "4px",
+        borderWidth: "2px",
         borderStyle: "solid",
         borderColor: grey[50],
         backgroundColor: "white"
