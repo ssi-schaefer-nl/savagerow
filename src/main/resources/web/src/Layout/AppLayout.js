@@ -11,25 +11,23 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Home from "../Views/Home";
 import Configure from "../Views/Configuration/Configure";
 import Tables from "../Views/SavageTable/TableLayout";
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import Collapse from '@material-ui/core/Collapse';
+import Sidebar from './Sidebar'
 import {
   Route, Switch,
 } from "react-router-dom";
-import StorageIcon from '@material-ui/icons/Storage';
-import HomeIcon from '@material-ui/icons/Home';
-import SettingsIcon from '@material-ui/icons/Settings';
 
 import {
   Link,
 } from "react-router-dom";
 import { grey, red } from "@material-ui/core/colors";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const drawerWidth = 240;
 
@@ -108,36 +106,26 @@ const useStyles = makeStyles((theme) => ({
 
 export default function OverviewFlow() {
   const classes = useStyles();
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [expand, setExpand] = React.useState(null);
   const database = localStorage.getItem("database")
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
         position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
+        className={clsx(classes.appBar)}
       >
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={() => setOpen(o => !o)}
             edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: open,
-            })}
+            className={clsx(classes.menuButton)}
           >
             <MenuIcon />
           </IconButton>
@@ -146,60 +134,20 @@ export default function OverviewFlow() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
 
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          }),
-        }}
-
-      >
-        <div className={classes.toolbar}>
-          <Typography variant="h6" noWrap >
-            Menu
-          </Typography>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-
-        </div>
-        <Divider />
-        <List>
-          <ListElement link="/" text="Home" icon={HomeIcon} />
-          <ListElement link="/tables" text="Tables" icon={StorageIcon} />
-          <ListElement link="/configuration" text="Configuration" icon={SettingsIcon} />
-        </List>
-      </Drawer>
-
+      <Sidebar open={open} />
+    
       <main className={classes.content} >
 
         <div className={classes.toolbar} />
         <Switch>
-          <Route exact path="/" ><Home/></Route>
-          <Route path="/tables" ><Tables/></Route>
-          <Route path="/configuration"><Configure/></Route>
+          <Route exact path="/" ><Home /></Route>
+          <Route path="/tables" ><Tables /></Route>
+          <Route path="/configuration"><Configure /></Route>
         </Switch>
 
       </main>
 
     </div>
   );
-}
-
-const ListElement = (props) => {
-  const TheIcon = props.icon;
-
-  return (
-    <ListItem component={Link} to={props.link} button key={props.text}>
-      <ListItemIcon><TheIcon /></ListItemIcon>
-      <ListItemText primary={props.text} />
-    </ListItem>
-  )
 }
