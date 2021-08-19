@@ -1,33 +1,21 @@
-import React, { Component, useEffect } from "react";
-import clsx from 'clsx';
-import { makeStyles, rgbToHex, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
+import { grey } from "@material-ui/core/colors";
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import { makeStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Home from "../Views/Home";
+import clsx from 'clsx';
+import React from "react";
+import {
+  Route, Switch
+} from "react-router-dom";
 import Configure from "../Views/Configuration/Configure";
+import Home from "../Views/Home";
 import Tables from "../Views/SavageTable/TableLayout";
-import Collapse from '@material-ui/core/Collapse';
-import Sidebar from './Sidebar'
-import {
-  Route, Switch,
-} from "react-router-dom";
+import Sidebar from './Sidebar';
 
-import {
-  Link,
-} from "react-router-dom";
-import { grey, red } from "@material-ui/core/colors";
-import { ExpandLess, ExpandMore } from "@material-ui/icons";
 
 const drawerWidth = 240;
 

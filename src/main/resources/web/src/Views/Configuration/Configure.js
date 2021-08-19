@@ -10,6 +10,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 
 import WorkspaceConfig from "./Workspace/WorkspaceConfig";
+import OverviewFlow from "./Workflow/Workflow";
 
 function createConfigSection(name, PanelComponent) {
     return { "name": name, "component": PanelComponent }
@@ -104,5 +105,5 @@ export default function Configure(props) {
 
 const ConfigurationSections = [
     createConfigSection("Database", <WorkspaceConfig />),
-    createConfigSection("Workflows", <Workflow />)
+    createConfigSection("Workflows", <OverviewFlow />)
 ]
