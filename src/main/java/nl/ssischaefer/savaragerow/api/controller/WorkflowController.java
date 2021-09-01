@@ -3,7 +3,7 @@ package nl.ssischaefer.savaragerow.api.controller;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.workflow.WorkflowService;
-import nl.ssischaefer.savaragerow.workflow.model.Workflow;
+import nl.ssischaefer.savaragerow.common.schema.WorkflowSchema;
 import spark.Request;
 import spark.Response;
 
@@ -19,7 +19,7 @@ public class WorkflowController {
     }
 
     public void setup(String prefix) {
-        String url = prefix + "/:database/workflow";
+        String url = prefix + "/workflow";
 
         get(url, this::getAllWorkflows);
         post(url, this::addWorkflow);
@@ -28,8 +28,8 @@ public class WorkflowController {
     }
 
     private String updateWorkflow(Request request, Response response) throws Exception {
-        Workflow workflow = mapper.readValue(request.body(), Workflow.class);
-        workflowService.update(workflow);
+        var workflowSchema = mapper.readValue(request.body(), WorkflowSchema.class);
+        workflowService.update(workflowSchema);
         return "";
     }
 
@@ -38,14 +38,14 @@ public class WorkflowController {
     }
 
     public String addWorkflow(Request request, Response response) throws Exception {
-        Workflow workflow = mapper.readValue(request.body(), Workflow.class);
-        workflowService.add(workflow);
+        var workflowSchema = mapper.readValue(request.body(), WorkflowSchema.class);
+        workflowService.add(workflowSchema);
         return "";
     }
 
     public String deleteWorkflow(Request request, Response response) throws Exception {
-        Workflow workflow = mapper.readValue(request.body(), Workflow.class);
-        workflowService.delete(workflow);
+        var workflowSchema = mapper.readValue(request.body(), WorkflowSchema.class);
+        workflowService.delete(workflowSchema);
         return "";
     }
 

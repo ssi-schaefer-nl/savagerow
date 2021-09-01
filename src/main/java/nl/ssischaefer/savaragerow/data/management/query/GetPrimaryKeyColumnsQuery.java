@@ -1,11 +1,8 @@
 package nl.ssischaefer.savaragerow.data.management.query;
 
-import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
+import nl.ssischaefer.savaragerow.WorkspaceConfiguration;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class GetPrimaryKeyColumnsQuery {
     public List<String> execute() throws SQLException {
         List<String> pkColumns = new ArrayList<>();
 
-        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
+        Connection connection = DriverManager.getConnection(WorkspaceConfiguration.getDatabaseUrl());
         DatabaseMetaData metaData = connection.getMetaData();
 
         ResultSet pkResultSet = metaData.getPrimaryKeys(null, null, table);

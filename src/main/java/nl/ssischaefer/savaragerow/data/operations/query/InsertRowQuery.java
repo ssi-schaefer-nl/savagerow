@@ -26,7 +26,7 @@ public class InsertRowQuery extends AbstractQuery {
             if(columns.isEmpty()) throw new Exception("The row must have at least one field with data to insert a row");
 
             String sql = SQLDMLGenerator.generateInsertIntoQuery(toTable, columns);
-            PreparedStatement preparedStatement = sqlConnection.prepareStatement(sql);
+            var preparedStatement = sqlConnection.prepareStatement(sql);
             PreparedStatementParameterHelper.setForRow(preparedStatement, row, columns);
             return preparedStatement;
         }

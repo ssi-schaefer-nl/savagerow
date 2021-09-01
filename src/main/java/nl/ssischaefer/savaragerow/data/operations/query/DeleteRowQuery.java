@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.data.operations.query;
 
-import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
 import nl.ssischaefer.savaragerow.data.common.AbstractQuery;
+import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
 import nl.ssischaefer.savaragerow.data.common.sql.PreparedStatementParameterHelper;
 import nl.ssischaefer.savaragerow.data.common.sql.SQLDMLGenerator;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DeleteRowQuery extends AbstractQuery {
     private String table;
-    private List<RowCriteria> criteria;
+    private List<RowSelectionCriterion> criteria;
     private long row;
 
     public DeleteRowQuery setTable(String table) {
@@ -25,7 +25,7 @@ public class DeleteRowQuery extends AbstractQuery {
         return this;
     }
 
-    public DeleteRowQuery setCriteria(List<RowCriteria> criteria) {
+    public DeleteRowQuery setCriteria(List<RowSelectionCriterion> criteria) {
         this.criteria = criteria;
         return this;
     }

@@ -5,11 +5,13 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import { Grid } from "@material-ui/core";
+import { grey } from "@material-ui/core/colors";
 
 
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
+        height: '100%',
     },
     button: {
         marginRight: theme.spacing(1),
@@ -25,9 +27,9 @@ export default function HorizontalLinearStepper(props) {
 
     const handleNext = () => {
         const currentStep = steps[activeStep]
-        if(currentStep.onNext != undefined)
-             currentStep.onNext()
-        if(activeStep != steps.length - 1 ) 
+        if (currentStep.onNext != undefined)
+            currentStep.onNext()
+        if (activeStep != steps.length - 1)
             setActiveStep((prevActiveStep) => prevActiveStep + 1);
     };
 
@@ -38,21 +40,24 @@ export default function HorizontalLinearStepper(props) {
 
     return (
         <div className={classes.root}>
-            <Stepper activeStep={activeStep}>
-                {steps.map((step, index) => {
-                    const stepProps = {};
-                    const labelProps = {};
-                    return (
-                        <Step key={step.name} {...stepProps}>
-                            <StepLabel {...labelProps}>{step.name}</StepLabel>
-                        </Step>
-                    );
-                })}
-            </Stepper>
+            <Grid container direction='column' justify='space-between' style={{height: '100%'}}>
+                <Grid item>
+                    <Stepper activeStep={activeStep} style={{backgroundColor: grey[50], borderRadius: '30px'}}>
+                        {steps.map((step, index) => {
+                            const stepProps = {};
+                            const labelProps = {};
+                            return (
+                                <Step key={step.name} {...stepProps}>
+                                    <StepLabel {...labelProps}>{step.name}</StepLabel>
+                                </Step>
+                            );
+                        })}
+                    </Stepper>
+                </Grid>
+                <Grid item xs style={{padding: '1em 2em'}}>
 
-            <Grid direction="column" style={{ margin: "0 2em 0 2em" }} >
-                <Grid item >
                     {steps[activeStep].Component}
+
                 </Grid>
                 <Grid item>
                     <Button disabled={(activeStep === 0) || steps[activeStep].restrictBack} onClick={handleBack} className={classes.button}>Back</Button>
@@ -64,11 +69,8 @@ export default function HorizontalLinearStepper(props) {
                     >
                         {steps[activeStep].nextButton != undefined ? steps[activeStep].nextButton : "Next"}
                     </Button>
-
-
                 </Grid>
             </Grid>
-
         </div>
     );
 }

@@ -3,8 +3,8 @@ package nl.ssischaefer.savaragerow.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import nl.ssischaefer.savaragerow.data.common.exception.DatabaseException;
+import nl.ssischaefer.savaragerow.api.dto.TableSchemaDTO;
+import nl.ssischaefer.savaragerow.api.util.RequestParams;
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
 import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDatatype;
 import nl.ssischaefer.savaragerow.data.management.ManagementService;
@@ -12,12 +12,9 @@ import nl.ssischaefer.savaragerow.data.management.query.CreateTableQuery;
 import nl.ssischaefer.savaragerow.data.management.query.DeleteTableQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetTablesQuery;
 import nl.ssischaefer.savaragerow.data.management.query.RenameColumnQuery;
-import nl.ssischaefer.savaragerow.api.dto.TableSchemaDTO;
-import nl.ssischaefer.savaragerow.api.util.RequestParams;
 import spark.Request;
 import spark.Response;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -33,13 +30,13 @@ public class SchemaController {
     }
 
     public void setup(String prefix) {
-        get(prefix + "/:database/database/:table/schema", this::getSchema);
-        post(prefix + "/:database/database/:table", this::addTable);
-        post(prefix + "/:database/database/:table/column", this::addColumn);
-        put(prefix + "/:database/database/:table/column/:column", this::renameColumn);
-        delete(prefix + "/:database/database/:table", this::deleteTable);
-        delete(prefix + "/:database/database/:table/column/:column", this::deleteColumn);
-        get(prefix + "/:database/database/tables", this::getTables); }
+        get(prefix + "/database/:table/schema", this::getSchema);
+        post(prefix + "/database/:table", this::addTable);
+        post(prefix + "/database/:table/column", this::addColumn);
+        put(prefix + "/database/:table/column/:column", this::renameColumn);
+        delete(prefix + "/database/:table", this::deleteTable);
+        delete(prefix + "/database/:table/column/:column", this::deleteColumn);
+        get(prefix + "/database/tables", this::getTables); }
 
 
 

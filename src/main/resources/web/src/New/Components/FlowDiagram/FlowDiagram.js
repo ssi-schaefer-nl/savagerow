@@ -1,29 +1,19 @@
 import React, { useRef, useState } from 'react';
-
 import ReactFlow, {
-    removeElements,
-    addEdge,
-    Controls,
-    Background,
+    addEdge, Background, Controls, removeElements
 } from 'react-flow-renderer';
-import DecisionPoint from './Nodes/DecisionPoint/DecisionPoint';
-import Task from './Nodes/Task/Task';
-import WorkflowEnd from './Nodes/WorkflowEnd/WorkflowEnd';
-import WorkflowTrigger from './Nodes/WorkflowTrigger/WorkflowTrigger';
+import NodeTypes from './Nodes/NodeTypes';
 
-const nodeTypes = {
-    'Workflow Trigger': WorkflowTrigger,
-    'Decision Point': DecisionPoint,
-    'Task': Task,
-    'Workflow End': WorkflowEnd
-};
+
+
 
 let id = 1;
 const getId = () => `dndnode_${id++}`;
 
-const FlowDiagram = ({elements, onChangeElements, onAddedElement, onEditElement}) => {
+const FlowDiagram = ({ elements, onChangeElements, onEditElement }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
 
     const onLoad = (_reactFlowInstance) => {
         setReactFlowInstance(_reactFlowInstance);
@@ -53,12 +43,12 @@ const FlowDiagram = ({elements, onChangeElements, onAddedElement, onEditElement}
         };
 
         onChangeElements([...elements, newNode])
-        onAddedElement(newNode.id)
-
     };
 
+
+
     const onElementsRemove = (elementsToRemove) => onChangeElements(removeElements(elementsToRemove, elements));
-    const onConnect = (params) => onChangeElements(addEdge({...params, type: 'step'}, elements));
+    const onConnect = (params) => onChangeElements(addEdge({ ...params, type: 'step' }, elements));
 
     return (
         <div style={{ width: '100%', height: '100%' }} ref={reactFlowWrapper}>
@@ -71,14 +61,15 @@ const FlowDiagram = ({elements, onChangeElements, onAddedElement, onEditElement}
                 snapToGrid={true}
                 onDragOver={onDragOver}
                 onDrop={onDrop}
-                onNodeDoubleClick={(e, node) => onEditElement(node.id)}
+                onNodeDoubleClick={(e, node) => onEditElement(node)}
 
                 snapGrid={[5, 5]}
-                nodeTypes={nodeTypes}
+                nodeTypes={NodeTypes}
             >
                 <Controls />
                 <Background color="#aaa" gap={10} />
             </ReactFlow>
+
         </div>
     );
 };

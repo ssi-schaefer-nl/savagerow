@@ -1,14 +1,13 @@
 package nl.ssischaefer.savaragerow.data.operations.query;
 
-import nl.ssischaefer.savaragerow.workflow.model.FieldUpdate;
-import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
+import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
+import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;
 import nl.ssischaefer.savaragerow.data.common.AbstractQuery;
 import nl.ssischaefer.savaragerow.data.common.sql.PreparedStatementParameterHelper;
 import nl.ssischaefer.savaragerow.data.common.sql.SQLDMLGenerator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,8 +15,8 @@ import java.util.stream.Collectors;
 public class UpdateRowQuery extends AbstractQuery {
     private String table;
     private Map<String, String> row;
-    private List<RowCriteria> criteria;
-    private List<FieldUpdate> fieldUpdates;
+    private List<RowSelectionCriterion> criteria;
+    private List<UpdateInstruction> updateInstructions;
     private Long rowId;
 
     public UpdateRowQuery setTable(String table) {
@@ -30,13 +29,13 @@ public class UpdateRowQuery extends AbstractQuery {
         return this;
     }
 
-    public UpdateRowQuery setCriteria(List<RowCriteria> criteria) {
+    public UpdateRowQuery setCriteria(List<RowSelectionCriterion> criteria) {
         this.criteria = criteria;
         return this;
     }
 
-    public UpdateRowQuery setFieldUpdates(List<FieldUpdate> fieldUpdates) {
-        this.fieldUpdates = fieldUpdates;
+    public UpdateRowQuery setUpdateInstructions(List<UpdateInstruction> updateInstructions) {
+        this.updateInstructions = updateInstructions;
         return this;
     }
 
@@ -47,11 +46,11 @@ public class UpdateRowQuery extends AbstractQuery {
 
     @Override
     protected PreparedStatement generate(Connection sqlConnection) throws Exception {
-        if(criteria != null && fieldUpdates != null ) {
-            String sql = SQLDMLGenerator.generateUpdateQuery(table, fieldUpdates, criteria);
+        if(criteria != null && updateInstructions != null ) {
+            String sql = SQLDMLGenerator.generateUpdateQuery(table, updateInstructions, criteria);
             PreparedStatement preparedStatement = sqlConnection.prepareStatement(sql);
 
-            int nextIndex = PreparedStatementParameterHelper.setForFieldUpdate( 1, preparedStatement, fieldUpdates);
+            int nextIndex = PreparedStatementParameterHelper.setForUpdateInstructions( 1, preparedStatement, updateInstructions);
             PreparedStatementParameterHelper.setForRowCriteria(nextIndex, preparedStatement, criteria);
             return preparedStatement;
         }

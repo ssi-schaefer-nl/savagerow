@@ -1,11 +1,8 @@
 package nl.ssischaefer.savaragerow.data.common;
 
-import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
+import nl.ssischaefer.savaragerow.WorkspaceConfiguration;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +12,12 @@ public abstract class AbstractQuery {
     private List<Map<String, String>> result;
     private Connection sqlConnection;
     private PreparedStatement preparedStatement;
+    private int affectedRows;
     private Long generatedKey;
 
     public AbstractQuery executeQuery() throws Exception {
         setup();
-
+        System.out.println(preparedStatement);
         ResultSet rs = preparedStatement.executeQuery();
         retrieveResult(rs);
 
@@ -30,8 +28,8 @@ public abstract class AbstractQuery {
 
     public AbstractQuery executeUpdate() throws Exception {
         setup();
-
-        preparedStatement.executeUpdate();
+        System.out.println(preparedStatement);
+        affectedRows = preparedStatement.executeUpdate();
         ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
 
         if (generatedKeys.next()) generatedKey = generatedKeys.getLong(1);
@@ -48,7 +46,7 @@ public abstract class AbstractQuery {
     }
 
     private void setup() throws Exception {
-        sqlConnection = SQLiteDataSource.getForCurrentWorkspace();
+        sqlConnection = DriverManager.getConnection(WorkspaceConfiguration.getDatabaseUrl());
         preparedStatement = generate(sqlConnection);
     }
 
@@ -75,5 +73,13 @@ public abstract class AbstractQuery {
 
     public Long getGeneratedKey() {
         return generatedKey;
+    }
+
+    public int getAffectedRows() {
+        return affectedRows;
+    }
+
+    public void setAffectedRows(int affectedRows) {
+        this.affectedRows = affectedRows;
     }
 }

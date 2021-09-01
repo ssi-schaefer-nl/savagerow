@@ -1,7 +1,7 @@
 package nl.ssischaefer.savaragerow.data.common.sql;
 
-import nl.ssischaefer.savaragerow.workflow.model.FieldUpdate;
-import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
+import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;
+import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +16,7 @@ public class SQLDMLGenerator {
         return sql.concat(" WHERE rowid = " + rowid);
     }
 
-    public static String generateDeleteQuery(String table, List<RowCriteria> criteria) {
+    public static String generateDeleteQuery(String table, List<RowSelectionCriterion> criteria) {
         String whereClause = SQLClauseGenerator.generateWhereClause(criteria);
         String sql = generateDeleteQuery(table);
         return sql.concat(" " + whereClause);
@@ -38,7 +38,7 @@ public class SQLDMLGenerator {
         return String.format("UPDATE %s SET %s WHERE rowid = %s", table, setColumns, rowid);
     }
 
-    public static String generateUpdateQuery(String table, List<FieldUpdate> fieldUpdates, List<RowCriteria> criteria) {
+    public static String generateUpdateQuery(String table, List<UpdateInstruction> fieldUpdates, List<RowSelectionCriterion> criteria) {
         String setClause = SQLClauseGenerator.generateSetClause(fieldUpdates);
         String whereClause = SQLClauseGenerator.generateWhereClause(criteria);
         return String.format("UPDATE %s %s %s", table, setClause, whereClause);

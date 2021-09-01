@@ -1,8 +1,6 @@
 package nl.ssischaefer.savaragerow.data.management;
 
-import nl.ssischaefer.savaragerow.data.common.exception.DatabaseException;
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
-import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.data.operations.query.InsertRowQuery;
 import nl.ssischaefer.savaragerow.data.management.query.CreateTableQuery;
 import nl.ssischaefer.savaragerow.data.management.query.DeleteTableQuery;
@@ -10,9 +8,7 @@ import nl.ssischaefer.savaragerow.data.management.query.RenameTableQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetColumnsQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetForeignKeysQuery;
 import nl.ssischaefer.savaragerow.data.management.query.GetPrimaryKeyColumnsQuery;
-import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;

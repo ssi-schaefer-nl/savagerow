@@ -1,57 +1,53 @@
 package nl.ssischaefer.savaragerow.workflow;
 
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.PathNotFoundException;
-import net.minidev.json.JSONArray;
-import nl.ssischaefer.savaragerow.workflow.model.Workflow;
-import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTask;
+import nl.ssischaefer.savaragerow.common.schema.WorkflowSchema;
+import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowMapper;
+import nl.ssischaefer.savaragerow.workflow.model.workflowtrigger.AbstractWorkflowTrigger;
+import nl.ssischaefer.savaragerow.workflow.model.workflowtrigger.TableEventObserver;
+import nl.ssischaefer.savaragerow.workflow.model.workflowtrigger.TableTrigger;
+import nl.ssischaefer.savaragerow.workflow.persistence.WorkflowRepository;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class WorkflowService {
-    private final WorkflowDataSource dataSource;
-    private static final String WORKFLOW_KEY = Workflow.class.getSimpleName().toLowerCase();
+    private final WorkflowRepository repository;
+    private final TableEventObserver eventObserver;
+    private final WorkflowMapper mapper;
 
-    public WorkflowService(WorkflowDataSource dataSource) {
-        this.dataSource = dataSource;
+    public WorkflowService(WorkflowRepository repository, TableEventObserver eventObserver, WorkflowMapper mapper) {
+        this.repository = repository;
+        this.eventObserver = eventObserver;
+        this.mapper = mapper;
     }
 
-    public List<Workflow> findAll() throws Exception {
-        return readWorkflows(String.format("$.%s[*]", WORKFLOW_KEY));
+    public List<WorkflowSchema> findAll() {
+        return repository.getAll();
     }
 
-    public List<Workflow> findByTask(WorkflowTask task) throws Exception {
-        return readWorkflows(String.format("$.%s[?(@.table == '%s' && @.type == '%s')]", WORKFLOW_KEY, task.getTable(), task.getType()));
+    public void update(WorkflowSchema workflowSchema) {
+        repository.save(workflowSchema);
+        if(Boolean.TRUE.equals(workflowSchema.getEnabled())) loadWorkflow(workflowSchema.getId());
+        else eventObserver.removeTrigger(workflowSchema.getId());
     }
 
-    private List<Workflow> readWorkflows(String query) throws Exception {
-        JSONArray read;
-        try {
-            read = dataSource.getDocument().read(query);
-        } catch (PathNotFoundException e) {
-            read = dataSource.createEmptyDocument().read(query);
-        }
-        return read.stream().map(r -> new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true).convertValue(r, Workflow.class)).collect(Collectors.toList());
+    public void add(WorkflowSchema workflowSchema) {
+        update(workflowSchema);
     }
 
-    public void update(Workflow workflow) throws Exception {
-        dataSource.getDocument().set(String.format("$.%s[?(@.identifier == '%s')]", WORKFLOW_KEY, workflow.getIdentifier()), workflow);
-        dataSource.saveDocument();
+    private void loadWorkflow(String id) {
+        repository.get(id).ifPresent(ws -> {
+            if(Boolean.TRUE.equals(ws.getEnabled())) {
+                var tasks = mapper.mapSchemaToTasks(ws.getTasks());
+                AbstractWorkflowTrigger trigger = mapper.mapSchemaToTrigger(ws.getTrigger(), tasks);
+                trigger.setWorkflowId(ws.getId());
+                if (trigger instanceof TableTrigger) eventObserver.addTrigger((TableTrigger) trigger);
+            }
+        });
     }
 
-    public void add(Workflow workflow) throws Exception {
-        workflow.setIdentifier(UUID.randomUUID().toString());
-        dataSource.getDocument().add(String.format("$.%s", WORKFLOW_KEY), new ObjectMapper().convertValue(workflow, LinkedHashMap.class));
-        dataSource.saveDocument();
-    }
-
-    public void delete(Workflow workflow) throws Exception {
-        dataSource.getDocument().delete(String.format("$.%s[?(@.identifier == '%s')]", WORKFLOW_KEY, workflow.getIdentifier()));
-        dataSource.saveDocument();
+    public void delete(WorkflowSchema workflowSchema) {
+        repository.delete(workflowSchema.getId());
+        if(Boolean.FALSE.equals(workflowSchema.getEnabled())) eventObserver.removeTrigger(workflowSchema.getId());
     }
 
 

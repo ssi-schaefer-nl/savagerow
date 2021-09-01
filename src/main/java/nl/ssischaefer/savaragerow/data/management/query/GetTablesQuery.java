@@ -1,11 +1,8 @@
 package nl.ssischaefer.savaragerow.data.management.query;
 
-import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
+import nl.ssischaefer.savaragerow.WorkspaceConfiguration;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +10,7 @@ public class GetTablesQuery {
     private List<String> result;
 
     public GetTablesQuery execute() throws SQLException {
-        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
+        Connection connection = DriverManager.getConnection(WorkspaceConfiguration.getDatabaseUrl());
         DatabaseMetaData md = connection.getMetaData();
         ResultSet rs = md.getTables(null, null, "%", null);
 

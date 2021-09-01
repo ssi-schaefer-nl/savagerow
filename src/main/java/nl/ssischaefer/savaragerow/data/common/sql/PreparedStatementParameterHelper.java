@@ -1,22 +1,21 @@
 package nl.ssischaefer.savaragerow.data.common.sql;
 
-import nl.ssischaefer.savaragerow.workflow.model.FieldUpdate;
-import nl.ssischaefer.savaragerow.workflow.model.RowCriteria;
+import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;
+import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 
 public class PreparedStatementParameterHelper {
-    public static int setForRowCriteria(int startIndex, PreparedStatement preparedStatement, List<RowCriteria> criteria) throws SQLException {
+    public static int setForRowCriteria(int startIndex, PreparedStatement preparedStatement, List<RowSelectionCriterion> criteria) throws SQLException {
         int nextParamIndex = startIndex;
-        for (RowCriteria c : criteria) {
+        for (RowSelectionCriterion c : criteria) {
 
             String op = c.getComparator();
-            String val = c.getRequired();
+            String val = c.getValue();
 
             if (op.equals(">") || op.equals("<"))
                 preparedStatement.setLong(nextParamIndex, Long.parseLong(val));
@@ -39,10 +38,10 @@ public class PreparedStatementParameterHelper {
         return i;
     }
 
-    public static int setForFieldUpdate(int startIndex, PreparedStatement preparedStatement, List<FieldUpdate> fieldUpdates) throws SQLException {
+    public static int setForUpdateInstructions(int startIndex, PreparedStatement preparedStatement, List<UpdateInstruction> fieldUpdates) throws SQLException {
         int nextParamIndex = startIndex;
-        for (FieldUpdate update : fieldUpdates) {
-            if (update.getAction().equals("set"))
+        for (UpdateInstruction update : fieldUpdates) {
+            if (update.getOperation().equals("set"))
                 preparedStatement.setString(nextParamIndex, update.getValue());
             else
                 preparedStatement.setLong(nextParamIndex, Long.parseLong(update.getValue()));

@@ -1,11 +1,8 @@
 package nl.ssischaefer.savaragerow.data.management.query;
 
-import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
+import nl.ssischaefer.savaragerow.WorkspaceConfiguration;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +16,7 @@ public class GetForeignKeysQuery {
 
 
     public Map<String, String> execute() throws SQLException {
-        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
+        Connection connection = DriverManager.getConnection(WorkspaceConfiguration.getDatabaseUrl());
         DatabaseMetaData metaData = connection.getMetaData();
 
         ResultSet fkResultSet = metaData.getImportedKeys(connection.getCatalog(), null, table);

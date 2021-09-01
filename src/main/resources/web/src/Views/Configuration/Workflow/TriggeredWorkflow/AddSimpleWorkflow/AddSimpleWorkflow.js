@@ -5,7 +5,7 @@ import CreateWorkflowActions from "./CreateWorkflowActions/CreateWorkflowActions
 import WorkflowService from "../../../../../Service/WorkflowService/WorkflowService";
 import QueryService from "../../../../../Service/QueryService/QueryService";
 import { Select } from '@material-ui/core';
-import { MenuItem } from "react-contextmenu";
+import MenuItem from '@material-ui/core/MenuItem';
 import WorkflowConditions from "./WorkflowCondition/WorkflowCondition";
 
 export default function AddSimpleWorkflow(props) {

@@ -1,14 +1,26 @@
 package nl.ssischaefer.savaragerow;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.api.controller.*;
+import nl.ssischaefer.savaragerow.common.event.TableEvent;
+import nl.ssischaefer.savaragerow.common.schema.WorkflowSchema;
 import nl.ssischaefer.savaragerow.data.management.ManagementService;
+import nl.ssischaefer.savaragerow.data.operations.DynamicRepository;
 import nl.ssischaefer.savaragerow.data.operations.OperationsService;
-import nl.ssischaefer.savaragerow.api.util.RequestParams;
-import nl.ssischaefer.savaragerow.workspace.WorkspaceService;
-import nl.ssischaefer.savaragerow.workflow.WorkflowDataSource;
 import nl.ssischaefer.savaragerow.workflow.WorkflowService;
-import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTaskProducer;
-import nl.ssischaefer.savaragerow.workflow.workflowqueue.WorkflowTaskQueue;
+import nl.ssischaefer.savaragerow.workflow.mapper.CrudTaskSchemaMapper;
+import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowMapper;
+import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowTaskSchemaMapper;
+import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowTriggerSchemaMapper;
+import nl.ssischaefer.savaragerow.workflow.model.workflowtrigger.TableEventObserver;
+import nl.ssischaefer.savaragerow.workflow.persistence.WorkflowRepositoryImpl;
+import nl.ssischaefer.savaragerow.common.event.TableEventProducer;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static spark.Spark.*;
 
@@ -18,30 +30,43 @@ public class SavageRow {
     public static void main(String[] args) {
         port(Configuration.parseOrDefaultInteger("PORT", 9010));
         staticFiles.location("/public");
+        var executor = Executors.newFixedThreadPool(1);
 
-        var workflowService = new WorkflowService(WorkflowDataSource.get());
+        var eventQueue = new LinkedBlockingQueue<TableEvent>();
+        var workflowMapper = buildWorkflowMapper(eventQueue);
+
+        var workflowRepository = new WorkflowRepositoryImpl(WorkspaceConfiguration.getWorkflowPath());
+
+        var eventObserver = new TableEventObserver(eventQueue);
+        executor.submit(eventObserver);
+        var workflowService = new WorkflowService(workflowRepository, eventObserver, workflowMapper);
         var managementService = new ManagementService();
-        var taskQueue = WorkflowTaskQueue.initQueue(workflowService);
-        var taskProducer = new WorkflowTaskProducer(taskQueue);
-        var operationsService = new OperationsService(taskProducer);
+
+        var eventProducer = new TableEventProducer(eventQueue);
+        var operationsService = new OperationsService(eventProducer, new DynamicRepository());
 
         var schemaController = new SchemaController(managementService);
         var workflowController = new WorkflowController(workflowService);
         var rowController = new RowController(operationsService);
-        var workspaceController = new WorkspaceController();
+        try {
+            var schema = new ObjectMapper().readValue(Paths.get("/tmp", "input.json").toFile(), WorkflowSchema.class);
+            workflowService.add(schema);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        workspaceController.setup(API_PREFIX);
         schemaController.setup(API_PREFIX);
         workflowController.setup(API_PREFIX);
         rowController.setup(API_PREFIX);
 
-        setupBefore();
         setupExceptions();
     }
 
-    private static void setupBefore() {
-        before(API_PREFIX + "/:database/database/*", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
-        before(API_PREFIX + "/:database/workflow", (request, response) -> WorkspaceService.setCurrentWorkspace(request.params(RequestParams.Parameter.Database)));
+    private static WorkflowMapper buildWorkflowMapper(LinkedBlockingQueue<TableEvent> eventQueue) {
+        var ctskm = new CrudTaskSchemaMapper(new DynamicRepository(), new TableEventProducer(eventQueue));
+        var tksm = new WorkflowTaskSchemaMapper(ctskm);
+        var trsm = new WorkflowTriggerSchemaMapper();
+        return new WorkflowMapper(tksm, trsm);
     }
 
     private static void setupExceptions() {

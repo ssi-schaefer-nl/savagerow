@@ -21,10 +21,10 @@ public class RowController {
     }
 
     public void setup(String prefix) {
-        get(prefix + "/:database/database/:table/rows", this::getRows);
-        post(prefix + "/:database/database/:table/rows", this::addRows);
-        put(prefix + "/:database/database/:table/rows/:row", this::updateRow);
-        delete(prefix + "/:database/database/:table/rows/:row", this::deleteRow);
+        get(prefix + "/database/:table/rows", this::getRows);
+        post(prefix + "/database/:table/rows", this::addRows);
+        put(prefix + "/database/:table/rows/:row", this::updateRow);
+        delete(prefix + "/database/:table/rows/:row", this::deleteRow);
 
     }
 
@@ -35,18 +35,20 @@ public class RowController {
         List<Map<String, String>> res;
 
         if (!row.isEmpty() && NumberUtils.isParsable(row))
-            res = operations.getByRowId(table, Long.parseLong(row));
+            res = operations.get(table, Long.parseLong(row));
         else
-            res = operations.getAll(table);
+            res = operations.get(table);
 
         return new ObjectMapper().writeValueAsString(res);
     }
 
-    public String addRows(Request request, Response response) throws Exception {
-        String table = request.params(RequestParams.Parameter.Table);
-        SQLRow row = new ObjectMapper().readValue(request.body(), SQLRow.class);
 
-        return new ObjectMapper().writeValueAsString(operations.insert(table, row.getRow()));
+    public String addRows(Request request, Response response) throws Exception {
+            String table = request.params(RequestParams.Parameter.Table);
+            SQLRow row = new ObjectMapper().readValue(request.body(), SQLRow.class);
+
+            return new ObjectMapper().writeValueAsString(operations.insert(table, row.getRow()));
+
     }
 
 

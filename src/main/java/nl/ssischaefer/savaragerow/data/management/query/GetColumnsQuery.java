@@ -1,10 +1,11 @@
 package nl.ssischaefer.savaragerow.data.management.query;
 
-import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDataSource;
 import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDatatype;
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
+import nl.ssischaefer.savaragerow.WorkspaceConfiguration;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class GetColumnsQuery {
     public List<SQLColumn> execute() throws SQLException {
         List<SQLColumn> columnSchemaList = new ArrayList<>();
 
-        Connection connection = SQLiteDataSource.getForCurrentWorkspace();
+        Connection connection = DriverManager.getConnection(WorkspaceConfiguration.getDatabaseUrl());
         ResultSet columnsResultSet = connection.getMetaData().getColumns(null, null, table, null);
 
         while (columnsResultSet.next()) {
