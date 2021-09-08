@@ -1,5 +1,6 @@
 package nl.ssischaefer.savaragerow.api.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.workflow.WorkflowService;
@@ -22,9 +23,15 @@ public class WorkflowController {
         String url = prefix + "/workflow";
 
         get(url, this::getAllWorkflows);
+        get(url.concat("/:id"), this::getWorkflow);
+        get(url.concat("/generate/id"), this::getUniqueID);
         post(url, this::addWorkflow);
         put(url, this::updateWorkflow);
-        delete(url, this::deleteWorkflow);
+        delete(url.concat("/:id"), this::deleteWorkflow);
+    }
+
+    private String getUniqueID(Request request, Response response) throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(workflowService.generateUniqueID());
     }
 
     private String updateWorkflow(Request request, Response response) throws Exception {
@@ -43,10 +50,18 @@ public class WorkflowController {
         return "";
     }
 
-    public String deleteWorkflow(Request request, Response response) throws Exception {
-        var workflowSchema = mapper.readValue(request.body(), WorkflowSchema.class);
-        workflowService.delete(workflowSchema);
+    public String deleteWorkflow(Request request, Response response) {
+        String id = request.params("id");
+        workflowService.delete(id);
         return "";
     }
+
+
+    private String getWorkflow(Request request, Response response) throws JsonProcessingException {
+        String id = request.params("id");
+        return new ObjectMapper().writeValueAsString(workflowService.find(id));
+
+    }
+
 
 }

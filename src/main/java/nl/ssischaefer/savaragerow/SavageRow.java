@@ -51,6 +51,8 @@ public class SavageRow {
         try {
             var schema = new ObjectMapper().readValue(Paths.get("/tmp", "input.json").toFile(), WorkflowSchema.class);
             workflowService.add(schema);
+            schema = new ObjectMapper().readValue(Paths.get("/tmp", "input2.json").toFile(), WorkflowSchema.class);
+            workflowService.add(schema);
         } catch (IOException e) {
             e.printStackTrace();
         }

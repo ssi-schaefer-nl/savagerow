@@ -129,7 +129,7 @@ export default function OverviewFlow() {
 
         <div className={classes.toolbar} />
         <Switch>
-          <Route exact path="/" ><Home /></Route>
+          <Route exaect path="/" ><Home /></Route>
           <Route path="/tables" ><Tables /></Route>
           <Route path="/configuration"><Configure /></Route>
         </Switch>

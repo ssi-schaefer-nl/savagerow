@@ -4,12 +4,6 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import NodeTypes from './Nodes/NodeTypes';
 
-
-
-
-let id = 1;
-const getId = () => `dndnode_${id++}`;
-
 const FlowDiagram = ({ elements, onChangeElements, onEditElement }) => {
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);

@@ -1,6 +1,7 @@
 package nl.ssischaefer.savaragerow.common.schema;
 
 public class WorkflowTriggerSchema {
+    private String name;
     private String triggerType;
     private String table;
     private String tableEvent;
@@ -36,5 +37,13 @@ public class WorkflowTriggerSchema {
 
     public void setTask(Long task) {
         this.task = task;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

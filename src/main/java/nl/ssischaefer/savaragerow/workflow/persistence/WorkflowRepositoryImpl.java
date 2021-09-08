@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,7 +45,11 @@ public class WorkflowRepositoryImpl implements WorkflowRepository {
     @Override
     public Optional<WorkflowSchema> get(String id) {
         try {
-            var workflow = new ObjectMapper().readValue(Paths.get(workflowRootDirectory, id, WORKFLOW_FILENAME).toFile(), WorkflowSchema.class);
+            WorkflowSchema workflow = null;
+            File f = Paths.get(workflowRootDirectory, id, WORKFLOW_FILENAME).toFile();
+            if(f.exists())
+                workflow = new ObjectMapper().readValue(f, WorkflowSchema.class);
+
             return Optional.ofNullable(workflow);
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,7 +61,7 @@ public class WorkflowRepositoryImpl implements WorkflowRepository {
     public boolean delete(String id) {
         try {
             var path = Paths.get(workflowRootDirectory, id, WORKFLOW_FILENAME);
-            FileUtils.deleteDirectory(path.toFile());
+            FileUtils.deleteDirectory(path.toFile().getParentFile());
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,6 +79,6 @@ public class WorkflowRepositoryImpl implements WorkflowRepository {
         });
         if(workflowDirectories == null) return Collections.emptyList();
 
-        return Arrays.stream(workflowDirectories).map(this::get).filter(Optional::isEmpty).map(Optional::get).collect(Collectors.toList());
+        return Arrays.stream(workflowDirectories).map(this::get).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     }
 }

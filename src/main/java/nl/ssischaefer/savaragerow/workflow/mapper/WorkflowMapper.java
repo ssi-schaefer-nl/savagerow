@@ -8,6 +8,7 @@ import nl.ssischaefer.savaragerow.workflow.model.workflowtrigger.AbstractWorkflo
 import nl.ssischaefer.savaragerow.workflow.util.TaskLinker;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WorkflowMapper {
     private final WorkflowTaskSchemaMapper taskSchemaMapper;

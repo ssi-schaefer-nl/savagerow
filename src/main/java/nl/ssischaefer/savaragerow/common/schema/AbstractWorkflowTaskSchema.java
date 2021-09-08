@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CrudWorkflowTaskSchema.class, name = "crud"),
 })
 public abstract class AbstractWorkflowTaskSchema {
+    private String name;
     private Long id;
     private Long next;
     private String taskType;
@@ -36,5 +37,13 @@ public abstract class AbstractWorkflowTaskSchema {
 
     public void setTaskType(String taskType) {
         this.taskType = taskType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
