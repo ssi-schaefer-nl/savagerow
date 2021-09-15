@@ -86,7 +86,7 @@ const CreateNewPopup = ({ open, handleClose, onCreate }) => {
                 <TextField placeholder="Workflow name" value={name} onChange={(e) => setName(e.target.value)} />
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" color="primary" onClick={create}>Create</Button>
+                <Button variant="contained" disabled={name == undefined || name.length == 0} color="primary" onClick={create}>Create</Button>
                 <Button variant="contained" onClick={close} >Cancel</Button>
             </DialogActions>
 

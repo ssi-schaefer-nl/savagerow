@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.data.management.query;
+package nl.ssischaefer.savaragerow.data.query;
 
 import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDatatype;
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;

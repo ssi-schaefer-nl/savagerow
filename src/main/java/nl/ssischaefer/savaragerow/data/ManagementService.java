@@ -1,13 +1,13 @@
-package nl.ssischaefer.savaragerow.data.management;
+package nl.ssischaefer.savaragerow.data;
 
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
-import nl.ssischaefer.savaragerow.data.operations.query.InsertRowQuery;
-import nl.ssischaefer.savaragerow.data.management.query.CreateTableQuery;
-import nl.ssischaefer.savaragerow.data.management.query.DeleteTableQuery;
-import nl.ssischaefer.savaragerow.data.management.query.RenameTableQuery;
-import nl.ssischaefer.savaragerow.data.management.query.GetColumnsQuery;
-import nl.ssischaefer.savaragerow.data.management.query.GetForeignKeysQuery;
-import nl.ssischaefer.savaragerow.data.management.query.GetPrimaryKeyColumnsQuery;
+import nl.ssischaefer.savaragerow.data.query.InsertRowQuery;
+import nl.ssischaefer.savaragerow.data.query.CreateTableQuery;
+import nl.ssischaefer.savaragerow.data.query.DeleteTableQuery;
+import nl.ssischaefer.savaragerow.data.query.RenameTableQuery;
+import nl.ssischaefer.savaragerow.data.query.GetColumnsQuery;
+import nl.ssischaefer.savaragerow.data.query.GetForeignKeysQuery;
+import nl.ssischaefer.savaragerow.data.query.GetPrimaryKeyColumnsQuery;
 
 import java.sql.SQLException;
 import java.util.List;

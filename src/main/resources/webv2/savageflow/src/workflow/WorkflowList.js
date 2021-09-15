@@ -1,4 +1,4 @@
-import { Divider } from '@material-ui/core';
+import { Button, Divider } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -44,9 +44,9 @@ const WorkflowListItem = ({ workflow, onToggle, onDelete, onEdit }) => {
                     primary={name}
                 />
                 <ListItemSecondaryAction>
-                    <IconButton onClick={() => onToggle(id)}>
-                        {enabled ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
-                    </IconButton>
+                    <Button variant="outlined" onClick={() => onToggle(id)}>
+                        {enabled ? "Disable" : "Enable"}
+                    </Button>
                     <IconButton edge="end" aria-label="edit" onClick={() => onEdit(id)}>
                         <EditIcon />
                     </IconButton>

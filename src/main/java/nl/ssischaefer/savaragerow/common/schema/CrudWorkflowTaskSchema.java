@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CrudWorkflowTaskSchema extends AbstractWorkflowTaskSchema {
-    private String operation;
+    private String subtype;
     private String table;
     private Map<String, String> rowTemplate;
     private List<RowSelectionCriterionSchema> rowSelectionCriteria;
@@ -12,12 +12,12 @@ public class CrudWorkflowTaskSchema extends AbstractWorkflowTaskSchema {
 
 
 
-    public String getOperation() {
-        return operation;
+    public String getSubtype() {
+        return subtype;
     }
 
-    public void setOperation(String operation) {
-        this.operation = operation;
+    public void setSubtype(String subtype) {
+        this.subtype = subtype;
     }
 
     public String getTable() {

@@ -2,10 +2,10 @@ package nl.ssischaefer.savaragerow.workflow.model.task.crud;
 
 
 import nl.ssischaefer.savaragerow.common.event.TableEventProducer;
-import nl.ssischaefer.savaragerow.data.operations.DynamicRepository;
+import nl.ssischaefer.savaragerow.data.DynamicRepository;
+import nl.ssischaefer.savaragerow.data.DynamicRepositoryImpl;
 import nl.ssischaefer.savaragerow.workflow.model.task.AbstractWorkflowTask;
 import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
-import org.apache.commons.lang3.text.StrSubstitutor;
 import org.apache.commons.text.StringSubstitutor;;
 
 import java.util.List;
@@ -46,7 +46,7 @@ public abstract class AbstractCrudWorkflowTask extends AbstractWorkflowTask {
      * @return List RowSelectionCriterion objects transformed from the templates with resolved placeholders.
      */
     public List<RowSelectionCriterion> getRowSelectionCriteria(Map<String, String> input) {
-        var sub = new StringSubstitutor(input, "{", "}");
+        var sub = new StringSubstitutor(input, "${", "}");
         return rowSelectionCriteriaTemplate.stream()
                 .map(t -> new RowSelectionCriterion(t.getColumn(), t.getComparator(), sub.replace(t.getValue())))
                 .collect(Collectors.toList());

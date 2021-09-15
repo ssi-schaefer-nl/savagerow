@@ -7,11 +7,13 @@ import nl.ssischaefer.savaragerow.api.dto.TableSchemaDTO;
 import nl.ssischaefer.savaragerow.api.util.RequestParams;
 import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
 import nl.ssischaefer.savaragerow.data.common.sql.SQLiteDatatype;
-import nl.ssischaefer.savaragerow.data.management.ManagementService;
-import nl.ssischaefer.savaragerow.data.management.query.CreateTableQuery;
-import nl.ssischaefer.savaragerow.data.management.query.DeleteTableQuery;
-import nl.ssischaefer.savaragerow.data.management.query.GetTablesQuery;
-import nl.ssischaefer.savaragerow.data.management.query.RenameColumnQuery;
+import nl.ssischaefer.savaragerow.data.ManagementService;
+import nl.ssischaefer.savaragerow.data.query.CreateTableQuery;
+import nl.ssischaefer.savaragerow.data.query.DeleteTableQuery;
+import nl.ssischaefer.savaragerow.data.query.GetTablesQuery;
+import nl.ssischaefer.savaragerow.data.query.RenameColumnQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
@@ -24,19 +26,24 @@ import static spark.Spark.*;
 
 public class SchemaController {
     private final ManagementService managementService;
+    private final Logger logger = LoggerFactory.getLogger("SchemaController");
 
     public SchemaController(ManagementService managementService) {
         this.managementService = managementService;
     }
 
     public void setup(String prefix) {
-        get(prefix + "/database/:table/schema", this::getSchema);
-        post(prefix + "/database/:table", this::addTable);
-        post(prefix + "/database/:table/column", this::addColumn);
-        put(prefix + "/database/:table/column/:column", this::renameColumn);
-        delete(prefix + "/database/:table", this::deleteTable);
-        delete(prefix + "/database/:table/column/:column", this::deleteColumn);
-        get(prefix + "/database/tables", this::getTables); }
+        String url = prefix + "/database";
+
+        logger.info("Setting up Schema Controller routes with prefix " + url);
+
+        get(url.concat("/:table/schema"), this::getSchema);
+        post(url.concat("/:table"), this::addTable);
+        post(url.concat("/:table/column"), this::addColumn);
+        put(url.concat("/:table/column/:column"), this::renameColumn);
+        delete(url.concat("/:table"), this::deleteTable);
+        delete(url.concat("/:table/column/:column"), this::deleteColumn);
+        get(url.concat("/tables"), this::getTables); }
 
 
 

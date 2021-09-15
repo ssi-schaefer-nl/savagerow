@@ -21,5 +21,8 @@ public class SQLDQLGenerator {
     }
 
 
+    public static String generateSelectQuery(String table, Integer top) {
+        return String.format("select rowid as rowid, * from %s limit %d", table, top);
 
+    }
 }

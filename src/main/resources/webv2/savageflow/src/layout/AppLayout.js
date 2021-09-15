@@ -22,8 +22,9 @@ const useStyles = makeStyles((theme) => ({
     },
     content: {
         flexGrow: 1,
+        width: "80vw",
         height: '100vh',
-        padding: theme.spacing(3),
+        padding: theme.spacing(2),
         backgroundColor: "white",
     },
 }))

@@ -1,15 +1,13 @@
-package nl.ssischaefer.savaragerow.data.operations;
+package nl.ssischaefer.savaragerow.data;
 
 import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
 import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;
-import nl.ssischaefer.savaragerow.data.operations.query.DeleteRowQuery;
-import nl.ssischaefer.savaragerow.data.operations.query.FindRowQuery;
-import nl.ssischaefer.savaragerow.data.operations.query.InsertRowQuery;
-import nl.ssischaefer.savaragerow.data.operations.query.UpdateRowQuery;
+import nl.ssischaefer.savaragerow.data.query.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class DynamicRepository {
+public class DynamicRepositoryImpl implements DynamicRepository {
     public List<Map<String, String>> get(String table, List<RowSelectionCriterion> rowSelectionCriteria) {
         try {
             return new FindRowQuery().setTable(table).setCriteria(rowSelectionCriteria).executeQuery().getResult();
@@ -19,9 +17,9 @@ public class DynamicRepository {
         }
     }
 
-    public List<Map<String, String>> nGet(String table, int n) {
+    public List<String> getSchema(String table) {
         try {
-            return new FindRowQuery().setTable(table).setTop(n).executeQuery().getResult();
+            return new GetColumnsQuery().setTable(table).execute().stream().map(c -> c.getName()).collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();

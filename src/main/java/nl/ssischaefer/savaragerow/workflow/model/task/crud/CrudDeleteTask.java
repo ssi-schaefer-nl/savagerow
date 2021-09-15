@@ -21,4 +21,13 @@ public class CrudDeleteTask extends AbstractCrudWorkflowTask {
         }
         return new HashMap<>();
     }
+
+    @Override
+    public Map<String, String> getOutput() {
+        if(table == null) return new HashMap<>();
+        var output = new HashMap<String, String>();
+        List<String> columns = repository.getSchema(table);
+        columns.forEach(c -> output.put(c, String.format("${%s}", c)));
+        return output;
+    }
 }

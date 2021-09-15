@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.data.operations.query;
+package nl.ssischaefer.savaragerow.data.query;
 
 
 import nl.ssischaefer.savaragerow.data.common.AbstractQuery;

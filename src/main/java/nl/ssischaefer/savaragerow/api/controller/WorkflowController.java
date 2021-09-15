@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.ssischaefer.savaragerow.workflow.WorkflowService;
 import nl.ssischaefer.savaragerow.common.schema.WorkflowSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 
 import static spark.Spark.*;
 
 public class WorkflowController {
+    private final Logger logger = LoggerFactory.getLogger("WorkflowController");
+
     private final WorkflowService workflowService;
     private final ObjectMapper mapper;
 
@@ -21,13 +25,21 @@ public class WorkflowController {
 
     public void setup(String prefix) {
         String url = prefix + "/workflow";
+        logger.info("Setting up Workflow Controller routes with prefix " + url);
 
         get(url, this::getAllWorkflows);
         get(url.concat("/:id"), this::getWorkflow);
+        get(url.concat("/:id/:task/input"), this::getTaskInput);
         get(url.concat("/generate/id"), this::getUniqueID);
         post(url, this::addWorkflow);
         put(url, this::updateWorkflow);
         delete(url.concat("/:id"), this::deleteWorkflow);
+    }
+
+    private String getTaskInput(Request request, Response response) throws JsonProcessingException {
+        String id = request.params("id");
+        String task = request.params("task");
+        return new ObjectMapper().writeValueAsString(workflowService.getInputForTask(id, Long.valueOf(task)));
     }
 
     private String getUniqueID(Request request, Response response) throws JsonProcessingException {

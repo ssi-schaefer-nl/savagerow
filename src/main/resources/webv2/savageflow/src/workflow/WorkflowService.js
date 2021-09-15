@@ -32,6 +32,11 @@ class WorkflowService {
             .catch(res => onFailure(res.response))
     }
 
+    save(workflow, onSuccess, onFailure) {
+        new HttpHelper().put("/workflow", workflow)
+            .then(res => onSuccess(res.data))
+            .catch(res => onFailure(res))
+    }
 
     createNew(name, onSuccess, onFailure) {
         let httpHelper = new HttpHelper()
@@ -45,6 +50,13 @@ class WorkflowService {
             .catch(idFailure => onFailure(idFailure))
     }
 
+    getTaskInput(workflow, taskId, onSuccess, onFailure) {
+        let httpHelper = new HttpHelper()
+
+        httpHelper.get(`/workflow/${workflow}/${taskId}/input`)
+            .then(res => onSuccess(res.data))
+            .catch(res => onFailure(res.response))
+    }
 }
 
 export default WorkflowService

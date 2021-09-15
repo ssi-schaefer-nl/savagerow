@@ -17,7 +17,6 @@ public abstract class AbstractQuery {
 
     public AbstractQuery executeQuery() throws Exception {
         setup();
-        System.out.println(preparedStatement);
         ResultSet rs = preparedStatement.executeQuery();
         retrieveResult(rs);
 
@@ -28,7 +27,6 @@ public abstract class AbstractQuery {
 
     public AbstractQuery executeUpdate() throws Exception {
         setup();
-        System.out.println(preparedStatement);
         affectedRows = preparedStatement.executeUpdate();
         ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
 

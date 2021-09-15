@@ -1,0 +1,80 @@
+Date : 2021-09-13 14:51:37
+Directory : c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src
+Total : 50 files,  3460 codes, 11 comments, 631 blanks, all 4102 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| JavaScript |         50 |      3,460 |         11 |        631 |      4,102 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                                     | files      | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                                        |         50 |      3,460 |         11 |        631 |      4,102 |
+| common                                                                                                                   |          2 |         82 |          1 |         22 |        105 |
+| layout                                                                                                                   |          3 |        181 |          1 |         21 |        203 |
+| table                                                                                                                    |          4 |        200 |          0 |         37 |        237 |
+| workflow                                                                                                                 |         13 |        992 |          3 |        182 |      1,177 |
+| workflow copy                                                                                                            |         26 |      1,984 |          6 |        364 |      2,354 |
+| workflow copy\workflow                                                                                                   |         13 |        992 |          3 |        182 |      1,177 |
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                                 | language   | code       | comment    | blank      | total      |
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\App.js                                            | JavaScript |         12 |          0 |          3 |         15 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\common\HttpHelper.js                              | JavaScript |         38 |          1 |         11 |         50 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\common\TabMenu.js                                 | JavaScript |         44 |          0 |         11 |         55 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\index.js                                          | JavaScript |          9 |          0 |          2 |         11 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\layout\AppLayout.js                               | JavaScript |         61 |          0 |          4 |         65 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\layout\Routes.js                                  | JavaScript |         26 |          0 |          2 |         28 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\layout\Sidebar.js                                 | JavaScript |         94 |          1 |         15 |        110 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\table\AddRowDialog.js                             | JavaScript |         59 |          0 |          5 |         64 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\table\DataTable.js                                | JavaScript |         87 |          0 |         14 |        101 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\table\TableService.js                             | JavaScript |         34 |          0 |         11 |         45 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\table\Tables.js                                   | JavaScript |         20 |          0 |          7 |         27 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\CrudTaskForms.js                    | JavaScript |        221 |          0 |         20 |        241 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\EditWorkflow.js                     | JavaScript |        125 |          0 |         27 |        152 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\FlowDiagram.js                      | JavaScript |         32 |          0 |         11 |         43 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\FlowDiagramContextMenu.js           | JavaScript |         33 |          0 |          5 |         38 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\FlowDiagramElementUtils.js          | JavaScript |         69 |          3 |         20 |         92 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\ManageWorkflows.js                  | JavaScript |         81 |          0 |         17 |         98 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\ReactFlowNodes.js                   | JavaScript |         79 |          0 |         14 |         93 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\TaskEditDialog.js                   | JavaScript |         93 |          0 |         12 |        105 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\TriggerEditDialog.js                | JavaScript |         87 |          0 |         18 |        105 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\WorkflowList.js                     | JavaScript |         59 |          0 |          6 |         65 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\WorkflowService.js                  | JavaScript |         50 |          0 |         12 |         62 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\WorkflowUtility.js                  | JavaScript |         41 |          0 |         13 |         54 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\Workflows.js                        | JavaScript |         22 |          0 |          7 |         29 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\CrudTaskForms.js           | JavaScript |        221 |          0 |         20 |        241 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\EditWorkflow.js            | JavaScript |        125 |          0 |         27 |        152 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\FlowDiagram.js             | JavaScript |         32 |          0 |         11 |         43 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\FlowDiagramContextMenu.js  | JavaScript |         33 |          0 |          5 |         38 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\FlowDiagramElementUtils.js | JavaScript |         69 |          3 |         20 |         92 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\ManageWorkflows.js         | JavaScript |         81 |          0 |         17 |         98 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\ReactFlowNodes.js          | JavaScript |         79 |          0 |         14 |         93 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\TaskEditDialog.js          | JavaScript |         93 |          0 |         12 |        105 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\TriggerEditDialog.js       | JavaScript |         87 |          0 |         18 |        105 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\WorkflowList.js            | JavaScript |         59 |          0 |          6 |         65 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\WorkflowService.js         | JavaScript |         50 |          0 |         12 |         62 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\WorkflowUtility.js         | JavaScript |         41 |          0 |         13 |         54 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow copy\workflow\Workflows.js               | JavaScript |         22 |          0 |          7 |         29 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\CrudTaskForms.js                         | JavaScript |        221 |          0 |         20 |        241 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\EditWorkflow.js                          | JavaScript |        125 |          0 |         27 |        152 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\FlowDiagram.js                           | JavaScript |         32 |          0 |         11 |         43 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\FlowDiagramContextMenu.js                | JavaScript |         33 |          0 |          5 |         38 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\FlowDiagramElementUtils.js               | JavaScript |         69 |          3 |         20 |         92 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\ManageWorkflows.js                       | JavaScript |         81 |          0 |         17 |         98 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\ReactFlowNodes.js                        | JavaScript |         79 |          0 |         14 |         93 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\TaskEditDialog.js                        | JavaScript |         93 |          0 |         12 |        105 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\TriggerEditDialog.js                     | JavaScript |         87 |          0 |         18 |        105 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\WorkflowList.js                          | JavaScript |         59 |          0 |          6 |         65 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\WorkflowService.js                       | JavaScript |         50 |          0 |         12 |         62 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\WorkflowUtility.js                       | JavaScript |         41 |          0 |         13 |         54 |
+| c:\Users\vincent\git\savagerow\src\main\resources\webv2\savageflow\src\workflow\Workflows.js                             | JavaScript |         22 |          0 |          7 |         29 |
+| Total                                                                                                                    |            |      3,460 |         11 |        631 |      4,102 |
++--------------------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

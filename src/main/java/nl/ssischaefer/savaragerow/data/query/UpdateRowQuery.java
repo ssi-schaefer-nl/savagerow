@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.data.operations.query;
+package nl.ssischaefer.savaragerow.data.query;
 
 import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
 import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;

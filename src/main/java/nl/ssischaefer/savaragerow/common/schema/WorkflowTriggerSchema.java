@@ -1,5 +1,7 @@
 package nl.ssischaefer.savaragerow.common.schema;
 
+import java.util.Map;
+
 public class WorkflowTriggerSchema {
     private String name;
     private String triggerType;
@@ -46,4 +48,5 @@ public class WorkflowTriggerSchema {
     public void setName(String name) {
         this.name = name;
     }
+
 }

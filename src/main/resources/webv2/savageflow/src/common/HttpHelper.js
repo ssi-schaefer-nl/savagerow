@@ -35,8 +35,10 @@ class HttpHelper {
     return this.http.put(this.getUrl(url), data)
   }
 
-  delete(url) {
-    return this.http.delete(this.getUrl(url))
+  delete(url, data = null) {
+    if(data == null) 
+      return this.http.delete(this.getUrl(url))
+      else return this.http.delete(this.getUrl(url), { data: data})
   }
 
 

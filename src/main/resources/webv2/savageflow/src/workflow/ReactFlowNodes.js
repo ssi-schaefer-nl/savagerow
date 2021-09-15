@@ -1,5 +1,4 @@
 import { makeStyles, Typography } from '@material-ui/core';
-import { grey } from '@material-ui/core/colors';
 import React from 'react';
 import { Handle } from 'react-flow-renderer';
 import { nodeHeight, nodeWidth } from './FlowDiagramElementUtils';
@@ -14,7 +13,7 @@ const useStyles = makeStyles({
         justifyContent: "center",
         height: nodeHeight,
         border: "2px solid black",
-        backgroundColor: grey[50]
+        backgroundColor: "white"
     },
 });
 
@@ -90,4 +89,4 @@ const ReactFlowDecisionNode = ({ data, isConnectable }) => {
 }
 
 
-export { ReactFlowTaskNode, ReactFlowTriggerNode }
+export { ReactFlowTaskNode, ReactFlowTriggerNode };

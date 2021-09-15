@@ -4,10 +4,12 @@ import nl.ssischaefer.savaragerow.common.event.TableEventProducer;
 import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
 import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;
 import nl.ssischaefer.savaragerow.common.schema.CrudWorkflowTaskSchema;
-import nl.ssischaefer.savaragerow.data.operations.DynamicRepository;
+import nl.ssischaefer.savaragerow.data.DynamicRepository;
+import nl.ssischaefer.savaragerow.data.DynamicRepositoryImpl;
 import nl.ssischaefer.savaragerow.workflow.model.task.AbstractWorkflowTask;
 import nl.ssischaefer.savaragerow.workflow.model.task.crud.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ public class CrudTaskSchemaMapper {
     public AbstractWorkflowTask mapSchemaToTask(CrudWorkflowTaskSchema taskSchema) {
         AbstractCrudWorkflowTask task = null;
 
-        switch(taskSchema.getOperation()) {
+        switch(taskSchema.getSubtype()) {
             case "insert":
                 task = new CrudInsertTask().setRowTemplate(taskSchema.getRowTemplate());
                 break;
@@ -48,12 +50,15 @@ public class CrudTaskSchemaMapper {
     }
 
     private List<RowSelectionCriterion> mapRowSelectionCriteria(CrudWorkflowTaskSchema taskSchema) {
+        if(taskSchema.getRowSelectionCriteria() == null) return new ArrayList<>();
         return taskSchema.getRowSelectionCriteria().stream()
                 .map(c -> new RowSelectionCriterion(c.getColumn(), c.getComparator(), c.getValue()))
                 .collect(Collectors.toList());
     }
 
     private List<UpdateInstruction> mapUpdateInstructions(CrudWorkflowTaskSchema taskSchema) {
+        if(taskSchema.getUpdateInstructions() == null) return new ArrayList<>();
+
         return taskSchema.getUpdateInstructions().stream()
                 .map(i -> new UpdateInstruction(i.getField(), i.getOperation(), i.getValue()))
                 .collect(Collectors.toList());

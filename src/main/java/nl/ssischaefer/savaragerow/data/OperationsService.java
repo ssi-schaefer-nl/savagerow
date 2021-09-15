@@ -1,4 +1,4 @@
-package nl.ssischaefer.savaragerow.data.operations;
+package nl.ssischaefer.savaragerow.data;
 
 import nl.ssischaefer.savaragerow.common.event.TableEvent;
 import nl.ssischaefer.savaragerow.common.event.TableEventProducer;

@@ -1,0 +1,10 @@
+"filename", "language", "JavaScript", "comment", "blank", "total"
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\ConfigureService.js", "JavaScript", 22, 0, 11, 33
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\DefinitionService\DefinitionService.js", "JavaScript", 46, 0, 12, 58
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\ErrorMessages\ErrorMessages.js", "JavaScript", 11, 0, 2, 13
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\HttpHelper.js", "JavaScript", 38, 1, 11, 50
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\ManipulationService\ManipulationService.js", "JavaScript", 54, 0, 13, 67
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\QueryService\QueryService.js", "JavaScript", 33, 0, 7, 40
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\WorkflowService\WorkflowService.js", "JavaScript", 69, 0, 23, 92
+"c:\Users\vincent\git\savagerow\src\main\resources\web\src\Service\WorkspaceService\WorkspaceService.js", "JavaScript", 23, 0, 6, 29
+"Total", "-", 296, 1, 85, 382

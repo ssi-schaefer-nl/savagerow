@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CrudUpdateTask extends AbstractCrudWorkflowTask {
+
     private List<UpdateInstruction> updateInstructionTemplates;
 
     public List<UpdateInstruction> getUpdateInstructionTemplates() {
@@ -45,9 +46,19 @@ public class CrudUpdateTask extends AbstractCrudWorkflowTask {
     }
 
     private List<UpdateInstruction> getUpdateInstructions(Map<String, String> input) {
-        var sub = new StringSubstitutor(input, "{", "}");
+        var sub = new StringSubstitutor(input, "${", "}");
         return updateInstructionTemplates.stream()
                 .map(t -> new UpdateInstruction(t.getField(), t.getOperation(), sub.replace(t.getValue())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, String> getOutput() {
+        if(table == null) return new HashMap<>();
+        var output = new HashMap<String, String>();
+        List<String> columns = repository.getSchema(table);
+        columns.forEach(c -> output.put(String.format("old.%s", c), String.format("${old.%s}", c)));
+        columns.forEach(c -> output.put(String.format("new.%s", c), String.format("${new.%s}", c)));
+        return output;
     }
 }

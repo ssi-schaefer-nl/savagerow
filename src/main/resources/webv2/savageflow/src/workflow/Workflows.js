@@ -1,17 +1,28 @@
 import { useState } from "react";
+import TabMenu from "../common/TabMenu";
 import EditWorkflow from "./EditWorkflow";
 import ManageWorkflows from "./ManageWorkflows";
 
-const Workflows = (props) => {
-    const [editingWorkflow, setEditingWorkflow] = useState(null)
-    window.onbeforeunload = (event) => {
-        return null; // undo preventing of refresh set by EditWorkflow
-    };
+const tabs = ["Manage", "Monitor"]
 
-    if (editingWorkflow == null)
-        return <ManageWorkflows onEdit={setEditingWorkflow} />
-    else
-        return <EditWorkflow workflowId={editingWorkflow} onCancel={() => setEditingWorkflow(null)}/>
+const Workflows = (props) => {
+    const [currentTab, setCurrentTab] = useState(tabs[0])
+    const [editingWorkflow, setEditingWorkflow] = useState(null)
+
+    const Content = () => {
+        if (currentTab === "Manage" && editingWorkflow == null) {
+            return <ManageWorkflows onEdit={setEditingWorkflow} />
+
+        }
+        else return null
+    }
+
+    if (editingWorkflow != null) return <EditWorkflow workflowId={editingWorkflow} onCancel={() => setEditingWorkflow(null)} />
+    return (
+        <TabMenu tabs={tabs} onChange={setCurrentTab}>
+            <Content />
+        </TabMenu>
+    )
 
 }
 
