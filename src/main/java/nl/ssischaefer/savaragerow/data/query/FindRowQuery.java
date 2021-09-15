@@ -13,6 +13,7 @@ import java.util.List;
 public class FindRowQuery extends AbstractQuery {
     private String table;
     private Long rowId;
+    private Integer top;
     private List<RowSelectionCriterion> criteria;
 
     public FindRowQuery setTable(String table) {
@@ -43,6 +44,9 @@ public class FindRowQuery extends AbstractQuery {
             String sql = SQLDQLGenerator.generateSelectQuery(table, criteria);
             preparedStatement = sqlConnection.prepareStatement(sql);
             PreparedStatementParameterHelper.setForRowCriteria(1, preparedStatement, criteria);
+        } else if (top != null) {
+            String sql = SQLDQLGenerator.generateSelectQuery(table, top);
+            preparedStatement = sqlConnection.prepareStatement(sql);
         } else {
             String sql = SQLDQLGenerator.generateSelectQuery(table);
             preparedStatement = sqlConnection.prepareStatement(sql);
@@ -50,5 +54,10 @@ public class FindRowQuery extends AbstractQuery {
 
         return preparedStatement;
 
+    }
+
+    public FindRowQuery setTop(Integer top) {
+        this.top = top;
+        return this;
     }
 }

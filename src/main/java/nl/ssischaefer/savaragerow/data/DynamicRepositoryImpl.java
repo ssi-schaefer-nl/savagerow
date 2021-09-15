@@ -7,9 +7,7 @@ import nl.ssischaefer.savaragerow.data.operations.query.FindRowQuery;
 import nl.ssischaefer.savaragerow.data.operations.query.InsertRowQuery;
 import nl.ssischaefer.savaragerow.data.operations.query.UpdateRowQuery;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DynamicRepository {
     public List<Map<String, String>> get(String table, List<RowSelectionCriterion> rowSelectionCriteria) {
@@ -18,6 +16,15 @@ public class DynamicRepository {
         } catch (Exception e) {
             e.printStackTrace();
             return Collections.emptyList();
+        }
+    }
+
+    public List<Map<String, String>> nGet(String table, int n) {
+        try {
+            return new FindRowQuery().setTable(table).setTop(n).executeQuery().getResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 
