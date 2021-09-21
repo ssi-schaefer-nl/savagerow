@@ -73,6 +73,7 @@ const CrudTaskForm = ({ task, onChange }) => {
         </Grid>
 
     )
+
 }
 
 const SelectTableForm = ({ tables, table, onChange }) => {

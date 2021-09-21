@@ -49,7 +49,7 @@ class WorkflowService {
             })
             .catch(idFailure => onFailure(idFailure))
     }
-
+    
     getTaskInput(workflow, taskId, onSuccess, onFailure) {
         let httpHelper = new HttpHelper()
 

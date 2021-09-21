@@ -7,7 +7,7 @@ import NodeContextMenu from "./NodeContextMenu";
 import TaskEditDialog from "./TaskEditDialog";
 import TriggerEditDialog from "./TriggerEditDialog";
 import WorkflowService from "./WorkflowService";
-import { addTaskToWorkflow, addTriggerToWorkflow, connectNodes, deleteNode, saveTaskToWorkflow, saveTriggerToWorkflow } from "./WorkflowUtility";
+import { addDecisionToWorkflow, addTaskToWorkflow, addTriggerToWorkflow, connectNodes, deleteNode, saveTaskToWorkflow, saveTriggerToWorkflow } from "./WorkflowUtility";
 
 const EditWorkflow = ({ workflowId, onCancel }) => {
     const [workflow, setWorkflow] = useState(null)
@@ -33,7 +33,8 @@ const EditWorkflow = ({ workflowId, onCancel }) => {
     const handleAddTrigger = (type) => setWorkflow(w => addTriggerToWorkflow(w, "New Trigger", type))
 
     const handleAddTask = (type, subtype) => setWorkflow(w => addTaskToWorkflow(w, `New ${type} ${subtype} task`, type, subtype))
-    // const handleAddDecision = (type) => setWorkflow(w => addDecisionToWorkflow(w, "New Decision", type))
+
+    const handleAddDecision = (type) => setWorkflow(w => addDecisionToWorkflow(w, "New Decision", type))
 
     const handlePaneContextMenu = (event) => {
         event.preventDefault();
@@ -44,6 +45,7 @@ const EditWorkflow = ({ workflowId, onCancel }) => {
         if (nodeId == TRIGGER_ID) setEditTrigger(workflow.trigger)
         else if (workflow.tasks != null) {
             const task = workflow.tasks.find(t => t.id == nodeId)
+            console.log(task)
             setEditTask(task)
         }
     }
@@ -71,7 +73,6 @@ const EditWorkflow = ({ workflowId, onCancel }) => {
         setNodeIdForContextMenu(node.id)
     }
 
-    const handleSaveWorkflow = () => new WorkflowService().save(workflow, () => setWorkflow(null), console.log)
 
     const content = () => {
         if (workflow != null) return (
@@ -104,10 +105,7 @@ const EditWorkflow = ({ workflowId, onCancel }) => {
             <Grid container spacing={1}>
                 <Grid item container direction='row' spacing={2}>
                     <Grid item>
-                        <Button variant="outlined" onClick={onCancel}>Cancel</Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="outlined" onClick={handleSaveWorkflow}>Save</Button>
+                        <Button variant="outlined" onClick={onCancel}>Back</Button>
                     </Grid>
                 </Grid>
                 {content()}
@@ -120,7 +118,7 @@ const EditWorkflow = ({ workflowId, onCancel }) => {
                     onSave={handleSaveTask}
                     handleClose={() => setEditTask(null)}
                     onChange={setEditTask}
-                    workflowId={workflow.id}
+                    workflow={workflow}
                 />
             }
             {editTrigger &&
@@ -138,7 +136,7 @@ const EditWorkflow = ({ workflowId, onCancel }) => {
                     onClose={() => setRightClickAnchor({ x: null, y: null })}
                     onAddTask={handleAddTask}
                     onAddTrigger={handleAddTrigger}
-                    // onAddDecision={handleAddDecision}
+                    onAddDecision={handleAddDecision}
                     allowTrigger={workflow && workflow.trigger == null}
                 />
                 :

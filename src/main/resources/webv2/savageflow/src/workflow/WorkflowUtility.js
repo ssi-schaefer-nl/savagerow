@@ -4,7 +4,7 @@ import { TRIGGER_ID } from "./FlowDiagramElementUtils"
 const getTaskInput = (id, workflow) => {
     let tsk = workflow.trigger && workflow.trigger.task == id
         ? workflow.trigger
-        : workflow.tasks.find(t => t.next == id)
+        : workflow.tasks.find(t => t.neighbors.includes(id))
     if (tsk == undefined) return {}
     return tsk.output
 }
@@ -21,7 +21,7 @@ const addTaskToWorkflow = (workflow, name, type, subtype) => {
         name: name,
         taskType: type,
         subtype: subtype,
-        next: null
+        neighbors: []
     }
 
     if (w.tasks == null) w.tasks = [task]
@@ -44,6 +44,7 @@ const saveTaskToWorkflow = (workflow, task) => {
     const w = { ...workflow }
     w.tasks = w.tasks.filter(t => t.id !== task.id)
     w.tasks.push(task)
+    console.log(task)
     return w
 }
 
@@ -59,8 +60,9 @@ const deleteNode = (workflow, nodeId) => {
         w.trigger = null;
     } else if (w.tasks != null) {
         w.tasks = w.tasks.filter(t => t.id != nodeId)
-        const prevNode = w.tasks.findIndex(i => i.next == nodeId)
-        if(prevNode != -1) w.tasks[prevNode].next = null
+        w.tasks = w.tasks.map(t => (
+            { ...t, neighbors: t.neighbors.filter(n => n != nodeId) }
+        ))
     }
 
     return w;
@@ -76,9 +78,9 @@ const connectNodes = (workflow, source, target) => {
     else if (w.tasks != null) {
 
         const task = w.tasks.find(t => t.id == source)
-        if (task != null) task.next = target
+        if (task != null) task.neighbors.push(target)
 
     }
     return w
 }
-export { deleteNode, connectNodes, getTaskInput, addTaskToWorkflow, addTriggerToWorkflow, saveTaskToWorkflow, saveTriggerToWorkflow }
+export {addDecisionToWorkflow, deleteNode, connectNodes, getTaskInput, addTaskToWorkflow, addTriggerToWorkflow, saveTaskToWorkflow, saveTriggerToWorkflow }

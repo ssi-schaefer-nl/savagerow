@@ -1,24 +1,23 @@
 package nl.ssischaefer.savaragerow.workflow.mapper;
 
-import nl.ssischaefer.savaragerow.common.event.TableEventProducer;
-import nl.ssischaefer.savaragerow.common.model.RowSelectionCriterion;
-import nl.ssischaefer.savaragerow.common.model.UpdateInstruction;
-import nl.ssischaefer.savaragerow.common.schema.CrudWorkflowTaskSchema;
-import nl.ssischaefer.savaragerow.data.DynamicRepository;
-import nl.ssischaefer.savaragerow.data.DynamicRepositoryImpl;
-import nl.ssischaefer.savaragerow.workflow.model.task.AbstractWorkflowTask;
-import nl.ssischaefer.savaragerow.workflow.model.task.crud.*;
+import nl.ssischaefer.savaragerow.shared.model.RowSelectionCriterion;
+import nl.ssischaefer.savaragerow.shared.model.UpdateInstruction;
+import nl.ssischaefer.savaragerow.shared.schema.CrudWorkflowTaskSchema;
+import nl.ssischaefer.savaragerow.workflow.StorageAdapter;
+import nl.ssischaefer.savaragerow.workflow.TableEventProducer;
+import nl.ssischaefer.savaragerow.workflow.task.AbstractWorkflowTask;
+import nl.ssischaefer.savaragerow.workflow.task.crud.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CrudTaskSchemaMapper {
-    private final DynamicRepository dynamicRepository;
+    private final StorageAdapter storageAdapter;
     private final TableEventProducer eventProducer;
 
-    public CrudTaskSchemaMapper(DynamicRepository dynamicRepository, TableEventProducer eventProducer) {
-        this.dynamicRepository = dynamicRepository;
+    public CrudTaskSchemaMapper(StorageAdapter storageAdapter, TableEventProducer eventProducer) {
+        this.storageAdapter = storageAdapter;
         this.eventProducer = eventProducer;
     }
 
@@ -42,9 +41,12 @@ public class CrudTaskSchemaMapper {
                 break;
             default: return null;
         }
+        if(!taskSchema.getNeighbors().isEmpty())
+            task.setNext(taskSchema.getNeighbors().get(0));
+
         task.setTable(taskSchema.getTable());
         task.setId(taskSchema.getId());
-        task.setRepository(dynamicRepository);
+        task.setStorageAdapter(storageAdapter);
         task.setEventProducer(eventProducer);
         return task;
     }

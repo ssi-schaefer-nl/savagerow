@@ -12,6 +12,8 @@ function createReactFlowElements(workflow) {
     const trigger = workflow.trigger
     const tasks = workflow.tasks
 
+
+
     if (trigger != undefined) {
         elements.push({ id: TRIGGER_ID, type: "triggerNode", data: { label: trigger.name }, position: { x: 0, y: 0 } })
         if (trigger.task != null) {
@@ -27,16 +29,17 @@ function createReactFlowElements(workflow) {
 
     if (tasks != undefined) {
         tasks.forEach(t => {
+            if(t.neighbors == null) t.neighbors = []
             elements.push({ id: `${t.id}`, type: "taskNode", data: { label: t.name }, position: { x: 0, y: 0 } })
-            if (t.next != null) {
+            t.neighbors.forEach(n =>
                 elements = addEdge({
-                    id: `${t.id}-${t.next}`,
+                    id: `${t.id}-${n}`,
                     source: `${t.id}`,
-                    target: `${t.next}`,
+                    target: `${n}`,
                     type: 'step',
                     arrowHeadType: 'arrowclosed'
                 }, elements)
-            }
+            )
         })
     }
 

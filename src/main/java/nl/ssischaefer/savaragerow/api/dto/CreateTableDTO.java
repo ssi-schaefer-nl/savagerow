@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.api.dto;
 
-import nl.ssischaefer.savaragerow.data.common.model.SQLColumn;
+import nl.ssischaefer.savaragerow.storage.common.model.SQLColumn;
 
 import java.util.List;
 

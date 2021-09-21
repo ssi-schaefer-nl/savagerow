@@ -11,15 +11,28 @@ import ListItemText from '@material-ui/core/ListItemText';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import { useEffect, useState } from "react";
 import CrudTaskForm from "./CrudTaskForms";
+import DecisionTaskForms from "./DecisionTaskForms";
 import WorkflowService from "./WorkflowService";
+import FastForwardIcon from '@material-ui/icons/FastForward';
 
-
-const TaskEditDialog = ({ open, handleClose, task, onChange, onSave, workflowId }) => {
+const TaskEditDialog = ({ open, handleClose, task, onChange, onSave, workflow }) => {
     const [input, setInput] = useState(null)
 
     useEffect(() => {
-        new WorkflowService().getTaskInput(workflowId, task.id, setInput, () => setInput(null))
+        new WorkflowService().getTaskInput(workflow.id, task.id, setInput, () => setInput(null))
     }, [])
+
+    const handlePropagate = (original) => {
+        const t = { ...task }
+        if (t.propagatedParameters != null && Object.keys(t.propagatedParameters).includes(original)) {
+            delete t.propagatedParameters[original]
+        }
+        else {
+            if (t.propagatedParameters == null) t.propagatedParameters = {}
+            t.propagatedParameters[original] = `${task.id}.${original}`
+        }
+        onChange(t)
+    }
 
     return (
         <Dialog
@@ -40,10 +53,10 @@ const TaskEditDialog = ({ open, handleClose, task, onChange, onSave, workflowId 
             <DialogContent style={{ height: '60vh' }}>
                 <Grid container direction='row' style={{ width: '100%', height: '90%' }}>
                     <Grid item style={{ borderRight: '1px solid grey', maxHeight: '100%', overflow: 'auto' }} xs={3}>
-                        <InputParamList params={input} />
+                        <InputParamList params={input} onPropagate={handlePropagate} propagated={task.propagatedParameters} />
                     </Grid>
                     <Grid item xs={true}>
-                        <WorkflowTaskEditor task={task} onChange={onChange} />
+                        <WorkflowTaskEditor task={task} onChange={onChange} workflow={workflow} />
                     </Grid>
                 </Grid>
             </DialogContent>
@@ -55,14 +68,15 @@ const TaskEditDialog = ({ open, handleClose, task, onChange, onSave, workflowId 
     )
 }
 
-const WorkflowTaskEditor = ({ task, onChange }) => {
+const WorkflowTaskEditor = ({ task, onChange, workflow }) => {
     switch (task.taskType) {
         case "crud": return <CrudTaskForm task={task} onChange={onChange} />
+        case "decision": return <DecisionTaskForms workflow={workflow} task={task} onChange={onChange} />
         default: return null;
     }
 }
 
-const InputParamList = ({ params }) => {
+const InputParamList = ({ params, onPropagate, propagated }) => {
     if (params == null) return "Unable to fetch input parameters"
     return (
         <>
@@ -74,6 +88,8 @@ const InputParamList = ({ params }) => {
                 {Object.keys(params).map(p =>
                     <InputParamListItem
                         name={p}
+                        onPropagate={onPropagate}
+                        propagated={propagated && Object.keys(propagated).includes(p)}
                         placeholder={params[p]}
                     />
                 )}
@@ -82,13 +98,17 @@ const InputParamList = ({ params }) => {
     );
 }
 
-const InputParamListItem = ({ name, placeholder }) => {
+const InputParamListItem = ({ name, placeholder, onPropagate, propagated }) => {
 
     return (
         <>
             <ListItem style={{ backgroundColor: "white", margin: '0.5em 0' }} >
-                <ListItemText primary={name}/>
+                <ListItemText primary={name} />
                 <ListItemSecondaryAction>
+                    <IconButton color={propagated ? "primary" : "default"} edge="end" onClick={() => onPropagate(name)}>
+                        <FastForwardIcon />
+                    </IconButton>
+
                     <IconButton edge="end" onClick={() => { navigator.clipboard.writeText(placeholder) }}>
                         <FileCopyOutlinedIcon />
                     </IconButton>

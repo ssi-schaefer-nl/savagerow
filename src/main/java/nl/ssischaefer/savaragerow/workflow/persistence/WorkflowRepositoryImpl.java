@@ -2,12 +2,11 @@ package nl.ssischaefer.savaragerow.workflow.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import nl.ssischaefer.savaragerow.common.schema.WorkflowSchema;
+import nl.ssischaefer.savaragerow.shared.schema.WorkflowSchema;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFileFilter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

@@ -1,6 +1,6 @@
 package nl.ssischaefer.savaragerow.workflow.persistence;
 
-import nl.ssischaefer.savaragerow.common.schema.WorkflowSchema;
+import nl.ssischaefer.savaragerow.shared.schema.WorkflowSchema;
 
 import java.util.List;
 import java.util.Optional;

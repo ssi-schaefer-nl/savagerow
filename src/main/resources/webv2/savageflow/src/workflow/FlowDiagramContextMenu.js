@@ -43,7 +43,7 @@ const FlowDiagramContextMenu = ({ anchor, onClose, onAddTask, onAddTrigger, allo
             <MenuItem onClick={() => handleAddTask('crud', 'delete')}>CRUD Delete</MenuItem>
             <MenuItem onClick={() => handleAddTask('crud', 'insert')}>CRUD Insert</MenuItem>
             <MenuItem onClick={() => handleAddTask('crud', 'select')}>CRUD Select</MenuItem>
-            {/* <MenuItem onClick={() => handleAddDecision('input')}>Input Decision</MenuItem> */}
+            <MenuItem onClick={() => handleAddTask('decision', 'input')}>Input Decision</MenuItem>
             
         </Menu>
     )

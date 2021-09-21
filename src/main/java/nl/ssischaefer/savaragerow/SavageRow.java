@@ -1,23 +1,24 @@
 package nl.ssischaefer.savaragerow;
 
-import nl.ssischaefer.savaragerow.api.controller.RowController;
-import nl.ssischaefer.savaragerow.api.controller.SchemaController;
-import nl.ssischaefer.savaragerow.api.controller.WorkflowController;
-import nl.ssischaefer.savaragerow.common.event.TableEvent;
-import nl.ssischaefer.savaragerow.common.event.TableEventProducer;
-import nl.ssischaefer.savaragerow.data.DynamicRepositoryImpl;
-import nl.ssischaefer.savaragerow.data.ManagementService;
-import nl.ssischaefer.savaragerow.data.OperationsService;
-import nl.ssischaefer.savaragerow.workflow.WorkflowService;
-import nl.ssischaefer.savaragerow.workflow.mapper.CrudTaskSchemaMapper;
-import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowMapper;
-import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowTaskSchemaMapper;
-import nl.ssischaefer.savaragerow.workflow.mapper.WorkflowTriggerSchemaMapper;
-import nl.ssischaefer.savaragerow.workflow.model.workflowtrigger.TableEventObserver;
+import nl.ssischaefer.savaragerow.api.endpoints.RowApiEndpoint;
+import nl.ssischaefer.savaragerow.api.endpoints.SchemaApiEndpoint;
+import nl.ssischaefer.savaragerow.api.endpoints.WorkflowApiEndpoint;
+import nl.ssischaefer.savaragerow.shared.event.TableEvent;
+import nl.ssischaefer.savaragerow.storage.StorageManagementController;
+import nl.ssischaefer.savaragerow.storage.StorageOperationsController;
+import nl.ssischaefer.savaragerow.storage.StorageServiceImpl;
+import nl.ssischaefer.savaragerow.storage.TableEventProducerImpl;
+import nl.ssischaefer.savaragerow.workflow.*;
+import nl.ssischaefer.savaragerow.workflow.mapper.*;
 import nl.ssischaefer.savaragerow.workflow.persistence.WorkflowRepositoryImpl;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -25,49 +26,82 @@ import static spark.Spark.*;
 
 public class SavageRow {
     private static final Logger logger = LoggerFactory.getLogger("Main");
-    private static final String API_PREFIX = "/api/v1";
 
-    public static void main(String[] args) {
+    private static ExecutorService executor;
+    private static BlockingQueue<TableEvent> tableEventQueue;
+
+    private static WorkflowController workflowController;
+    private static StorageManagementController storageManagementController;
+    private static StorageOperationsController storageOperationsController;
+
+    public static void main(String[] args) throws SchedulerException {
+        setup();
+        setupControllers();
+        setupApiEndpoints();
+        setupExceptions();
+        workflowController.startAll();
+    }
+
+    private static void setupApiEndpoints() {
+        String apiPrefix = "/api/v1";
+
+        var rowApiEndpoint = new RowApiEndpoint(storageOperationsController);
+        var workflowApiEndpoint = new WorkflowApiEndpoint(workflowController);
+        var schemaApiEndpoint = new SchemaApiEndpoint(storageManagementController);
+
+        rowApiEndpoint.setup(apiPrefix);
+        workflowApiEndpoint.setup(apiPrefix);
+        schemaApiEndpoint.setup(apiPrefix);
+    }
+
+    private static void setupControllers() throws SchedulerException {
+        workflowController = setupWorkflowController();
+        storageManagementController = setupStorageManagementController();
+        storageOperationsController = setupStorageOperationsController();
+    }
+
+    private static void setup() {
         logger.info("Starting up SavageFlow");
         configureServer();
-        logger.info("Instantiating Objects");
-        var executor = Executors.newFixedThreadPool(1);
-        var eventQueue = new LinkedBlockingQueue<TableEvent>();
-        var eventObserver = new TableEventObserver(eventQueue);
-        executor.submit(eventObserver);
+        tableEventQueue = new LinkedBlockingQueue<>();
+        executor = Executors.newFixedThreadPool(1);
+    }
 
-        var workflowMapper = buildWorkflowMapper(eventQueue);
+    private static StorageOperationsController setupStorageOperationsController() {
+        var tableEventProducer = new TableEventProducerImpl(tableEventQueue);
+        return new StorageOperationsController(tableEventProducer, new StorageServiceImpl());
+    }
 
+    private static StorageManagementController setupStorageManagementController() {
+        return new StorageManagementController();
+    }
+
+    private static WorkflowController setupWorkflowController() throws SchedulerException {
+        SchedulerFactory sf = new StdSchedulerFactory();
+        var workflowScheduler = new WorkflowScheduler(sf.getScheduler());
+        workflowScheduler.start();
+        var tableEventConsumer = new TableEventConsumer(tableEventQueue, workflowScheduler);
         var workflowRepository = new WorkflowRepositoryImpl(WorkspaceConfiguration.getWorkflowPath());
+        var workflowMapper = createWorkflowMapper();
+        var workflowService = new WorkflowService(workflowScheduler, tableEventConsumer);
+        var workflowController = new WorkflowControllerImpl(workflowService, workflowMapper, workflowRepository);
 
-        var workflowService = new WorkflowService(workflowRepository, eventObserver, workflowMapper);
-        var managementService = new ManagementService();
+        executor.submit(tableEventConsumer);
 
-        var eventProducer = new TableEventProducer(eventQueue);
-        var operationsService = new OperationsService(eventProducer, new DynamicRepositoryImpl());
-
-        var schemaController = new SchemaController(managementService);
-        var workflowController = new WorkflowController(workflowService);
-        var rowController = new RowController(operationsService);
-
-        schemaController.setup(API_PREFIX);
-        workflowController.setup(API_PREFIX);
-        rowController.setup(API_PREFIX);
-
-        setupExceptions();
-        workflowService.startAll();
+        return workflowController;
     }
 
     private static void configureServer() {
-        logger.info("Configuring server");
         port(Configuration.parseOrDefaultInteger("PORT", 9010));
         staticFiles.location("/public");
     }
 
-    private static WorkflowMapper buildWorkflowMapper(LinkedBlockingQueue<TableEvent> eventQueue) {
-        var ctskm = new CrudTaskSchemaMapper(new DynamicRepositoryImpl(), new TableEventProducer(eventQueue));
-        var tksm = new WorkflowTaskSchemaMapper(ctskm);
-        var trsm = new WorkflowTriggerSchemaMapper(new DynamicRepositoryImpl());
+    private static WorkflowMapper createWorkflowMapper() {
+        var storageAdapter = new StorageAdapterImpl(new StorageServiceImpl());
+
+        var ctskm = new CrudTaskSchemaMapper(storageAdapter, new LocalTableEventProducer(tableEventQueue));
+        var tksm = new WorkflowTaskMapper(ctskm, new DecisionTaskSchemaMapper());
+        var trsm = new WorkflowTriggerMapper(storageAdapter);
         return new WorkflowMapper(tksm, trsm);
     }
 
@@ -77,5 +111,4 @@ public class SavageRow {
             response.body(e.getMessage());
         });
     }
-
 }
